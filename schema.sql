@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS leads (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL,
+  role TEXT,
+  team_size TEXT,
+  use_case TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

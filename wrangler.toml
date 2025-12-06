@@ -1,0 +1,26 @@
+# Cloudflare Pages Configuration for Kitly Landing Page
+
+name = "kitly-webpage"
+compatibility_date = "2024-12-04"
+pages_build_output_dir = "dist"
+
+# KV Namespace for Rate Limiting
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "5a16641676e84251bc640f0cc1a3493d"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "kitly-wishlist"
+database_id = "edcbab3d-a536-4375-b6cb-4611efd72f36"
+
+# Cloudflare Turnstile Secret Key
+# Configure this in Cloudflare Pages dashboard under Environment Variables
+# Variable name: TURNSTILE_SECRET_KEY
+# Get the key from: https://dash.cloudflare.com → Turnstile
+
+# Build configuration (handled by Cloudflare Pages UI, but documented here)
+# Build command: npm run build
+# Build output directory: dist
+# Root directory: /
