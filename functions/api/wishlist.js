@@ -47,7 +47,7 @@ export async function onRequest({ request, env }) {
         }
 
         const body = await request.json();
-        const { email, role, teamSize, useCase, honeypot, turnstileToken } = body;
+        const { email, role, teamSize, useCase, honeypot } = body;
 
         // Bot detection: reject if honeypot field is filled
         if (honeypot) {
@@ -55,52 +55,6 @@ export async function onRequest({ request, env }) {
             // Return success to avoid revealing honeypot
             return new Response(JSON.stringify({ success: true }), {
                 status: 200,
-                headers: securityHeaders
-            });
-        }
-
-        // Verify Cloudflare Turnstile token
-        if (turnstileToken) {
-            try {
-                const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        secret: env.TURNSTILE_SECRET_KEY,
-                        response: turnstileToken,
-                        remoteip: clientIP
-                    })
-                });
-
-                const turnstileData = await turnstileResponse.json();
-
-                if (!turnstileData.success) {
-                    console.log('Turnstile verification failed:', clientIP, turnstileData['error-codes']);
-                    return new Response(JSON.stringify({
-                        error: 'Verification failed. Please try again.'
-                    }), {
-                        status: 400,
-                        headers: securityHeaders
-                    });
-                }
-            } catch (error) {
-                console.error('Turnstile verification error:', error);
-                // Fail securely - reject if we can't verify
-                return new Response(JSON.stringify({
-                    error: 'Verification service unavailable. Please try again later.'
-                }), {
-                    status: 503,
-                    headers: securityHeaders
-                });
-            }
-        } else {
-            // Reject if no Turnstile token provided
-            return new Response(JSON.stringify({
-                error: 'Verification required. Please complete the challenge.'
-            }), {
-                status: 400,
                 headers: securityHeaders
             });
         }

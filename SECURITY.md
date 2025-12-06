@@ -64,24 +64,6 @@ This document outlines the comprehensive security measures implemented in the Ki
 - **Detection**: If field is filled, request is silently rejected
 - **Response**: Returns success to avoid revealing the honeypot technique
 
-#### Cloudflare Turnstile
-- **Widget Type**: Managed (automatic challenge selection)
-- **Theme**: Auto (matches light/dark mode)
-- **Implementation**: [@marsidev/react-turnstile](https://github.com/marsidev/react-turnstile)
-- **Verification**: Server-side token validation via Cloudflare API
-- **Security Features**:
-  - Single-use tokens
-  - Time-limited validation
-  - IP address binding
-  - Fail-secure verification (rejects if service unavailable)
-
-- **Error Handling**:
-  - Auto-reset widget on failure
-  - Clear user feedback on verification errors
-  - Token expiration handling
-
-- **Setup Guide**: See [TURNSTILE_SETUP.md](file:///Users/anupadesilva/Documents/MyApps/2025/kitly-webpage/TURNSTILE_SETUP.md) for configuration instructions
-
 ### 4. Security Headers
 
 #### HTTP Response Headers ([security.js](file:///Users/anupadesilva/Documents/MyApps/2025/kitly-webpage/functions/lib/security.js))
@@ -105,12 +87,11 @@ This document outlines the comprehensive security measures implemented in the Ki
 
 - **Content Security Policy (CSP)**:
   - `default-src 'self'`: Only same-origin resources by default
-  - `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com`: Scripts from same origin + inline + Turnstile
+  - `script-src 'self' 'unsafe-inline'`: Scripts from same origin + inline (required for Vite/React)
   - `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`: Styles + Google Fonts
   - `font-src 'self' https://fonts.gstatic.com`: Fonts from same origin + Google Fonts CDN
   - `img-src 'self' data: https:`: Images from same origin, data URIs, and HTTPS sources
-  - `connect-src 'self' https://challenges.cloudflare.com`: API calls + Turnstile verification
-  - `frame-src https://challenges.cloudflare.com`: Allows Turnstile iframe
+  - `connect-src 'self'`: API calls only to same origin
 
 - **X-Content-Type-Options**: `nosniff`
 - **Referrer Policy**: `strict-origin-when-cross-origin`
@@ -190,9 +171,6 @@ To enable rate limiting, you need to create a KV namespace in Cloudflare:
 ### Bot Protection Tests
 - [ ] Fill honeypot field and verify silent rejection
 - [ ] Verify normal submission without honeypot works
-- [ ] Complete Turnstile challenge and verify submission succeeds
-- [ ] Submit without completing Turnstile and verify rejection
-- [ ] Verify Turnstile widget resets after successful submission
 
 ### Security Headers Tests
 - [ ] Verify CSP in browser DevTools Network tab
@@ -208,11 +186,11 @@ To enable rate limiting, you need to create a KV namespace in Cloudflare:
 
 ✅ **SQL Injection**: Parameterized queries  
 ✅ **XSS (Cross-Site Scripting)**: Input sanitization + CSP  
-✅ **CSRF (Cross-Site Request Forgery)**: CORS configuration (honeypot + Turnstile provide additional protection)  
+✅ **CSRF (Cross-Site Request Forgery)**: CORS configuration (honeypot provides additional protection)  
 ✅ **Clickjacking**: X-Frame-Options header  
 ✅ **MIME Sniffing**: X-Content-Type-Options header  
 ✅ **Rate Limiting/DDoS**: IP-based rate limiting  
-✅ **Bot Spam**: Honeypot field + Cloudflare Turnstile  
+✅ **Bot Spam**: Honeypot field  
 ✅ **Information Disclosure**: Generic error messages  
 ✅ **Duplicate Entries**: Database constraint check  
 
@@ -242,9 +220,9 @@ When adding new external resources (CDNs, APIs, etc.), update the CSP in [`index
 2. **Subresource Integrity (SRI)**: Add integrity attributes to external scripts/styles
 3. **Database Encryption**: Consider encrypting email addresses at rest
 4. **Email Verification**: Implement double opt-in to verify email addresses
-5. **Security Headers Service**: Use Cloudflare Page Rules for additional security headers
-6. **WAF Rules**: Configure Cloudflare WAF for additional protection
-7. **Turnstile Analytics**: Monitor Turnstile Dashboard for bot patterns and adjust settings
+5. **CAPTCHA**: Add reCAPTCHA v3 for additional bot protection if honeypot proves insufficient
+6. **Security Headers Service**: Use Cloudflare Page Rules for additional security headers
+7. **WAF Rules**: Configure Cloudflare WAF for additional protection
 
 ### Monitoring
 - Set up alerts for high rate limit triggers
@@ -256,5 +234,4 @@ When adding new external resources (CDNs, APIs, etc.), update the CSP in [`index
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Content Security Policy Reference](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 - [Cloudflare Workers KV](https://developers.cloudflare.com/workers/runtime-apis/kv/)
-- [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
 - [RFC 5322 (Email Format)](https://tools.ietf.org/html/rfc5322)

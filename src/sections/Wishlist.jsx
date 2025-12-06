@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { Turnstile } from '@marsidev/react-turnstile';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
@@ -9,11 +8,9 @@ const Wishlist = () => {
     const [teamSize, setTeamSize] = useState('');
     const [useCase, setUseCase] = useState('');
     const [honeypot, setHoneypot] = useState(''); // Bot detection
-    const [turnstileToken, setTurnstileToken] = useState(''); // Turnstile token
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [errorMessage, setErrorMessage] = useState('');
     const lastSubmitTime = useRef(0);
-    const turnstileRef = useRef(null);
 
     // Client-side email validation
     const isValidEmail = (email) => {
@@ -52,12 +49,6 @@ const Wishlist = () => {
             return;
         }
 
-        // Verify Turnstile token
-        if (!turnstileToken) {
-            setErrorMessage('Please complete the verification challenge');
-            return;
-        }
-
         // Submission throttling - prevent rapid repeated submissions
         const now = Date.now();
         const timeSinceLastSubmit = now - lastSubmitTime.current;
@@ -82,8 +73,7 @@ const Wishlist = () => {
                     role: sanitizeInput(role),
                     teamSize: sanitizeInput(teamSize),
                     useCase: sanitizeInput(useCase),
-                    honeypot: honeypot, // Include honeypot field
-                    turnstileToken: turnstileToken // Include Turnstile token
+                    honeypot: honeypot // Include honeypot field
                 }),
             });
 
@@ -96,13 +86,7 @@ const Wishlist = () => {
                 setTeamSize('');
                 setUseCase('');
                 setHoneypot('');
-                setTurnstileToken('');
                 lastSubmitTime.current = now;
-
-                // Reset Turnstile widget
-                if (turnstileRef.current) {
-                    turnstileRef.current.reset();
-                }
             } else {
                 setStatus('error');
                 // Display specific error from API
@@ -112,23 +96,11 @@ const Wishlist = () => {
                 if (response.status === 429 && data.retryAfter) {
                     setErrorMessage(`Too many requests. Please try again in ${Math.ceil(data.retryAfter / 60)} minutes.`);
                 }
-
-                // Reset Turnstile on error
-                if (turnstileRef.current) {
-                    turnstileRef.current.reset();
-                    setTurnstileToken('');
-                }
             }
         } catch (error) {
             console.error('Error submitting wishlist:', error);
             setStatus('error');
             setErrorMessage('Network error. Please check your connection and try again.');
-
-            // Reset Turnstile on error
-            if (turnstileRef.current) {
-                turnstileRef.current.reset();
-                setTurnstileToken('');
-            }
         }
     };
 
@@ -204,31 +176,6 @@ const Wishlist = () => {
                                         aria-label="Primary use case"
                                     />
                                 </div>
-
-                                {/* Cloudflare Turnstile Widget */}
-                                <div className="flex justify-center my-4">
-                                    <Turnstile
-                                        ref={turnstileRef}
-                                        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
-                                        onSuccess={(token) => {
-                                            console.log('Turnstile success');
-                                            setTurnstileToken(token);
-                                            setErrorMessage(''); // Clear any previous errors
-                                        }}
-                                        onError={(error) => {
-                                            console.error('Turnstile error:', error);
-                                            setTurnstileToken('');
-                                            // Don't show error immediately, user might retry
-                                        }}
-                                        onExpire={() => {
-                                            console.log('Turnstile expired');
-                                            setTurnstileToken('');
-                                        }}
-                                        theme="auto"
-                                        size="normal"
-                                    />
-                                </div>
-
                                 <Button
                                     type="submit"
                                     variant="primary"
