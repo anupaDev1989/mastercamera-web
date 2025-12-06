@@ -122,6 +122,56 @@ export function getClientIP(request) {
         'unknown';
 }
 
+// Verify Cloudflare Turnstile token
+export async function verifyTurnstileToken(token, clientIP, env) {
+    if (!token) {
+        return { success: false, error: 'Turnstile token is required' };
+    }
+
+    if (!env.TURNSTILE_SECRET_KEY) {
+        console.error('TURNSTILE_SECRET_KEY not configured');
+        // In production, you might want to fail closed (return false)
+        // For now, we'll log and fail open to prevent breaking the app
+        return { success: true, warning: 'Turnstile not configured' };
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('secret', env.TURNSTILE_SECRET_KEY);
+        formData.append('response', token);
+        if (clientIP && clientIP !== 'unknown') {
+            formData.append('remoteip', clientIP);
+        }
+
+        const verifyResponse = await fetch(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
+
+        const outcome = await verifyResponse.json();
+
+        if (!outcome.success) {
+            console.log('Turnstile verification failed:', outcome['error-codes']);
+            return {
+                success: false,
+                error: 'Security check failed',
+                errorCodes: outcome['error-codes']
+            };
+        }
+
+        return { success: true };
+
+    } catch (error) {
+        console.error('Turnstile verification error:', error);
+        // On error, fail open to prevent blocking legitimate users
+        // In production, you may want to fail closed for security
+        return { success: true, warning: 'Verification error, allowing request' };
+    }
+}
+
 // Generate security headers
 export function getSecurityHeaders() {
     return {

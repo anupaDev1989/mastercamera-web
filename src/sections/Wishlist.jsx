@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
@@ -8,9 +9,11 @@ const Wishlist = () => {
     const [teamSize, setTeamSize] = useState('');
     const [useCase, setUseCase] = useState('');
     const [honeypot, setHoneypot] = useState(''); // Bot detection
+    const [turnstileToken, setTurnstileToken] = useState('');
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [errorMessage, setErrorMessage] = useState('');
     const lastSubmitTime = useRef(0);
+    const turnstileRef = useRef(null);
 
     // Client-side email validation
     const isValidEmail = (email) => {
@@ -40,6 +43,12 @@ const Wishlist = () => {
 
         if (!isValidEmail(email)) {
             setErrorMessage('Please enter a valid email address');
+            return;
+        }
+
+        // Validate Turnstile token
+        if (!turnstileToken) {
+            setErrorMessage('Please complete the security check');
             return;
         }
 
@@ -73,7 +82,8 @@ const Wishlist = () => {
                     role: sanitizeInput(role),
                     teamSize: sanitizeInput(teamSize),
                     useCase: sanitizeInput(useCase),
-                    honeypot: honeypot // Include honeypot field
+                    honeypot: honeypot, // Include honeypot field
+                    turnstileToken: turnstileToken // Include Turnstile token
                 }),
             });
 
@@ -86,7 +96,12 @@ const Wishlist = () => {
                 setTeamSize('');
                 setUseCase('');
                 setHoneypot('');
+                setTurnstileToken('');
                 lastSubmitTime.current = now;
+                // Reset Turnstile widget
+                if (turnstileRef.current) {
+                    turnstileRef.current.reset();
+                }
             } else {
                 setStatus('error');
                 // Display specific error from API
@@ -101,6 +116,11 @@ const Wishlist = () => {
             console.error('Error submitting wishlist:', error);
             setStatus('error');
             setErrorMessage('Network error. Please check your connection and try again.');
+            // Reset Turnstile on error
+            if (turnstileRef.current) {
+                turnstileRef.current.reset();
+            }
+            setTurnstileToken('');
         }
     };
 
@@ -176,6 +196,27 @@ const Wishlist = () => {
                                         aria-label="Primary use case"
                                     />
                                 </div>
+                                
+                                {/* Cloudflare Turnstile Widget */}
+                                <div className="flex justify-center">
+                                    <Turnstile
+                                        ref={turnstileRef}
+                                        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                                        onSuccess={(token) => {
+                                            setTurnstileToken(token);
+                                            setErrorMessage('');
+                                        }}
+                                        onError={() => {
+                                            setTurnstileToken('');
+                                            setErrorMessage('Security check failed. Please try again.');
+                                        }}
+                                        onExpire={() => {
+                                            setTurnstileToken('');
+                                            setErrorMessage('Security check expired. Please verify again.');
+                                        }}
+                                    />
+                                </div>
+                                
                                 <Button
                                     type="submit"
                                     variant="primary"

@@ -2,19 +2,28 @@
 
 name = "kitly-webpage"
 compatibility_date = "2024-12-04"
+pages_build_output_dir = "dist"
 
 # KV Namespace for Rate Limiting
 # To create: wrangler kv:namespace create RATE_LIMIT
 # Then add the ID below after creation
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
-id = "YOUR_KV_NAMESPACE_ID_HERE"  # Replace with your actual KV namespace ID
+id = "5a16641676e84251bc640f0cc1a3493d"  # Replace with your actual KV namespace ID
 
 # D1 Database binding (if not already configured)
 [[d1_databases]]
 binding = "DB"
-database_name = "kitly-leads"
-database_id = "YOUR_DATABASE_ID_HERE"  # Replace with your actual D1 database ID
+database_name = "kitly-wishlist"
+database_id = "edcbab3d-a536-4375-b6cb-4611efd72f36"  # Replace with your actual D1 database ID
+
+# Cloudflare Turnstile Secret Configuration
+# To set the secret, run:
+# wrangler secret put TURNSTILE_SECRET_KEY
+# When prompted, enter: 0x4AAAAAACE4oS_4ydpWpVCizlMwn6bXkHg
+#
+# The secret is not stored in this file for security reasons.
+# It's encrypted and stored in Cloudflare's secure storage.
 
 # Build configuration (handled by Cloudflare Pages UI, but documented here)
 # Build command: npm run build

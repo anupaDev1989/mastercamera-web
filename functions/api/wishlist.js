@@ -5,7 +5,8 @@ import {
     checkRateLimit,
     updateRateLimit,
     getClientIP,
-    getSecurityHeaders
+    getSecurityHeaders,
+    verifyTurnstileToken
 } from '../lib/security.js';
 
 export async function onRequest({ request, env }) {
@@ -47,7 +48,7 @@ export async function onRequest({ request, env }) {
         }
 
         const body = await request.json();
-        const { email, role, teamSize, useCase, honeypot } = body;
+        const { email, role, teamSize, useCase, honeypot, turnstileToken } = body;
 
         // Bot detection: reject if honeypot field is filled
         if (honeypot) {
@@ -57,6 +58,24 @@ export async function onRequest({ request, env }) {
                 status: 200,
                 headers: securityHeaders
             });
+        }
+
+        // Verify Cloudflare Turnstile token
+        const turnstileResult = await verifyTurnstileToken(turnstileToken, clientIP, env);
+        
+        if (!turnstileResult.success) {
+            console.log('Turnstile verification failed:', turnstileResult.error);
+            return new Response(JSON.stringify({
+                error: 'Security verification failed. Please try again.'
+            }), {
+                status: 403,
+                headers: securityHeaders
+            });
+        }
+
+        // Log warning if Turnstile verification had issues but passed
+        if (turnstileResult.warning) {
+            console.warn('Turnstile warning:', turnstileResult.warning);
         }
 
         // Validate email
