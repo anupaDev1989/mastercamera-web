@@ -24,6 +24,7 @@ const Hero = () => {
         { src: "/hero-screenshot.png", alt: "RiGG App Interface" },
         { src: "/tracking-screenshot.png", alt: "RiGG Tracking Interface" },
         { src: "/projects-screenshot.png", alt: "RiGG Projects Interface" },
+        { src: "/Rented-tracking-screenshot.png", alt: "RiGG Rented Gear Tracking" },
     ];
 
     const handleIndexChange = (index) => {
@@ -38,7 +39,7 @@ const Hero = () => {
             <span className="inline-flex items-center justify-center h-[1.2em] overflow-hidden">
                 <TextRotate
                     ref={textRotateRef}
-                    texts={["your gear", "gear maintenance", "gear planning"]}
+                    texts={["your gear", "gear maintenance", "gear planning", "what you rented"]}
                     mainClassName="text-primary overflow-hidden justify-center rounded-lg"
                     staggerFrom="last"
                     initial={{ y: "100%" }}
