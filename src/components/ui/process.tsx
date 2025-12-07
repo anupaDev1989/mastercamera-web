@@ -15,7 +15,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more wasted time hunting for equipment or discovering issues too late.",
-    image: "/feature-images/feature-1.webp",
+    image: "/feature-images/feature-1.png",
   },
   {
     id: "feature-2",
@@ -30,7 +30,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more unexpected equipment failures or forgotten maintenance tasks.",
-    image: "/feature-images/feature-2.webp",
+    image: "/feature-images/feature-2.png",
   },
   {
     id: "feature-3",
@@ -45,7 +45,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more losing track of rental gear or paying unnecessary late fees.",
-    image: "/feature-images/feature-3.webp",
+    image: "/feature-images/feature-3.png",
   },
   {
     id: "feature-4",
@@ -60,7 +60,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more rebuilding gear lists from scratch or guessing what’s missing.",
-    image: "/feature-images/feature-4.webp",
+    image: "/feature-images/feature-4.png",
   },
   {
     id: "feature-5",
@@ -75,7 +75,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more double-booking gear or finding items unavailable at the last minute.",
-    image: "/feature-images/feature-5.webp",
+    image: "/feature-images/feature-5.png",
   },
   {
     id: "feature-6",
@@ -90,7 +90,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more packing mistakes or missing transaction history.",
-    image: "/feature-images/feature-6.webp",
+    image: "/feature-images/feature-6.png",
   },
   {
     id: "feature-7",
@@ -105,7 +105,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more premature servicing, delayed maintenance, or accidental gear damage.",
-    image: "/feature-images/feature-7.webp",
+    image: "/feature-images/feature-7.png",
   },
   {
     id: "feature-8",
@@ -120,7 +120,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more being blocked by poor connectivity or forced account signups.",
-    image: "/feature-images/feature-8.webp",
+    image: "/feature-images/feature-8.png",
   },
   {
     id: "feature-9",
@@ -135,7 +135,7 @@ const PROCESS_PHASES = [
     ],
     solves:
       "No more fragmented records or confusion across team members and devices.",
-    image: "/feature-images/feature-9.webp",
+    image: "/feature-images/feature-9.png",
   },
 ]
 
