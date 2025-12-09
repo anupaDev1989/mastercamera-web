@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title>Android logo</title>
+  <g fill="#3DDC84">
+    <rect x="4" y="8" width="16" height="9" rx="2" />
+    <rect x="7" y="17" width="2" height="4" rx="1" />
+    <rect x="15" y="17" width="2" height="4" rx="1" />
+    <circle cx="9" cy="11" r="1.1" fill="#000000" />
+    <circle cx="15" cy="11" r="1.1" fill="#000000" />
+  </g>
+</svg>

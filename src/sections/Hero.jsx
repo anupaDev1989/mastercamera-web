@@ -34,9 +34,9 @@ const Hero = () => {
     };
 
     const title = (
-        <span className="flex flex-col items-center justify-center md:flex-row md:gap-4">
+        <span className="flex flex-col md:flex-row md:gap-4 items-baseline justify-center">
             Stay on top of {' '}
-            <span className="inline-flex items-center justify-center h-[1.2em] overflow-hidden">
+            <span className="inline-flex items-baseline overflow-hidden align-baseline">
                 <TextRotate
                     ref={textRotateRef}
                     texts={["your gear", "gear maintenance", "gear planning", "what you rented"]}
@@ -46,7 +46,7 @@ const Hero = () => {
                     animate={{ y: 0 }}
                     exit={{ y: "-120%" }}
                     staggerDuration={0.025}
-                    splitLevelClassName="overflow-hidden pb-2"
+                    splitLevelClassName="overflow-hidden pb-1"
                     transition={{ type: "spring", damping: 30, stiffness: 400 }}
                     rotationInterval={2000}
                     auto={false} // Disable auto rotation, controlled by carousel

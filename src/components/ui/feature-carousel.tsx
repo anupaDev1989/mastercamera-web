@@ -16,6 +16,8 @@ interface HeroProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> 
 export const HeroSection = React.forwardRef<HTMLDivElement, HeroProps>(
     ({ title, subtitle, images, children, onIndexChange, className, ...props }, ref) => {
         const [currentIndex, setCurrentIndex] = React.useState(Math.floor(images.length / 2));
+        const [isPaused, setIsPaused] = React.useState(false);
+        const pauseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
         React.useEffect(() => {
             if (onIndexChange) {
@@ -23,20 +25,51 @@ export const HeroSection = React.forwardRef<HTMLDivElement, HeroProps>(
             }
         }, [currentIndex, onIndexChange]);
 
-        const handleNext = React.useCallback(() => {
+        const goToNext = React.useCallback(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
         }, [images.length]);
 
-        const handlePrev = () => {
+        const goToPrev = React.useCallback(() => {
             setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-        };
+        }, [images.length]);
+
+        const triggerPause = React.useCallback(() => {
+            setIsPaused(true);
+            if (pauseTimeoutRef.current) {
+                clearTimeout(pauseTimeoutRef.current);
+            }
+            pauseTimeoutRef.current = setTimeout(() => {
+                setIsPaused(false);
+            }, 3000);
+        }, []);
+
+        const handleNext = React.useCallback(() => {
+            triggerPause();
+            goToNext();
+        }, [triggerPause, goToNext]);
+
+        const handlePrev = React.useCallback(() => {
+            triggerPause();
+            goToPrev();
+        }, [triggerPause, goToPrev]);
 
         React.useEffect(() => {
+            if (isPaused) return;
+
             const timer = setInterval(() => {
-                handleNext();
+                goToNext();
             }, 4000);
+
             return () => clearInterval(timer);
-        }, [handleNext]);
+        }, [goToNext, isPaused]);
+
+        React.useEffect(() => {
+            return () => {
+                if (pauseTimeoutRef.current) {
+                    clearTimeout(pauseTimeoutRef.current);
+                }
+            };
+        }, []);
 
         return (
             <div

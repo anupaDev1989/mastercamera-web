@@ -205,8 +205,7 @@ const Process = () => {
                     <img
                       src={phase.image}
                       alt={phase.title}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
+                      className="w-full h-auto md:h-full object-cover"
                     />
                   </div>
                 </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './sections/Hero';
 import Features from './sections/Features';
+import Platforms from './sections/Platforms';
 import Wishlist from './sections/Wishlist';
 import Footer from './components/Footer';
 import './index.css';
@@ -22,6 +23,7 @@ function App() {
       <main>
         <Hero />
         <Features />
+        <Platforms />
         <Wishlist />
       </main>
       <Footer />
