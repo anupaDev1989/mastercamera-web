@@ -58,16 +58,16 @@ const Hero = () => {
     return (
         <HeroSection
             title={title}
-            subtitle="Gear chaos ends here. The all-in-one inventory management solution for creators and production teams."
+            subtitle="Gear chaos ends here. RiGG is the all-in-one inventory solution for photographers, videographers, production teams, audio professionals, and anyone who runs gear-heavy work."
             images={images}
             onIndexChange={handleIndexChange}
         >
             <div className="flex flex-col gap-4 sm:flex-row">
                 <Button variant="default" size="lg" onClick={scrollToWishlist} className="min-w-[200px] text-lg h-12 w-full sm:w-auto">
-                    Join the Wishlist
+                    Join the waitlist
                 </Button>
                 <Button variant="outline" size="lg" onClick={scrollToFeatures} className="min-w-[200px] text-lg h-12 w-full sm:w-auto">
-                    See How It Works
+                    How It Works
                 </Button>
             </div>
         </HeroSection>

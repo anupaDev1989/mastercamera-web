@@ -14,8 +14,8 @@ const PROCESS_PHASES = [
       "Manage your full gear catalog with photos and details",
     ],
     solves:
-      "No more wasted time hunting for equipment or discovering issues too late.",
-    image: "/feature-images/feature-1.png",
+      "No more constant gear hunts or last-minute surprises about what’s actually ready to use.",
+    image: "/feature-images/feature-1.jpg",
   },
   {
     id: "feature-2",
@@ -29,42 +29,42 @@ const PROCESS_PHASES = [
       "Automatically adjust availability for affected gear",
     ],
     solves:
-      "No more unexpected equipment failures or forgotten maintenance tasks.",
-    image: "/feature-images/feature-2.png",
+      "No more unexpected gear failures or maintenance tasks quietly falling through the cracks.",
+    image: "/feature-images/feature-2.jpg",
   },
   {
     id: "feature-3",
     title: "Seamless Rental Management",
-    tagline: "Effortlessly stay on top of third-party rentals.",
+    tagline: "Effortlessly stay on top of gear you rent in.",
     description:
-      "RiGG gives rented gear the structure and clarity it always lacked.",
+      "RiGG keeps all the equipment you’ve rented for your projects organized in one place.",
     bullets: [
-      "Track gear checked out to clients, collaborators, or rental houses",
-      "Add due dates and instantly spot overdue items",
-      "Keep all external rentals in one clear view",
+      "Track gear you’ve rented from rental houses, vendors, or other teams",
+      "Add due dates and instantly spot upcoming or overdue returns",
+      "See all rented-in gear in a single clear view across projects",
     ],
     solves:
-      "No more losing track of rental gear or paying unnecessary late fees.",
-    image: "/feature-images/feature-3.png",
+      "No more rented gear slipping your mind, unexpected overages, or scrambling to return items on time.",
+    image: "/feature-images/feature-3.jpg",
   },
   {
     id: "feature-4",
     title: "Turn Chaos into Ready-to-Go Kits",
     tagline: "Pack faster with reusable, reliable kit presets.",
     description:
-      "RiGG keeps your shoots consistent, organized, and efficient.",
+      "RiGG helps you keep your projects consistent, organized, and efficient.",
     bullets: [
       "Build reusable kits for common setups",
       "Instantly check kit readiness (green / yellow / red)",
       "Clone kits to adapt for new clients or variations",
     ],
     solves:
-      "No more rebuilding gear lists from scratch or guessing what’s missing.",
-    image: "/feature-images/feature-4.png",
+      "No more rebuilding gear lists from scratch or realizing something important is missing on set.",
+    image: "/feature-images/feature-4.jpg",
   },
   {
     id: "feature-5",
-    title: "Plan Shoots with Confidence",
+    title: "Plan Projects with Confidence",
     tagline: "Assign gear to projects and avoid schedule conflicts.",
     description:
       "RiGG ensures your gear is available where and when you need it.",
@@ -74,8 +74,8 @@ const PROCESS_PHASES = [
       "Get automatic conflict warnings for overlapping bookings",
     ],
     solves:
-      "No more double-booking gear or finding items unavailable at the last minute.",
-    image: "/feature-images/feature-5.png",
+      "No more double-booked gear, scheduling conflicts, or gear that isn’t where you need it on project day.",
+    image: "/feature-images/feature-5.jpg",
   },
   {
     id: "feature-6",
@@ -84,18 +84,18 @@ const PROCESS_PHASES = [
     description:
       "RiGG streamlines packing and captures a complete history for accountability.",
     bullets: [
-      "Use a visual packing checklist for fast bulk checkout",
+      "Use a visual packing checklist to bulk check out gear in minutes",
       "See a summary of what’s packed or missing",
       "Log every event: who, when, conditions, and notes",
     ],
     solves:
-      "No more packing mistakes or missing transaction history.",
-    image: "/feature-images/feature-6.png",
+      "No more packing mistakes, missing items, or gaps in your transaction history when something goes wrong.",
+    image: "/feature-images/feature-6.jpg",
   },
   {
     id: "feature-7",
     title: "Track Maintenance by Usage, Not Just Dates",
-    tagline: "Service equipment when it actually needs it.",
+    tagline: "Service gear based on real-world use, not arbitrary calendar dates.",
     description:
       "RiGG prevents premature wear and unnecessary downtime.",
     bullets: [
@@ -104,23 +104,23 @@ const PROCESS_PHASES = [
       "Get smart reminders when service is due or overdue",
     ],
     solves:
-      "No more premature servicing, delayed maintenance, or accidental gear damage.",
-    image: "/feature-images/feature-7.png",
+      "No more guesswork around service intervals, premature servicing, or hidden wear that leads to avoidable damage.",
+    image: "/feature-images/feature-7.jpg",
   },
   {
     id: "feature-8",
     title: "Works On Set, Offline & Secure",
     tagline: "No signal? No problem.",
     description:
-      "RiGG gives you full functionality even on remote shoots.",
+      "RiGG gives you full functionality even on remote productions.",
     bullets: [
       "Operates 100% offline in Private Mode",
       "No account required to start",
       "All data stays local — zero sync, zero tracking",
     ],
     solves:
-      "No more being blocked by poor connectivity or forced account signups.",
-    image: "/feature-images/feature-8.png",
+      "No more being blocked by bad connectivity, forced account creation, or tools that don’t respect your privacy.",
+    image: "/feature-images/feature-8.jpg",
   },
   {
     id: "feature-9",
@@ -134,8 +134,8 @@ const PROCESS_PHASES = [
       "Smooth, real-time syncing between devices",
     ],
     solves:
-      "No more fragmented records or confusion across team members and devices.",
-    image: "/feature-images/feature-9.png",
+      "No more fragmented spreadsheets, conflicting records, or confusion across your team’s devices.",
+    image: "/feature-images/feature-9.jpg",
   },
 ]
 
@@ -150,7 +150,7 @@ const Process = () => {
         </h2>
       </div>
 
-      <ContainerScroll className="mx-auto mt-10 min-h-[400vh] max-w-5xl space-y-8 py-4 md:space-y-10">
+      <ContainerScroll className="mx-auto mt-10 min-h-[260vh] max-w-5xl space-y-8 pt-4 pb-24 md:pb-32 md:space-y-10">
         {PROCESS_PHASES.map((phase, index) => {
           const isImageLeft = index % 2 === 0
 
@@ -158,7 +158,7 @@ const Process = () => {
             <CardSticky
               key={phase.id}
               index={index + 2}
-              className="min-h-[240px] rounded-3xl border bg-white/90 p-6 shadow-lg backdrop-blur-md sm:min-h-[280px] sm:p-8 lg:min-h-[320px]"
+              className="min-h-[220px] rounded-3xl border border-stone-200 bg-white p-6 shadow-md sm:min-h-[260px] sm:p-8 lg:min-h-[280px]"
             >
               <div
                 className={cn(
@@ -201,10 +201,12 @@ const Process = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <div className="h-full min-h-[160px] overflow-hidden rounded-2xl bg-indigo-50/40 sm:min-h-[190px]">
+                  <div className="h-full min-h-[160px] overflow-hidden rounded-2xl bg-stone-100 sm:min-h-[190px]">
                     <img
                       src={phase.image}
                       alt={phase.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-auto md:h-full object-cover"
                     />
                   </div>
@@ -213,6 +215,8 @@ const Process = () => {
             </CardSticky>
           )
         })}
+
+        <div className="h-16 sm:h-20 md:h-24" />
       </ContainerScroll>
     </section>
   )

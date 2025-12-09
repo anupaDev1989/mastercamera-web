@@ -11,7 +11,7 @@ RiGG removes the guesswork around where your gear is and whether it’s ready to
 - See **real-time status**: available, checked out, booked, or in repair  
 - View **current condition** and physical **location**  
 - Manage your **full gear catalog** with photos and details  
-**Solves:** No more wasted time hunting for equipment or discovering issues too late.
+**No more:** constant gear hunts or last-minute surprises about what’s actually ready to use.
 
 ---
 
@@ -22,18 +22,18 @@ RiGG helps you capture issues immediately and ensure nothing slips through the c
 - Log **damage, missing items, or malfunctions** with notes and photos  
 - Move issues through a simple **Open → In Progress → Resolved** workflow  
 - Automatically adjust **availability** for affected gear  
-**Solves:** No more unexpected equipment failures or forgotten maintenance tasks.
+**No more:** unexpected gear failures or maintenance tasks quietly falling through the cracks.
 
 ---
 
 ## 3. Seamless Rental Management
-**Effortlessly stay on top of third-party rentals.**  
-RiGG gives rented gear the structure and clarity it always lacked.
+**Effortlessly stay on top of gear you rent in.**  
+RiGG keeps all the equipment you’ve rented for your projects organized in one place.
 
-- Track gear **checked out to clients, collaborators, or rental houses**  
-- Add **due dates** and instantly spot overdue items  
-- Keep all external rentals in **one clear view**  
-**Solves:** No more losing track of rental gear or paying unnecessary late fees.
+- Track gear **you’ve rented from rental houses, vendors, or other teams**  
+- Add **due dates** and instantly spot upcoming or overdue returns  
+- See all rented-in gear in **one clear view across projects**  
+**No more:** rented gear slipping your mind, unexpected overages, or scrambling to return items on time.
 
 ---
 
@@ -44,7 +44,7 @@ RiGG keeps your shoots consistent, organized, and efficient.
 - Build **reusable kits** for common setups  
 - Instantly check **kit readiness** (green / yellow / red)  
 - **Clone kits** to adapt for new clients or variations  
-**Solves:** No more rebuilding gear lists from scratch or guessing what’s missing.
+**No more:** rebuilding gear lists from scratch or realizing something important is missing on set.
 
 ---
 
@@ -55,7 +55,7 @@ RiGG ensures your gear is available where and when you need it.
 - Create **projects** with start and end dates  
 - Assign **individual items or entire kits**  
 - Get automatic **conflict warnings** for overlapping bookings  
-**Solves:** No more double-booking gear or finding items unavailable at the last minute.
+**No more:** double-booked gear, scheduling conflicts, or gear that isn’t where you need it on shoot day.
 
 ---
 
@@ -63,21 +63,21 @@ RiGG ensures your gear is available where and when you need it.
 **Check out gear quickly and track everything with confidence.**  
 RiGG streamlines packing and captures a complete history for accountability.
 
-- Use a **visual packing checklist** for fast bulk checkout  
+- Use a **visual packing checklist** to bulk check out gear in minutes  
 - See a **summary** of what’s packed or missing  
 - Log every event: **who**, **when**, **conditions**, and **notes**  
-**Solves:** No more packing mistakes or missing transaction history.
+**No more:** packing mistakes, missing items, or gaps in your transaction history when something goes wrong.
 
 ---
 
 ## 7. Track Maintenance by Usage, Not Just Dates
-**Service equipment when it actually needs it.**  
+**Service gear based on real-world use, not arbitrary calendar dates.**  
 RiGG prevents premature wear and unnecessary downtime.
 
 - Set **maintenance plans** per item  
 - Trigger service by **hours used**, **number of uses**, or **milestones**  
 - Get **smart reminders** when service is due or overdue  
-**Solves:** No more premature servicing, delayed maintenance, or accidental gear damage.
+**No more:** guesswork around service intervals, premature servicing, or hidden wear that leads to avoidable damage.
 
 ---
 
@@ -88,7 +88,7 @@ RiGG gives you full functionality even on remote shoots.
 - Operates **100% offline** in Private Mode  
 - **No account required** to start  
 - All data stays **local** — zero sync, zero tracking  
-**Solves:** No more being blocked by poor connectivity or forced account signups.
+**No more:** being blocked by bad connectivity, forced account creation, or tools that don’t respect your privacy.
 
 ---
 
@@ -99,6 +99,6 @@ RiGG will make multi-user gear management simple, safe, and synced.
 - Shared, **cloud-backed inventory** across the team  
 - **Role-based access** to protect critical data  
 - Smooth, **real-time syncing** between devices  
-**Solves:** No more fragmented records or confusion across team members and devices.
+**No more:** fragmented spreadsheets, conflicting records, or confusion across your team’s devices.
 
 ---

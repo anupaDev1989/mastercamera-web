@@ -114,6 +114,33 @@ button {
 img {
   max-width: 100%;
   display: block;
+  /* Optimize image rendering on mobile */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  /* Optimize scrolling performance for sticky cards */
+  .sticky {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: auto;
+  }
+  
+  /* Disable expensive filters on mobile */
+  * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Optimize animations for mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    .sticky {
+      transition: transform 0.2s ease-out;
+    }
+  }
 }
 
 h1,

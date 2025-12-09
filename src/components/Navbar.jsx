@@ -28,13 +28,13 @@ const Navbar = () => {
                     <img
                         src="/logo.png"
                         alt="RiGG"
-                        className={`w-auto drop-shadow-xl transition-all duration-300 ease-out hover:scale-105 ${isScrolled ? 'h-20 md:h-24' : 'h-24 md:h-32'
+                        className={`w-auto drop-shadow-md transition-all duration-300 ease-out hover:scale-105 ${isScrolled ? 'h-20 md:h-24' : 'h-24 md:h-32'
                             }`}
                     />
                 </a>
                 <div className="flex items-center gap-4">
                     <Button variant="primary" onClick={scrollToWishlist}>
-                        Join Wishlist
+                        Join the waitlist
                     </Button>
                 </div>
             </div>

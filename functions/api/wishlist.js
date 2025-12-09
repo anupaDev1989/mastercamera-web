@@ -10,7 +10,8 @@ import {
 } from '../lib/security.js';
 
 export async function onRequest({ request, env }) {
-    const securityHeaders = getSecurityHeaders();
+    const origin = request.headers.get('Origin');
+    const securityHeaders = getSecurityHeaders(origin, env);
 
     // Handle OPTIONS request for CORS
     if (request.method === 'OPTIONS') {
@@ -23,6 +24,30 @@ export async function onRequest({ request, env }) {
     if (request.method !== 'POST') {
         return new Response(JSON.stringify({ error: 'Method not allowed' }), {
             status: 405,
+            headers: securityHeaders
+        });
+    }
+
+    // Validate Content-Type
+    const contentType = request.headers.get('Content-Type');
+    if (!contentType || !contentType.includes('application/json')) {
+        return new Response(JSON.stringify({ 
+            error: 'Content-Type must be application/json' 
+        }), {
+            status: 415,
+            headers: securityHeaders
+        });
+    }
+
+    // Check Content-Length to prevent large payloads (10KB limit)
+    const contentLength = request.headers.get('Content-Length');
+    const MAX_BODY_SIZE = 10 * 1024; // 10KB
+    
+    if (contentLength && parseInt(contentLength) > MAX_BODY_SIZE) {
+        return new Response(JSON.stringify({ 
+            error: 'Request body too large' 
+        }), {
+            status: 413,
             headers: securityHeaders
         });
     }
@@ -47,7 +72,30 @@ export async function onRequest({ request, env }) {
             });
         }
 
-        const body = await request.json();
+        // Read body with size check (in case Content-Length header is missing)
+        const bodyText = await request.text();
+        
+        if (bodyText.length > MAX_BODY_SIZE) {
+            return new Response(JSON.stringify({ 
+                error: 'Request body too large' 
+            }), {
+                status: 413,
+                headers: securityHeaders
+            });
+        }
+
+        let body;
+        try {
+            body = JSON.parse(bodyText);
+        } catch (parseError) {
+            return new Response(JSON.stringify({ 
+                error: 'Invalid JSON in request body' 
+            }), {
+                status: 400,
+                headers: securityHeaders
+            });
+        }
+        
         const { email, role, teamSize, useCase, honeypot, turnstileToken } = body;
 
         // Bot detection: reject if honeypot field is filled

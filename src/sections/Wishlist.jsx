@@ -125,20 +125,20 @@ const Wishlist = () => {
     };
 
     return (
-        <section id="wishlist" className="py-24 md:py-32 mt-16 md:mt-24">
+        <section id="wishlist" className="py-24 md:py-32 mt-8 md:mt-12">
             <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                     <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-4xl">Get Early Access</h2>
                     <p className="mb-8 text-lg text-muted-foreground">
-                        Join the wishlist to be the first to know when RiGG launches.
-                        Help us shape the roadmap and get exclusive updates.
+                        RiGG is launching across mobile and web so you can stay on top of your gear from set, studio, or anywhere in between.
+                        Join the waitlist to be the first to try RiGG when it goes live and unlock special discounts on premium plans.
                     </p>
 
                     <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
                         {status === 'success' ? (
                             <div className="text-center animate-fade-in">
                                 <h3 className="mb-2 text-xl font-semibold text-foreground">You're on the list! 🎉</h3>
-                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll be in touch soon.</p>
+                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll let you know as soon as RiGG is live and share your premium plan discounts.</p>
                                 <Button variant="secondary" onClick={() => setStatus('idle')} className="w-full">
                                     Add another email
                                 </Button>
@@ -223,7 +223,7 @@ const Wishlist = () => {
                                     className="w-full"
                                     disabled={status === 'loading'}
                                 >
-                                    {status === 'loading' ? 'Joining...' : 'Join the Wishlist'}
+                                    {status === 'loading' ? 'Joining...' : 'Join the waitlist'}
                                 </Button>
                                 {errorMessage && (
                                     <p className="text-sm text-destructive" role="alert">{errorMessage}</p>

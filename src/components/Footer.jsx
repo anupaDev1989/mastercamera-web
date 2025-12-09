@@ -7,7 +7,7 @@ const Footer = () => {
                 <div className="grid gap-8 grid-cols-1 md:grid-cols-4 lg:gap-12">
                     <div className="col-span-1 md:col-span-1">
                         <div className="flex items-center gap-2 mb-4">
-                            <img src="/logo.png" alt="RiGG" className="h-8 w-auto" />
+                            <img src="/logo.png" alt="RiGG" className="h-8 w-auto drop-shadow-md" />
                             <span className="text-xl font-bold tracking-tight">RiGG</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -19,7 +19,15 @@ const Footer = () => {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
                             <li><a href="#wishlist" className="hover:text-primary transition-colors">Pricing</a></li>
-                            <li><a href="#wishlist" className="hover:text-primary transition-colors">Download</a></li>
+                            <li>
+                                <a
+                                    href="#wishlist"
+                                    aria-disabled="true"
+                                    className="cursor-not-allowed opacity-60"
+                                >
+                                    Download (Coming soon)
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div>
@@ -27,7 +35,7 @@ const Footer = () => {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><a href="#" className="hover:text-primary transition-colors">About</a></li>
                             <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
+                            <li><a href="mailto:hello@rigg.app" className="hover:text-primary transition-colors">Email: hello@rigg.app</a></li>
                         </ul>
                     </div>
                     <div>

@@ -41,9 +41,15 @@ export function validateFieldLength(field, maxLength) {
 
 // Rate limiting using Cloudflare KV
 export async function checkRateLimit(ip, env) {
-    if (!ip || !env.RATE_LIMIT) {
-        // If KV is not configured, allow request (graceful degradation)
-        return { allowed: true };
+    if (!ip) {
+        console.error('No IP provided for rate limiting');
+        return { allowed: false, error: 'Unable to verify request source' };
+    }
+
+    if (!env.RATE_LIMIT) {
+        console.error('RATE_LIMIT KV namespace not configured');
+        // Fail closed in production - KV is required for rate limiting
+        return { allowed: false, error: 'Rate limiting unavailable' };
     }
 
     try {
@@ -80,8 +86,8 @@ export async function checkRateLimit(ip, env) {
 
     } catch (error) {
         console.error('Rate limit check error:', error);
-        // On error, allow request (fail open)
-        return { allowed: true };
+        // Fail closed on errors - better to block one request than allow abuse
+        return { allowed: false, error: 'Rate limiting error' };
     }
 }
 
@@ -129,10 +135,9 @@ export async function verifyTurnstileToken(token, clientIP, env) {
     }
 
     if (!env.TURNSTILE_SECRET_KEY) {
-        console.error('TURNSTILE_SECRET_KEY not configured');
-        // In production, you might want to fail closed (return false)
-        // For now, we'll log and fail open to prevent breaking the app
-        return { success: true, warning: 'Turnstile not configured' };
+        console.error('TURNSTILE_SECRET_KEY not configured - failing closed');
+        // Fail closed in production - Turnstile secret is required
+        return { success: false, error: 'Security verification unavailable' };
     }
 
     try {
@@ -151,6 +156,11 @@ export async function verifyTurnstileToken(token, clientIP, env) {
             }
         );
 
+        if (!verifyResponse.ok) {
+            console.error('Turnstile API returned non-OK status:', verifyResponse.status);
+            return { success: false, error: 'Security verification failed' };
+        }
+
         const outcome = await verifyResponse.json();
 
         if (!outcome.success) {
@@ -166,25 +176,35 @@ export async function verifyTurnstileToken(token, clientIP, env) {
 
     } catch (error) {
         console.error('Turnstile verification error:', error);
-        // On error, fail open to prevent blocking legitimate users
-        // In production, you may want to fail closed for security
-        return { success: true, warning: 'Verification error, allowing request' };
+        // Fail closed on errors - security checks must pass
+        return { success: false, error: 'Security verification error' };
     }
 }
 
-// Generate security headers
-export function getSecurityHeaders() {
-    return {
+// Generate security headers with proper CORS
+export function getSecurityHeaders(origin, env) {
+    const headers = {
         'Content-Type': 'application/json',
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'DENY',
         'X-XSS-Protection': '1; mode=block',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
-        // CORS headers
-        'Access-Control-Allow-Origin': '*', // Adjust if you want to restrict to specific domain
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Max-Age': '86400',
     };
+
+    // CORS: Restrict to allowed origins only
+    const allowedOrigins = env?.ALLOWED_ORIGINS 
+        ? env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+        : [];
+
+    // Check if origin is in allowed list
+    if (origin && allowedOrigins.includes(origin)) {
+        headers['Access-Control-Allow-Origin'] = origin;
+        headers['Vary'] = 'Origin';
+        headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS';
+        headers['Access-Control-Allow-Headers'] = 'Content-Type';
+        headers['Access-Control-Max-Age'] = '86400';
+    }
+
+    return headers;
 }

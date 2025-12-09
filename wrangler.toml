@@ -18,12 +18,13 @@ database_name = "kitly-wishlist"
 database_id = "edcbab3d-a536-4375-b6cb-4611efd72f36"  # Replace with your actual D1 database ID
 
 # Cloudflare Turnstile Secret Configuration
-# To set the secret, run:
+# CRITICAL: The previous secret key was exposed in version control and must be rotated immediately!
+# 
+# To set a NEW secret after rotating in Cloudflare Dashboard, run:
 # wrangler secret put TURNSTILE_SECRET_KEY
-# When prompted, enter: 0x4AAAAAACE4oS_4ydpWpVCizlMwn6bXkHg
-#
-# The secret is not stored in this file for security reasons.
-# It's encrypted and stored in Cloudflare's secure storage.
+# 
+# The secret is encrypted and stored in Cloudflare's secure storage.
+# NEVER commit actual secret values to version control.
 
 # Build configuration (handled by Cloudflare Pages UI, but documented here)
 # Build command: npm run build
