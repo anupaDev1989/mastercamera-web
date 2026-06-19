@@ -130,15 +130,15 @@ const Wishlist = () => {
                 <div className="mx-auto max-w-2xl text-center">
                     <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-4xl">Get Early Access</h2>
                     <p className="mb-8 text-lg text-muted-foreground">
-                        RiGG is launching across mobile and web so you can stay on top of your gear from set, studio, or anywhere in between.
-                        Join the waitlist to be the first to try RiGG when it goes live and unlock special discounts on premium plans.
+                        Master Camera is launching on the App Store soon. Join the waitlist to be among the first to try it and get notified the moment it's available.
+                        Early access members will receive special launch discounts and direct input on features.
                     </p>
 
                     <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
                         {status === 'success' ? (
                             <div className="text-center animate-fade-in">
                                 <h3 className="mb-2 text-xl font-semibold text-foreground">You're on the list! 🎉</h3>
-                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll let you know as soon as RiGG is live and share your premium plan discounts.</p>
+                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll let you know as soon as Master Camera is available and share your early access details.</p>
                                 <Button variant="secondary" onClick={() => setStatus('idle')} className="w-full">
                                     Add another email
                                 </Button>

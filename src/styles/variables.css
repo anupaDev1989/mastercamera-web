@@ -1,20 +1,36 @@
 :root {
   /* Colors */
-  /* Colors */
-  --color-bg-page: #FFFFFF;
-  --color-bg-surface: #F7F9FC;
-  --color-bg-card: #FFFFFF;
+  --color-bg-page: #D0D5DD;
+  --color-bg-surface: #E8EBF0;
+  --color-bg-card: #E8EBF0;
 
-  --color-primary-base: #fc5e56;
+  --color-primary-base: #FC5E56;
   --color-primary-hover: #e3554d;
   --color-primary-pressed: #ca4b45;
 
-  --color-text-primary: #121417;
-  --color-text-secondary: #4B5563;
-  --color-text-muted: #9CA3AF;
+  --color-text-primary: #1A1D20;
+  --color-text-secondary: #4A4D50;
+  --color-text-muted: #7A7D80;
 
-  --color-border-subtle: #E5E7EB;
-  --color-border-strong: #D1D5DB;
+  --color-border-subtle: #B8BEC8;
+  --color-border-strong: #989EA8;
+}
+
+.dark {
+  --color-bg-page: #121417;
+  --color-bg-surface: #1C1F24;
+  --color-bg-card: #1C1F24;
+
+  --color-primary-base: #FD7269;
+  --color-primary-hover: #e3665e;
+  --color-primary-pressed: #ca5b54;
+
+  --color-text-primary: #F4F6F9;
+  --color-text-secondary: #C4C6C9;
+  --color-text-muted: #949699;
+
+  --color-border-subtle: #2C323A;
+  --color-border-strong: #3C424A;
 
   /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

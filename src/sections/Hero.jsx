@@ -1,11 +1,7 @@
-import React, { useRef } from 'react';
-import { HeroSection } from '@/components/ui/feature-carousel';
-import { Button } from '@/components/ui/button';
-import { TextRotate } from '@/components/ui/text-rotate';
+import React from 'react';
+import { CinematicHero } from '@/components/ui/cinematic-hero';
 
 const Hero = () => {
-    const textRotateRef = useRef(null);
-
     const scrollToWishlist = () => {
         const element = document.getElementById('wishlist');
         if (element) {
@@ -13,64 +9,18 @@ const Hero = () => {
         }
     };
 
-    const scrollToFeatures = () => {
-        const element = document.getElementById('features');
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
-    const images = [
-        { src: "/hero-screenshot.png", alt: "RiGG App Interface" },
-        { src: "/tracking-screenshot.png", alt: "RiGG Tracking Interface" },
-        { src: "/projects-screenshot.png", alt: "RiGG Projects Interface" },
-        { src: "/Rented-tracking-screenshot.png", alt: "RiGG Rented Gear Tracking" },
-    ];
-
-    const handleIndexChange = (index) => {
-        if (textRotateRef.current) {
-            textRotateRef.current.jumpTo(index);
-        }
-    };
-
-    const title = (
-        <span className="flex flex-col md:flex-row md:gap-4 items-baseline justify-center">
-            Stay on top of {' '}
-            <span className="inline-flex items-baseline overflow-hidden align-baseline">
-                <TextRotate
-                    ref={textRotateRef}
-                    texts={["your gear", "gear maintenance", "gear planning", "what you rented"]}
-                    mainClassName="text-primary overflow-hidden justify-center rounded-lg"
-                    staggerFrom="last"
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    exit={{ y: "-120%" }}
-                    staggerDuration={0.025}
-                    splitLevelClassName="overflow-hidden pb-1"
-                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                    rotationInterval={2000}
-                    auto={false} // Disable auto rotation, controlled by carousel
-                />
-            </span>
-        </span>
-    );
-
     return (
-        <HeroSection
-            title={title}
-            subtitle="Gear chaos ends here. RiGG is the all-in-one inventory solution for photographers, videographers, production teams, audio professionals, and anyone who runs gear-heavy work."
-            images={images}
-            onIndexChange={handleIndexChange}
-        >
-            <div className="flex flex-col gap-4 sm:flex-row">
-                <Button variant="default" size="lg" onClick={scrollToWishlist} className="min-w-[200px] text-lg h-12 w-full sm:w-auto">
-                    Join the waitlist
-                </Button>
-                <Button variant="outline" size="lg" onClick={scrollToFeatures} className="min-w-[200px] text-lg h-12 w-full sm:w-auto">
-                    How It Works
-                </Button>
-            </div>
-        </HeroSection>
+        <CinematicHero
+            tagline1="Capture, organize, edit."
+            tagline2="No chaos. All offline."
+            cardTagline={<>The simplicity you want.<br />The features your work demands.</>}
+            cardDescription="Master Camera pairs the effortless feel of the native Camera app with powerful metadata workflows and total offline privacy."
+            cardAudience="Engineered for DIY enthusiasts, scientists, and field professionals."
+            ctaHeading="Start capturing."
+            ctaDescription="Master Camera is coming to iOS. Join the waitlist and be the first to know when it launches."
+            appScreenSrc="/app_screen.png"
+            onJoinWaitlist={scrollToWishlist}
+        />
     );
 };
 

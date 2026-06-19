@@ -1,16 +1,68 @@
-# React + Vite
+# Stackr Camera — Promotional Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Promotional / waitlist landing page for **Stackr Camera**, a professional work-capture iOS app.
 
-Currently, two official plugins are available:
+## What is Stackr Camera?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Stackr Camera is an iOS camera app built for professionals, hobbyists, scientists, and anyone capturing structured work. It provides:
 
-## React Compiler
+- **Capture** — Professional camera with grid overlays, watermarking, voice notes, metadata fields, geolocation
+- **Organize** — Projects/stacks, tags, custom fields, fast search (by location, date, metadata)
+- **Edit** — In-app markup/annotation, quick edits
+- **Share** — Individual or batch zip sharing
+- **Privacy/offline** — Local-only storage, zero cloud, full functionality without internet
+- **Map view** — Locate photos by GPS coordinates
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Framework:** React + Vite
+- **Styling:** Tailwind CSS (v3) + CSS Variables for centralized color system (integrated with the official Stackr Camera palette, with automatic system dark mode detection)
+- **Deployment:** Cloudflare Pages + Cloudflare Workers (API)
+- **Database:** Cloudflare D1 (waitlist)
+- **Security:** Cloudflare Turnstile (CAPTCHA), honeypot fields, rate limiting
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
+
+## Building for Production
+
+```bash
+npm run build
+npm run preview  # preview the production build locally
+```
+
+## Project Structure
+
+```
+├── index.html              # Entry point
+├── src/
+│   ├── App.jsx             # Main app component
+│   ├── main.jsx            # React root
+│   ├── index.css           # Global styles + Tailwind
+│   ├── styles/
+│   │   └── variables.css   # Centralized color system
+│   ├── sections/
+│   │   ├── Hero.jsx        # Hero section with image carousel
+│   │   ├── Features.tsx    # Features section (card stack)
+│   │   ├── Platforms.jsx   # Platform availability (iOS)
+│   │   └── Wishlist.jsx    # Waitlist form with Turnstile
+│   └── components/
+│       ├── Navbar.jsx      # Navigation bar
+│       ├── Footer.jsx      # Footer
+│       ├── Button.jsx      # Button component
+│       ├── Input.jsx       # Input component
+│       └── ui/             # Shared UI components
+├── public/                 # Static assets (images, logos)
+├── functions/              # Cloudflare Workers API
+├── DOCS/                   # Feature documentation
+└── wrangler.toml           # Cloudflare deployment config
+```
+
+## Environment Variables
+
+- `VITE_TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key (client-side)
+- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key (server-side, set via `wrangler secret`)

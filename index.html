@@ -5,12 +5,37 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RiGG - Gear chaos ends here</title>
+  <title>Master Camera — Professional Work Capture</title>
+  <meta name="description" content="Master Camera is an iOS app for capturing, organizing, and editing your work photos with metadata-rich workflows, offline-first design, and complete privacy." />
 
   <!-- Security Headers (CSP now in _headers file for proper header-based enforcement) -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
+  <!-- Auto Dark Mode Script based on system settings -->
+  <script>
+    (function() {
+      try {
+        const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        function updateTheme(e) {
+          if (e.matches) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+        updateTheme(darkQuery);
+        if (typeof darkQuery.addEventListener === 'function') {
+          darkQuery.addEventListener('change', updateTheme);
+        } else if (typeof darkQuery.addListener === 'function') {
+          darkQuery.addListener(updateTheme);
+        }
+      } catch (err) {
+        console.error('Failed to set theme:', err);
+      }
+    })();
+  </script>
 </head>
 
 <body>

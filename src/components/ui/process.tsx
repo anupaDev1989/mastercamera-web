@@ -4,149 +4,113 @@ import { cn } from "@/lib/utils"
 const PROCESS_PHASES = [
   {
     id: "feature-1",
-    title: "Always Know What’s Available",
-    tagline: "Instant visibility into availability, condition, and location.",
+    title: "Capture Like a Pro",
+    tagline: null,
     description:
-      "RiGG removes the guesswork around where your gear is and whether it’s ready to use.",
+      "Every shot, perfectly framed and richly documented. Overlays, watermarks, and live guides built right into the viewfinder.",
     bullets: [
-      "See real-time status: available, checked out, booked, or in repair",
-      "View current condition and physical location",
-      "Manage your full gear catalog with photos and details",
+      "Grid, level, and compass guides",
+      "Automatic watermarking",
+      "Photo and 4K video",
     ],
-    solves:
-      "No more constant gear hunts or last-minute surprises about what’s actually ready to use.",
+    solves: null,
     image: "/feature-images/feature-1.jpg",
   },
   {
     id: "feature-2",
-    title: "Protect Your Investment with Issue Tracking",
-    tagline: "Never get surprised by gear failures again.",
+    title: "Context That Sticks",
+    tagline: null,
     description:
-      "RiGG helps you capture issues immediately and ensure nothing slips through the cracks.",
+      "Add notes, tags, and details the moment you capture — while it's still fresh. Nothing forgotten, nothing lost.",
     bullets: [
-      "Log damage, missing items, or malfunctions with notes and photos",
-      "Move issues through a simple Open → In Progress → Resolved workflow",
-      "Automatically adjust availability for affected gear",
+      "Quick context right after each shot",
+      "Notes, tags, and custom fields",
+      "Voice notes in seconds",
+      "Automatic data capture: Location, compass, pitch, etc.",
     ],
-    solves:
-      "No more unexpected gear failures or maintenance tasks quietly falling through the cracks.",
+    solves: null,
     image: "/feature-images/feature-2.jpg",
   },
   {
-    id: "feature-3",
-    title: "Seamless Rental Management",
-    tagline: "Effortlessly stay on top of gear you rent in.",
-    description:
-      "RiGG keeps all the equipment you’ve rented for your projects organized in one place.",
-    bullets: [
-      "Track gear you’ve rented from rental houses, vendors, or other teams",
-      "Add due dates and instantly spot upcoming or overdue returns",
-      "See all rented-in gear in a single clear view across projects",
-    ],
-    solves:
-      "No more rented gear slipping your mind, unexpected overages, or scrambling to return items on time.",
-    image: "/feature-images/feature-3.jpg",
-  },
-  {
     id: "feature-4",
-    title: "Turn Chaos into Ready-to-Go Kits",
-    tagline: "Pack faster with reusable, reliable kit presets.",
+    title: "Organized in Stacks",
+    tagline: null,
     description:
-      "RiGG helps you keep your projects consistent, organized, and efficient.",
+      "Group photos and video by project, event, or site. Your work, structured exactly how you think about it.",
     bullets: [
-      "Build reusable kits for common setups",
-      "Instantly check kit readiness (green / yellow / red)",
-      "Clone kits to adapt for new clients or variations",
+      "Stacks for jobs, events, and locations",
+      "Tags and custom fields",
+      "Searchable from the first shot",
     ],
-    solves:
-      "No more rebuilding gear lists from scratch or realizing something important is missing on set.",
+    solves: null,
     image: "/feature-images/feature-4.jpg",
   },
   {
     id: "feature-5",
-    title: "Plan Projects with Confidence",
-    tagline: "Assign gear to projects and avoid schedule conflicts.",
+    title: "Built-In Document Scanner",
+    tagline: null,
     description:
-      "RiGG ensures your gear is available where and when you need it.",
+      "Capture crisp, cropped scans of documents and notes — no second app required.",
     bullets: [
-      "Create projects with start and end dates",
-      "Assign individual items or entire kits",
-      "Get automatic conflict warnings for overlapping bookings",
+      "Auto edge detection and cropping",
+      "Multi-page scans",
+      "Stored alongside your photos",
     ],
-    solves:
-      "No more double-booked gear, scheduling conflicts, or gear that isn’t where you need it on project day.",
+    solves: null,
     image: "/feature-images/feature-5.jpg",
   },
   {
     id: "feature-6",
-    title: "Fast Packing & Comprehensive Logging",
-    tagline: "Check out gear quickly and track everything with confidence.",
+    title: "Smart Search",
+    tagline: null,
     description:
-      "RiGG streamlines packing and captures a complete history for accountability.",
+      "Find anything in seconds. Search by location, tags, notes — even text inside your scanned documents.",
     bullets: [
-      "Use a visual packing checklist to bulk check out gear in minutes",
-      "See a summary of what’s packed or missing",
-      "Log every event: who, when, conditions, and notes",
+      "Search text inside scans",
+      "Filter by location, date, and tags",
+      "Map view of every geotagged shot",
     ],
-    solves:
-      "No more packing mistakes, missing items, or gaps in your transaction history when something goes wrong.",
+    solves: null,
     image: "/feature-images/feature-6.jpg",
   },
   {
     id: "feature-7",
-    title: "Track Maintenance by Usage, Not Just Dates",
-    tagline: "Service gear based on real-world use, not arbitrary calendar dates.",
+    title: "Before & After Compare",
+    tagline: null,
     description:
-      "RiGG prevents premature wear and unnecessary downtime.",
+      "Place any two shots side by side. Label them, style the banner, and save the comparison — compare as many pairs as you need at once.",
     bullets: [
-      "Set maintenance plans per item",
-      "Trigger service by hours used, number of uses, or milestones",
-      "Get smart reminders when service is due or overdue",
+      "Bulk compare multiple pairs at once",
+      "Custom Before/After labels and banner",
+      "Saves as a new image in your Stack",
     ],
-    solves:
-      "No more guesswork around service intervals, premature servicing, or hidden wear that leads to avoidable damage.",
+    solves: null,
     image: "/feature-images/feature-7.jpg",
   },
   {
     id: "feature-8",
-    title: "Works On Set, Offline & Secure",
-    tagline: "No signal? No problem.",
+    title: "Private by Design",
+    tagline: null,
     description:
-      "RiGG gives you full functionality even on remote productions.",
+      "Everything stays on your device. No cloud, no tracking, no account — full power, fully offline.",
     bullets: [
-      "Operates 100% offline in Private Mode",
-      "No account required to start",
-      "All data stays local — zero sync, zero tracking",
+      "100% on-device, works offline",
+      "Zero tracking or telemetry",
+      "No login required",
     ],
-    solves:
-      "No more being blocked by bad connectivity, forced account creation, or tools that don’t respect your privacy.",
-    image: "/feature-images/feature-8.jpg",
-  },
-  {
-    id: "feature-9",
-    title: "Shared Inventory & Team Sync (Coming Soon)",
-    tagline: "A unified inventory for your team — coming soon.",
-    description:
-      "RiGG will make multi-user gear management simple, safe, and synced.",
-    bullets: [
-      "Shared, cloud-backed inventory across the team",
-      "Role-based access to protect critical data",
-      "Smooth, real-time syncing between devices",
-    ],
-    solves:
-      "No more fragmented spreadsheets, conflicting records, or confusion across your team’s devices.",
-    image: "/feature-images/feature-9.jpg",
+    solves: null,
+    image: "/feature-images/feature-8.png",
   },
 ]
 
 const Process = () => {
   return (
-    <section className="w-full bg-stone-50 px-4 py-16 text-stone-900 sm:px-6 lg:py-20 xl:px-12">
+    <section className="w-full bg-background px-4 py-16 text-foreground sm:px-6 lg:py-20 xl:px-12">
       <div className="mx-auto max-w-5xl text-center">
-        <h5 className="text-xs tracking-wide">The RiGG way...</h5>
+        <h5 className="text-xs tracking-wide">The Master Camera way...</h5>
         <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
-          How RiGG removes the {" "}
-          <span className="text-red-800">gear chaos</span> from your work
+          How Master Camera brings{" "}
+          <span className="text-primary">order to your work</span>
         </h2>
       </div>
 
@@ -158,7 +122,7 @@ const Process = () => {
             <CardSticky
               key={phase.id}
               index={index + 2}
-              className="min-h-[220px] rounded-3xl border border-stone-200 bg-white p-6 shadow-md sm:min-h-[260px] sm:p-8 lg:min-h-[280px]"
+              className="min-h-[220px] rounded-3xl border border-border bg-card p-6 shadow-md sm:min-h-[260px] sm:p-8 lg:min-h-[280px]"
             >
               <div
                 className={cn(
@@ -186,7 +150,7 @@ const Process = () => {
                         <ul className="mt-3 space-y-1 text-sm leading-relaxed text-foreground sm:text-base">
                           {phase.bullets.map((bullet: string) => (
                             <li key={bullet} className="flex gap-2">
-                              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-800" />
+                              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
                               <span>{bullet}</span>
                             </li>
                           ))}
@@ -200,14 +164,15 @@ const Process = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex-1">
-                  <div className="h-full min-h-[160px] overflow-hidden rounded-2xl bg-stone-100 sm:min-h-[190px]">
+                <div className="flex-1 flex justify-center">
+                  <div className="w-1/2 aspect-[3/4] overflow-hidden rounded-2xl bg-muted">
                     <img
                       src={phase.image}
                       alt={phase.title}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-auto md:h-full object-cover"
+                      className="w-full h-full object-cover object-top"
+                      style={{ imageRendering: '-webkit-optimize-contrast' }}
                     />
                   </div>
                 </div>
