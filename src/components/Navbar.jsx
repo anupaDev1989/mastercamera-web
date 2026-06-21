@@ -33,7 +33,7 @@ const Navbar = ({ onPrivacyClick }) => {
                     <img
                         src="/logo.png"
                         alt="Master Camera"
-                        className={`w-auto drop-shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-active:scale-95 ${isScrolled ? 'h-7 md:h-8' : 'h-9 md:h-10'
+                        className={`aspect-square object-cover rounded-[22%] shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-active:scale-95 ${isScrolled ? 'h-8 w-8 md:h-9 md:w-9' : 'h-10 w-10 md:h-11 md:w-11'
                             }`}
                     />
                     <span
