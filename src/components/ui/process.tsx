@@ -11,7 +11,8 @@ const PROCESS_PHASES = [
     bullets: [
       "Grid, level, and compass guides",
       "Automatic watermarking",
-      "Photo and 4K video",
+      "Photo, Video and all the useful features of stock camera",
+      "Organized right from the Capture screen",
     ],
     solves: null,
     image: "/feature-images/feature-1.jpg",
