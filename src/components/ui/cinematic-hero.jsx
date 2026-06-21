@@ -130,14 +130,14 @@ const INJECTED_STYLES = `
 
 // Badge definitions — clean, aligned column; precise over jittery (Apple-style)
 const BADGES = [
-  { Icon: Layers,      label: "Job Stacks",        color: "text-blue-300",    iconBg: "bg-blue-400/10    border-blue-400/20"    },
-  { Icon: Tag,         label: "Shot Notes",        color: "text-amber-300",   iconBg: "bg-amber-400/10   border-amber-400/20"   },
-  { Icon: Captions,    label: "Metadata Overlays", color: "text-cyan-300",    iconBg: "bg-cyan-400/10    border-cyan-400/20"    },
-  { Icon: ShieldCheck, label: "Stay Private",      color: "text-emerald-300", iconBg: "bg-emerald-400/10 border-emerald-400/20" },
-  { Icon: MapPin,      label: "Search by Place",   color: "text-sky-300",     iconBg: "bg-sky-400/10     border-sky-400/20"     },
-  { Icon: Columns2,    label: "Compare Progress",  color: "text-violet-300",  iconBg: "bg-violet-400/10  border-violet-400/20"  },
-  { Icon: Signature,   label: "Auto Watermark",    color: "text-rose-300",    iconBg: "bg-rose-400/10    border-rose-400/20"    },
-  { Icon: Archive,     label: "Zip & Share",       color: "text-orange-300",  iconBg: "bg-orange-400/10  border-orange-400/20"  },
+  { Icon: Layers,      label: "Job Stacks",        color: "text-blue-600",    iconBg: "bg-blue-500/15    border-blue-500/30"    },
+  { Icon: Tag,         label: "Shot Notes",        color: "text-amber-600",   iconBg: "bg-amber-500/15   border-amber-500/30"   },
+  { Icon: Captions,    label: "Metadata Overlays", color: "text-cyan-600",    iconBg: "bg-cyan-500/15    border-cyan-500/30"    },
+  { Icon: ShieldCheck, label: "Stay Private",      color: "text-emerald-600", iconBg: "bg-emerald-500/15 border-emerald-500/30" },
+  { Icon: MapPin,      label: "Search by Place",   color: "text-sky-600",     iconBg: "bg-sky-500/15     border-sky-500/30"     },
+  { Icon: Columns2,    label: "Compare Progress",  color: "text-violet-600",  iconBg: "bg-violet-500/15  border-violet-500/30"  },
+  { Icon: Signature,   label: "Auto Watermark",    color: "text-rose-600",    iconBg: "bg-rose-500/15    border-rose-500/30"    },
+  { Icon: Archive,     label: "Zip & Share",       color: "text-orange-600",  iconBg: "bg-orange-500/15  border-orange-500/30"  },
 ];
 
 export function CinematicHero({
