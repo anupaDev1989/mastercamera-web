@@ -106,7 +106,7 @@ const PROCESS_PHASES = [
 
 const Process = () => {
   return (
-    <section className="w-full bg-background px-4 py-16 text-foreground sm:px-6 lg:py-20 xl:px-12">
+    <section className="w-full bg-background px-4 pt-6 pb-16 text-foreground sm:px-6 lg:pt-8 lg:pb-20 xl:px-12">
       <div className="mx-auto max-w-5xl text-center">
         <h5 className="text-xs tracking-wide">The Master Camera way...</h5>
         <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -127,11 +127,11 @@ const Process = () => {
             >
               <div
                 className={cn(
-                  "flex flex-col md:flex-row",
+                  "flex flex-col md:flex-row md:h-[200px]",
                   !isImageLeft && "md:flex-row-reverse"
                 )}
               >
-                <div className="aspect-[4/3] md:aspect-auto md:w-[45%] overflow-hidden">
+                <div className="aspect-[16/7] md:aspect-auto md:w-[45%] overflow-hidden">
                   <img
                     src={phase.image}
                     alt={phase.title}
@@ -141,7 +141,7 @@ const Process = () => {
                     style={{ imageRendering: '-webkit-optimize-contrast' }}
                   />
                 </div>
-                <div className="flex-1 p-6 sm:p-8 text-left">
+                <div className="flex-1 p-4 sm:p-5 text-left">
                   <div className="flex h-full flex-col justify-between">
                     <div>
                       <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
