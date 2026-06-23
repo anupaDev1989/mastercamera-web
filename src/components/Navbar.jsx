@@ -31,7 +31,7 @@ const Navbar = ({ onPrivacyClick }) => {
             <div className="container mx-auto flex h-full items-center justify-between px-5">
                 <a href="#" className="group flex items-center gap-2">
                     <div
-                        className={`flex-shrink-0 overflow-hidden rounded-[22%] shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-active:scale-95 ${isScrolled ? 'h-8 w-8 md:h-9 md:w-9' : 'h-10 w-10 md:h-11 md:w-11'
+                        className={`flex-shrink-0 overflow-hidden rounded-[22%] shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-active:scale-95 ${isScrolled ? 'h-9 w-9 md:h-10 md:w-10' : 'h-11 w-11 md:h-12 md:w-12'
                             }`}
                     >
                         <img
@@ -46,8 +46,8 @@ const Navbar = ({ onPrivacyClick }) => {
                             : 'max-w-[240px] opacity-100 translate-x-0'
                             }`}
                     >
-                        <span className="whitespace-nowrap text-[1.3rem] font-bold tracking-tight text-primary">Master</span>
-                        <span className="whitespace-nowrap text-[1.3rem] font-normal tracking-tight text-muted-foreground">Camera</span>
+                        <span className="whitespace-nowrap text-[1.45rem] font-bold tracking-tight text-primary">Master</span>
+                        <span className="whitespace-nowrap text-[1.45rem] font-normal tracking-tight text-muted-foreground">Camera</span>
                     </span>
                 </a>
                 <div className="flex items-center">

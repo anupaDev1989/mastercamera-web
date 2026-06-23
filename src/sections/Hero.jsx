@@ -11,8 +11,8 @@ const Hero = () => {
 
     return (
         <CinematicHero
-            tagline1="Capture, organize, edit."
-            tagline2="No chaos. All offline."
+            tagline1="Your camera app wasn't built for work."
+            tagline2="Master Camera was."
             cardTagline={<>The simplicity you want.<br />The features your work demands.</>}
             cardDescription="Master Camera pairs the effortless feel of the native Camera app with powerful metadata workflows and total offline privacy."
             cardAudience="Engineered for DIY enthusiasts, scientists, and field professionals."
