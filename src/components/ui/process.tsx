@@ -123,15 +123,25 @@ const Process = () => {
             <CardSticky
               key={phase.id}
               index={index + 2}
-              className="min-h-[220px] rounded-3xl border border-border bg-card p-6 shadow-md sm:min-h-[260px] sm:p-8 lg:min-h-[280px]"
+              className="rounded-3xl border border-border bg-card shadow-md overflow-hidden"
             >
               <div
                 className={cn(
-                  "flex flex-col gap-4 md:items-stretch md:gap-8",
-                  isImageLeft ? "md:flex-row" : "md:flex-row-reverse"
+                  "flex flex-col md:flex-row",
+                  !isImageLeft && "md:flex-row-reverse"
                 )}
               >
-                <div className="flex-1 text-left">
+                <div className="aspect-[4/3] md:aspect-auto md:w-[45%] overflow-hidden">
+                  <img
+                    src={phase.image}
+                    alt={phase.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover object-top"
+                    style={{ imageRendering: '-webkit-optimize-contrast' }}
+                  />
+                </div>
+                <div className="flex-1 p-6 sm:p-8 text-left">
                   <div className="flex h-full flex-col justify-between">
                     <div>
                       <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
@@ -163,18 +173,6 @@ const Process = () => {
                         {phase.solves}
                       </p>
                     )}
-                  </div>
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="w-1/2 aspect-[3/4] overflow-hidden rounded-2xl bg-muted">
-                    <img
-                      src={phase.image}
-                      alt={phase.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover object-top"
-                      style={{ imageRendering: '-webkit-optimize-contrast' }}
-                    />
                   </div>
                 </div>
               </div>

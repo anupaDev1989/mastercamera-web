@@ -30,12 +30,16 @@ const Navbar = ({ onPrivacyClick }) => {
         >
             <div className="container mx-auto flex h-full items-center justify-between px-5">
                 <a href="#" className="group flex items-center gap-2">
-                    <img
-                        src="/logo.png"
-                        alt="Master Camera"
-                        className={`aspect-square object-cover rounded-[22%] shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-active:scale-95 ${isScrolled ? 'h-8 w-8 md:h-9 md:w-9' : 'h-10 w-10 md:h-11 md:w-11'
+                    <div
+                        className={`flex-shrink-0 overflow-hidden rounded-[22%] shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-active:scale-95 ${isScrolled ? 'h-8 w-8 md:h-9 md:w-9' : 'h-10 w-10 md:h-11 md:w-11'
                             }`}
-                    />
+                    >
+                        <img
+                            src="/logo.png"
+                            alt="Master Camera"
+                            className="h-full w-full object-cover"
+                        />
+                    </div>
                     <span
                         className={`flex items-baseline gap-1 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled
                             ? 'max-w-0 opacity-0 -translate-x-2'

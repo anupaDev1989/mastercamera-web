@@ -8,6 +8,7 @@ import {
     getSecurityHeaders,
     verifyTurnstileToken
 } from '../lib/security.js';
+import { sendWaitlistConfirmation } from '../lib/email.js';
 
 export async function onRequest({ request, env }) {
     const origin = request.headers.get('Origin');
@@ -199,9 +200,15 @@ export async function onRequest({ request, env }) {
         // Update rate limit counter after successful submission
         await updateRateLimit(clientIP, env);
 
+        // Send confirmation email — fire-and-forget; a failure here never blocks signup
+        const emailResult = await sendWaitlistConfirmation(sanitizedEmail, env);
+        if (!emailResult.success) {
+            console.warn('Confirmation email failed (signup still recorded):', emailResult.error);
+        }
+
         return new Response(JSON.stringify({
             success: true,
-            message: 'Successfully added to wishlist'
+            message: 'Successfully added to waitlist'
         }), {
             status: 200,
             headers: securityHeaders
