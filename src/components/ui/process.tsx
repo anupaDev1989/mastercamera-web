@@ -127,17 +127,17 @@ const Process = () => {
             >
               <div
                 className={cn(
-                  "flex flex-col md:flex-row md:h-[200px]",
+                  "flex flex-col md:flex-row",
                   !isImageLeft && "md:flex-row-reverse"
                 )}
               >
-                <div className="aspect-[16/7] md:aspect-auto md:w-[45%] overflow-hidden">
+                <div className="flex-1 flex items-center justify-center p-4 md:p-6">
                   <img
                     src={phase.image}
                     alt={phase.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover object-top"
+                    className="max-h-[220px] w-auto rounded-2xl"
                     style={{ imageRendering: '-webkit-optimize-contrast' }}
                   />
                 </div>

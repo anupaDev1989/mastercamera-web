@@ -134,15 +134,14 @@ export async function verifyTurnstileToken(token, clientIP, env) {
         return { success: false, error: 'Turnstile token is required' };
     }
 
-    if (!env.TURNSTILE_SECRET_KEY) {
-        console.error('TURNSTILE_SECRET_KEY not configured - failing closed');
-        // Fail closed in production - Turnstile secret is required
+    if (!env.TURNSTILE_S_KEY) {
+        console.error('TURNSTILE_S_KEY not configured - failing closed');
         return { success: false, error: 'Security verification unavailable' };
     }
 
     try {
         const formData = new FormData();
-        formData.append('secret', env.TURNSTILE_SECRET_KEY);
+        formData.append('secret', env.TURNSTILE_S_KEY);
         formData.append('response', token);
         if (clientIP && clientIP !== 'unknown') {
             formData.append('remoteip', clientIP);
