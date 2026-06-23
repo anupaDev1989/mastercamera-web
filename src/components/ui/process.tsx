@@ -44,7 +44,7 @@ const PROCESS_PHASES = [
       "Searchable from the first shot",
     ],
     solves: null,
-    image: "/feature-images/feature-4.jpg",
+    image: "/feature-images/feature-3.png",
   },
   {
     id: "feature-5",
@@ -58,7 +58,7 @@ const PROCESS_PHASES = [
       "Stored alongside your photos",
     ],
     solves: null,
-    image: "/feature-images/feature-5.jpg",
+    image: "/feature-images/feature-4.jpg",
   },
   {
     id: "feature-6",
@@ -72,7 +72,7 @@ const PROCESS_PHASES = [
       "Map view of every geotagged shot",
     ],
     solves: null,
-    image: "/feature-images/feature-6.jpg",
+    image: "/feature-images/feature-5.jpg",
   },
   {
     id: "feature-7",
@@ -86,7 +86,7 @@ const PROCESS_PHASES = [
       "Saves as a new image in your Stack",
     ],
     solves: null,
-    image: "/feature-images/feature-7.jpg",
+    image: "/feature-images/feature-6.jpg",
   },
   {
     id: "feature-8",
@@ -100,7 +100,7 @@ const PROCESS_PHASES = [
       "No login required",
     ],
     solves: null,
-    image: "/feature-images/feature-8.png",
+    image: "/feature-images/feature-7.jpg",
   },
 ]
 
