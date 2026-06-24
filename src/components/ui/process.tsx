@@ -1,5 +1,6 @@
 import { ContainerScroll, CardSticky } from "@/components/ui/cards-stack"
 import { cn } from "@/lib/utils"
+import Reveal from "@/components/Reveal"
 
 const PROCESS_PHASES = [
   {
@@ -107,13 +108,13 @@ const PROCESS_PHASES = [
 const Process = () => {
   return (
     <section className="w-full bg-background px-4 pt-6 pb-16 text-foreground sm:px-6 lg:pt-8 lg:pb-20 xl:px-12">
-      <div className="mx-auto max-w-5xl text-center">
+      <Reveal className="mx-auto max-w-5xl text-center">
         <h5 className="text-xs tracking-wide">The Master Camera way...</h5>
         <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
           How Master Camera brings{" "}
           <span className="text-primary">order to your work</span>
         </h2>
-      </div>
+      </Reveal>
 
       <ContainerScroll className="mx-auto mt-10 min-h-[260vh] max-w-5xl space-y-8 pt-4 pb-24 md:pb-32 md:space-y-10">
         {PROCESS_PHASES.map((phase, index) => {

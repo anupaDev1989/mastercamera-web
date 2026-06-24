@@ -182,13 +182,31 @@ export function CinematicHero({
   // Cinematic scroll timeline
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Reduced motion: skip the cinematic scroll sequence entirely and just present
+    // the headline as a clean, static first screen (no pinning, no scrubbed motion).
+    if (prefersReduced) {
+      gsap.set([".text-track-cin", ".text-days-cin"], {
+        autoAlpha: 1,
+        clearProps: "transform,filter,clipPath",
+      });
+      gsap.set([".main-card-cin", ".cta-wrapper-cin"], { autoAlpha: 0 });
+      return;
+    }
+
+    // Animating `filter: blur()` is GPU-heavy on phones — only blur on desktop.
+    const blurIn = (px) => (isMobile ? "blur(0px)" : `blur(${px}px)`);
 
     const ctx = gsap.context(() => {
-      gsap.set(".text-track-cin", { autoAlpha: 0, y: 60, scale: 0.85, filter: "blur(20px)", rotationX: -20 });
+      gsap.set(".text-track-cin", { autoAlpha: 0, y: 60, scale: 0.85, filter: blurIn(20), rotationX: isMobile ? 0 : -20 });
       gsap.set(".text-days-cin", { autoAlpha: 1, clipPath: "inset(0 100% 0 0)" });
       gsap.set(".main-card-cin", { y: window.innerHeight + 200, autoAlpha: 0 });
       gsap.set([".card-left-text-cin", ".mockup-scroll-wrapper-cin", ".floating-badge-cin"], { autoAlpha: 0 });
-      gsap.set(".cta-wrapper-cin", { autoAlpha: 0, scale: 0.8, filter: "blur(30px)" });
+      gsap.set(".cta-wrapper-cin", { autoAlpha: 0, scale: 0.8, filter: blurIn(30) });
 
       // Intro entrance
       const introTl = gsap.timeline({ delay: 0.3 });
@@ -209,8 +227,8 @@ export function CinematicHero({
       });
 
       scrollTl
-        // Bg blurs out, card rises
-        .to([".hero-text-wrapper-cin", ".bg-grid-cinematic"], { scale: 1.15, filter: "blur(20px)", opacity: 0.2, ease: "power2.inOut", duration: 2 }, 0)
+        // Bg recedes as the card rises — blur only on desktop (heavy on mobile GPUs)
+        .to([".hero-text-wrapper-cin", ".bg-grid-cinematic"], { scale: 1.15, filter: blurIn(20), opacity: 0.2, ease: "power2.inOut", duration: 2 }, 0)
         .to(".main-card-cin", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
         // Card expands fullscreen and fades in — never visible as a small floating box
         .to(".main-card-cin", { width: "100%", height: "100%", borderRadius: "0px", autoAlpha: 1, ease: "power3.inOut", duration: 1.5 })

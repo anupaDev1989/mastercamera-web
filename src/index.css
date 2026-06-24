@@ -118,27 +118,42 @@ img {
   image-rendering: crisp-edges;
 }
 
+/* Smooth momentum scrolling + avoid tap-highlight flash on iOS */
+html,
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Mobile performance optimizations */
 @media (max-width: 768px) {
-  /* Optimize scrolling performance for sticky cards */
+  /* Promote sticky cards to their own layer for jank-free scrolling */
   .sticky {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     backface-visibility: hidden;
-    will-change: auto;
   }
-  
-  /* Disable expensive filters on mobile */
-  * {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+
+  /* Heavy blur is expensive on mobile GPUs — keep the glass look but lighten it.
+     (We no longer nuke backdrop-filter globally so the nav/pills stay crisp.) */
+  .feature-badge-cin {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
   }
-  
-  /* Optimize animations for mobile */
-  @media (prefers-reduced-motion: no-preference) {
-    .sticky {
-      transition: transform 0.2s ease-out;
-    }
+}
+
+/* Respect users who prefer reduced motion — kill non-essential animation */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

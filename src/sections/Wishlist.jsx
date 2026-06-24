@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import Reveal from '../components/Reveal';
 
 const Wishlist = () => {
     const [email, setEmail] = useState('');
@@ -93,13 +94,15 @@ const Wishlist = () => {
         <section id="wishlist" className="py-24 md:py-32 mt-8 md:mt-12">
             <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
-                    <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-4xl">Get Early Access</h2>
-                    <p className="mb-8 text-lg text-muted-foreground">
-                        Master Camera is launching on the App Store soon. Join the waitlist to be among the first to try it and get notified the moment it's available.
-                        Early access members will receive special launch discounts and direct input on features.
-                    </p>
+                    <Reveal>
+                        <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-4xl">Get Early Access</h2>
+                        <p className="mb-8 text-lg text-muted-foreground">
+                            Master Camera is launching on the App Store soon. Join the waitlist to be among the first to try it and get notified the moment it's available.
+                            Early access members will receive special launch discounts and direct input on features.
+                        </p>
+                    </Reveal>
 
-                    <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
+                    <Reveal delay={0.1} className="mx-auto max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
                         {status === 'success' ? (
                             <div className="text-center animate-fade-in">
                                 <h3 className="mb-2 text-xl font-semibold text-foreground">You're on the list! 🎉</h3>
@@ -176,7 +179,7 @@ const Wishlist = () => {
                                 )}
                             </form>
                         )}
-                    </div>
+                    </Reveal>
                     <p className="mt-6 text-sm text-muted-foreground">
                         No spam, unsubscribe anytime.
                     </p>
