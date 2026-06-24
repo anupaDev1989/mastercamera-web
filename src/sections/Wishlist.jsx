@@ -5,37 +5,28 @@ import Input from '../components/Input';
 
 const Wishlist = () => {
     const [email, setEmail] = useState('');
-    const [role, setRole] = useState('');
-    const [teamSize, setTeamSize] = useState('');
-    const [useCase, setUseCase] = useState('');
-    const [honeypot, setHoneypot] = useState(''); // Bot detection
+    const [industry, setIndustry] = useState('');
+    const [honeypot, setHoneypot] = useState('');
     const [turnstileToken, setTurnstileToken] = useState('');
-    const [status, setStatus] = useState('idle'); // idle, loading, success, error
+    const [status, setStatus] = useState('idle');
     const [errorMessage, setErrorMessage] = useState('');
     const lastSubmitTime = useRef(0);
     const turnstileRef = useRef(null);
 
-    // Client-side email validation
     const isValidEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email) && email.length <= 254;
     };
 
-    // Client-side input sanitization
     const sanitizeInput = (input) => {
         if (!input) return '';
-        return input
-            .trim()
-            .replace(/[<>]/g, '')
-            .replace(/javascript:/gi, '')
-            .slice(0, 500); // Max length
+        return input.trim().replace(/[<>]/g, '').replace(/javascript:/gi, '').slice(0, 500);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
 
-        // Client-side validation
         if (!email) {
             setErrorMessage('Email is required');
             return;
@@ -46,26 +37,15 @@ const Wishlist = () => {
             return;
         }
 
-        // Validate Turnstile token
         if (!turnstileToken) {
             setErrorMessage('Please complete the security check');
             return;
         }
 
-        // Check length limits
-        if (email.length > 254 || role.length > 500 || teamSize.length > 500 || useCase.length > 500) {
-            setErrorMessage('Input too long. Please use shorter text.');
-            return;
-        }
-
-        // Submission throttling - prevent rapid repeated submissions
         const now = Date.now();
-        const timeSinceLastSubmit = now - lastSubmitTime.current;
-        const THROTTLE_MS = 30000; // 30 seconds
-
-        if (timeSinceLastSubmit < THROTTLE_MS) {
-            const remainingSeconds = Math.ceil((THROTTLE_MS - timeSinceLastSubmit) / 1000);
-            setErrorMessage(`Please wait ${remainingSeconds} seconds before submitting again`);
+        if (now - lastSubmitTime.current < 30000) {
+            const remaining = Math.ceil((30000 - (now - lastSubmitTime.current)) / 1000);
+            setErrorMessage(`Please wait ${remaining} seconds before submitting again`);
             return;
         }
 
@@ -74,16 +54,12 @@ const Wishlist = () => {
         try {
             const response = await fetch('/api/wishlist', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email.toLowerCase().trim(),
-                    role: sanitizeInput(role),
-                    teamSize: sanitizeInput(teamSize),
-                    useCase: sanitizeInput(useCase),
-                    honeypot: honeypot, // Include honeypot field
-                    turnstileToken: turnstileToken // Include Turnstile token
+                    industry: sanitizeInput(industry),
+                    honeypot,
+                    turnstileToken,
                 }),
             });
 
@@ -92,34 +68,23 @@ const Wishlist = () => {
             if (response.ok) {
                 setStatus('success');
                 setEmail('');
-                setRole('');
-                setTeamSize('');
-                setUseCase('');
+                setIndustry('');
                 setHoneypot('');
                 setTurnstileToken('');
                 lastSubmitTime.current = now;
-                // Reset Turnstile widget
-                if (turnstileRef.current) {
-                    turnstileRef.current.reset();
-                }
+                if (turnstileRef.current) turnstileRef.current.reset();
             } else {
                 setStatus('error');
-                // Display specific error from API
-                setErrorMessage(data.error || 'Something went wrong. Please try again.');
-
-                // If rate limited, show retry time
                 if (response.status === 429 && data.retryAfter) {
                     setErrorMessage(`Too many requests. Please try again in ${Math.ceil(data.retryAfter / 60)} minutes.`);
+                } else {
+                    setErrorMessage(data.error || 'Something went wrong. Please try again.');
                 }
             }
-        } catch (error) {
-            console.error('Error submitting wishlist:', error);
+        } catch {
             setStatus('error');
             setErrorMessage('Network error. Please check your connection and try again.');
-            // Reset Turnstile on error
-            if (turnstileRef.current) {
-                turnstileRef.current.reset();
-            }
+            if (turnstileRef.current) turnstileRef.current.reset();
             setTurnstileToken('');
         }
     };
@@ -138,14 +103,14 @@ const Wishlist = () => {
                         {status === 'success' ? (
                             <div className="text-center animate-fade-in">
                                 <h3 className="mb-2 text-xl font-semibold text-foreground">You're on the list! 🎉</h3>
-                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll let you know as soon as Master Camera is available and share your early access details.</p>
+                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll let you know as soon as Master Camera is available.</p>
                                 <Button variant="secondary" onClick={() => setStatus('idle')} className="w-full">
                                     Add another email
                                 </Button>
                             </div>
                         ) : (
                             <form className="space-y-4" onSubmit={handleSubmit}>
-                                {/* Honeypot field - hidden from users, visible to bots */}
+                                {/* Honeypot — hidden from users, visible to bots */}
                                 <div style={{ position: 'absolute', left: '-5000px' }} aria-hidden="true">
                                     <input
                                         type="text"
@@ -170,34 +135,15 @@ const Wishlist = () => {
                                     />
                                     <Input
                                         type="text"
-                                        placeholder="Your Role (Optional)"
-                                        value={role}
-                                        onChange={(e) => setRole(e.target.value)}
+                                        placeholder="Industry / Profession (Optional)"
+                                        value={industry}
+                                        onChange={(e) => setIndustry(e.target.value)}
                                         maxLength={500}
                                         className="w-full"
-                                        aria-label="Your role"
-                                    />
-                                    <Input
-                                        type="text"
-                                        placeholder="Team Size (Optional)"
-                                        value={teamSize}
-                                        onChange={(e) => setTeamSize(e.target.value)}
-                                        maxLength={500}
-                                        className="w-full"
-                                        aria-label="Team size"
-                                    />
-                                    <Input
-                                        type="text"
-                                        placeholder="Primary Use Case (Optional)"
-                                        value={useCase}
-                                        onChange={(e) => setUseCase(e.target.value)}
-                                        maxLength={500}
-                                        className="w-full"
-                                        aria-label="Primary use case"
+                                        aria-label="Industry or profession"
                                     />
                                 </div>
-                                
-                                {/* Cloudflare Turnstile Widget */}
+
                                 <div className="flex justify-center">
                                     <Turnstile
                                         ref={turnstileRef}
@@ -216,7 +162,7 @@ const Wishlist = () => {
                                         }}
                                     />
                                 </div>
-                                
+
                                 <Button
                                     type="submit"
                                     variant="primary"
