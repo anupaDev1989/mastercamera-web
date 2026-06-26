@@ -20,29 +20,32 @@ const EASE    = [0.25, 0.46, 0.45, 0.94];
 const EASE_IN = [0.55, 0, 1, 0.45];
 
 // ─── Animation variant factories ───────────────────────────────────────────
-const stagger = (staggerChildren = 0.09, delayChildren = 0.05) => ({
+// delayChildren gives the snap-scroll time to fully settle before any child
+// starts animating — this is the primary fix for the mobile "blink".
+const stagger = (staggerChildren = 0.08, delayChildren = 0.12) => ({
   hidden: {},
   show: { transition: { staggerChildren, delayChildren } },
 });
 
-const slideUp = (duration = 0.7, delay = 0) => ({
-  hidden: { opacity: 0, y: 32 },
+// Gentler y displacement (16px) feels lighter on mobile than 32px.
+const slideUp = (duration = 0.65, delay = 0) => ({
+  hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration, ease: EASE, delay } },
 });
 
-const slideUpSm = (duration = 0.55, delay = 0) => ({
-  hidden: { opacity: 0, y: 18 },
+const slideUpSm = (duration = 0.5, delay = 0) => ({
+  hidden: { opacity: 0, y: 10 },
   show: { opacity: 1, y: 0, transition: { duration, ease: EASE, delay } },
 });
 
-const fadeIn = (duration = 0.5, delay = 0) => ({
+const fadeIn = (duration = 0.45, delay = 0) => ({
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { duration, ease: EASE, delay } },
 });
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.88 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.85, ease: EASE } },
+  hidden: { opacity: 0, scale: 0.9 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: EASE } },
 };
 
 // ─── Feature badges ────────────────────────────────────────────────────────
@@ -241,15 +244,24 @@ function PhoneMockup({ appScreenSrc }) {
 }
 
 // ─── Screen 1 — The Statement ───────────────────────────────────────────────
+// Screen 1 is always visible on load — drive animation from a mount timer
+// rather than IntersectionObserver to avoid the "hidden flash" before the
+// observer fires on the very first paint.
 function Screen1({ sectionRef, isActive, tagline1, tagline2 }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.45 });
-  const show = isInView;
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    // Two rAFs ensure layout is committed before we start animating.
+    let id = requestAnimationFrame(() => {
+      id = requestAnimationFrame(() => setShow(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   return (
     <section
       id="mc-s1"
-      ref={el => { sectionRef.current = el; ref.current = el; }}
+      ref={sectionRef}
       className="mc-snap relative z-[1] flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 pt-24 pb-16 text-center"
     >
       <div className="mc-grid" aria-hidden />
@@ -313,9 +325,11 @@ function Screen1({ sectionRef, isActive, tagline1, tagline2 }) {
 }
 
 // ─── Screen 2 — The Product ─────────────────────────────────────────────────
+// once:true prevents the observer from resetting mid-snap-bounce on iOS,
+// which was the primary cause of the mobile blink.
 function Screen2({ sectionRef, cardTagline, cardDescription, cardAudience, appScreenSrc }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.35 });
+  const isInView = useInView(ref, { once: true, amount: 0.55 });
   const show = isInView;
 
   return (
@@ -397,7 +411,7 @@ function Screen2({ sectionRef, cardTagline, cardDescription, cardAudience, appSc
 // ─── Screen 3 — The Invitation ──────────────────────────────────────────────
 function Screen3({ sectionRef, ctaHeading, ctaDescription, onJoinWaitlist }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.45 });
+  const isInView = useInView(ref, { once: true, amount: 0.55 });
   const show = isInView;
 
   return (
