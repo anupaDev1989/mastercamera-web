@@ -1,5 +1,5 @@
 // src/components/ui/cinematic-hero.jsx
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
@@ -140,6 +140,149 @@ const BADGES = [
   { Icon: Archive,     label: "Zip & Share",       color: "text-orange-600",  iconBg: "bg-orange-500/15  border-orange-500/30"  },
 ];
 
+// Mobile-only styles: an auto-cycling, seamless feature marquee + a lighter
+// hero card shadow that reads well on the light page background.
+const MOBILE_STYLES = `
+  @keyframes mc-badge-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .mc-marquee-mask {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+  }
+  .mc-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: mc-badge-marquee 26s linear infinite;
+    will-change: transform;
+  }
+  .mc-marquee-track:active { animation-play-state: paused; }
+  .mc-marquee-item { margin-right: 10px; }
+  .mc-hero-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow:
+        0 24px 60px -20px rgba(0,0,0,0.35),
+        0 8px 20px -12px rgba(0,0,0,0.25),
+        inset 0 1px 2px hsl(var(--foreground) / 0.08);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mc-marquee-track { animation: none; }
+  }
+`;
+
+// Phones can't run the pinned cinematic scroll timeline (it never engages, so the
+// card screen vanished entirely). Render a dedicated static mobile hero instead:
+// same copy, the app mockup, and an auto-cycling feature carousel.
+function MobileHero({
+  tagline1,
+  tagline2,
+  cardTagline,
+  cardDescription,
+  cardAudience,
+  ctaHeading,
+  ctaDescription,
+  appScreenSrc,
+  onJoinWaitlist,
+}) {
+  const loop = [...BADGES, ...BADGES];
+
+  return (
+    <div className="relative w-full overflow-hidden font-sans text-foreground antialiased">
+      <style dangerouslySetInnerHTML={{ __html: INJECTED_STYLES + MOBILE_STYLES }} />
+      <div className="film-grain" aria-hidden="true" />
+      <div className="bg-grid-cinematic pointer-events-none absolute inset-0 z-0 opacity-40" aria-hidden="true" />
+
+      {/* Intro headline */}
+      <section className="relative z-10 flex flex-col items-center px-5 pt-24 pb-10 text-center">
+        <h1 className="text-3d-matte-cin mb-1 text-4xl font-bold tracking-tight sm:text-5xl">
+          {tagline1}
+        </h1>
+        <h1 className="text-silver-matte-cin text-4xl font-extrabold tracking-tighter sm:text-5xl">
+          {tagline2}
+        </h1>
+      </section>
+
+      {/* Card — same text, app mockup, auto-cycling feature carousel */}
+      <section className="relative z-10 px-4 pb-12">
+        <div className="mc-hero-card relative flex flex-col items-center gap-7 overflow-hidden rounded-[28px] px-5 py-8">
+          {/* Text */}
+          <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+            <h2 className="text-3xl font-bold leading-[1.15] tracking-tight text-foreground">
+              {cardTagline}
+            </h2>
+            <div className="h-px w-10 bg-foreground/20" />
+            <p className="text-sm leading-relaxed text-foreground/70">
+              {cardDescription}
+            </p>
+            <p className="text-xs leading-relaxed text-foreground/40">
+              {cardAudience}
+            </p>
+          </div>
+
+          {/* Auto-cycling feature carousel */}
+          <div className="relative z-10 -mx-5 w-[calc(100%+2.5rem)]">
+            <div className="mc-marquee-mask">
+              <div className="mc-marquee-track">
+                {loop.map(({ Icon, label, color, iconBg }, i) => (
+                  <div
+                    key={`${label}-${i}`}
+                    className="feature-badge-cin mc-marquee-item flex shrink-0 items-center gap-2 rounded-xl px-3 py-2"
+                  >
+                    <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconBg}`}>
+                      <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
+                    </div>
+                    <span className="whitespace-nowrap text-xs font-semibold tracking-tight text-foreground/90">
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative z-10 flex flex-col items-center px-5 pt-2 pb-16 text-center">
+        <h2 className="text-silver-matte-cin mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+          {ctaHeading}
+        </h2>
+        <p className="mb-8 max-w-md font-light leading-relaxed text-muted-foreground">
+          {ctaDescription}
+        </p>
+        <div className="flex w-full max-w-xs flex-col gap-4">
+          <button
+            onClick={onJoinWaitlist}
+            className="btn-app-store-cin group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
+            aria-label="Join the waitlist"
+          >
+            <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
+              <rect width="28" height="28" rx="6" fill="#0F172A" />
+              <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
+              <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+              <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+              <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
+            </svg>
+            <div className="text-left">
+              <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
+              <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+            </div>
+          </button>
+          <a
+            href="#features"
+            className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <span className="text-xl font-semibold tracking-tight">How It Works</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function CinematicHero({
   tagline1 = "Capture, organize, edit.",
   tagline2 = "No chaos. All offline.",
@@ -159,8 +302,20 @@ export function CinematicHero({
   const mockupRef = useRef(null);
   const requestRef = useRef(0);
 
+  // Phones (<768px) get a dedicated static hero — the pinned scroll timeline below
+  // never engages on mobile, so the cinematic card screen disappeared entirely.
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768
+  );
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // Mouse parallax + card sheen
   useEffect(() => {
+    if (isMobile) return;
     const handleMouseMove = (e) => {
       if (window.scrollY > window.innerHeight * 2) return;
       cancelAnimationFrame(requestRef.current);
@@ -177,11 +332,11 @@ export function CinematicHero({
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => { window.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(requestRef.current); };
-  }, []);
+  }, [isMobile]);
 
   // Cinematic scroll timeline
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    if (isMobile) return;
     const prefersReduced =
       typeof window !== "undefined" &&
       window.matchMedia &&
@@ -270,7 +425,23 @@ export function CinematicHero({
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <MobileHero
+        tagline1={tagline1}
+        tagline2={tagline2}
+        cardTagline={cardTagline}
+        cardDescription={cardDescription}
+        cardAudience={cardAudience}
+        ctaHeading={ctaHeading}
+        ctaDescription={ctaDescription}
+        appScreenSrc={appScreenSrc}
+        onJoinWaitlist={onJoinWaitlist}
+      />
+    );
+  }
 
   return (
     <div
