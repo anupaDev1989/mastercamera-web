@@ -1,134 +1,82 @@
 // src/components/ui/cinematic-hero.jsx
-import React, { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+//
+// Apple-style "stacked cards" hero. Three full-screen cards are sticky-pinned in
+// a tall track; as you scroll, each next card slides up and covers the previous
+// one, settling from rounded + slightly scaled-down into a full-bleed panel.
+// This reads as genuine card-by-card scrolling (not a continuous text flow),
+// stays buttery on iOS Safari (transform/opacity only, 100svh units, sticky —
+// all rock-solid there), and never traps scroll the way mandatory snap does.
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
-import { Layers, ShieldCheck, Signature, Tag, MapPin, Columns2, Archive, Captions } from "lucide-react";
+import Reveal from "@/components/Reveal";
+import {
+  Layers, ShieldCheck, Signature, Tag, MapPin, Columns2, Archive, Captions, ChevronDown,
+} from "lucide-react";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-const INJECTED_STYLES = `
-  .gsap-reveal { visibility: hidden; }
-
-  .film-grain {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 50; opacity: 0.04; mix-blend-mode: overlay;
-      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+const STYLES = `
+  .mc-grain {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    opacity: 0.035; mix-blend-mode: overlay;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
   }
-
-  .bg-grid-cinematic {
-      --grid-line: hsl(var(--foreground) / 0.04);
-      background-size: 60px 60px;
-      background-image:
-          linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-          linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  .mc-grid {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    --line: hsl(var(--foreground) / 0.045);
+    background-size: 64px 64px;
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    -webkit-mask-image: radial-gradient(ellipse 85% 65% at center, black 0%, transparent 78%);
+    mask-image: radial-gradient(ellipse 85% 65% at center, black 0%, transparent 78%);
   }
-
-  .text-3d-matte-cin {
-      color: hsl(var(--foreground));
-      text-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
+  /* coloured spotlight glow behind a headline — adds life without heaviness */
+  .mc-spot {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(560px circle at 50% 36%, hsl(var(--primary) / 0.12), transparent 62%);
   }
-
-  .text-silver-matte-cin {
-      background: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.45) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transform: translateZ(0);
-      filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.4)) drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
+  .mc-card {
+    background:
+      radial-gradient(120% 80% at 50% 0%, hsl(var(--card)) 0%, hsl(var(--background)) 60%);
   }
+  .mc-card-shadow { box-shadow: 0 -24px 60px -28px rgba(0,0,0,0.45), 0 -1px 0 hsl(var(--border)); }
 
-  .premium-depth-card-cin {
-      background: hsl(var(--card));
-      box-shadow:
-          0 40px 100px -20px rgba(0,0,0,0.95),
-          0 20px 40px -20px rgba(0,0,0,0.8),
-          inset 0 1px 2px hsl(var(--foreground) / 0.12),
-          inset 0 -2px 4px rgba(0,0,0,0.8);
-      border: 1px solid hsl(var(--border));
-      position: relative;
+  .mc-gradient-text {
+    background: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.55) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
   }
 
-  .card-sheen-cin {
-      position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
-      background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(var(--foreground) / 0.04) 0%, transparent 40%);
-      mix-blend-mode: screen; transition: opacity 0.3s ease;
+  .mc-bezel {
+    background-color: #0A0A0A;
+    box-shadow: inset 0 0 0 2px #3F3F46, inset 0 0 0 7px #000,
+      0 50px 90px -20px rgba(0,0,0,0.55), 0 18px 30px -12px rgba(0,0,0,0.4);
   }
+  .mc-hw { background: linear-gradient(90deg, #404040 0%, #171717 100%);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.6), inset -1px 0 1px rgba(255,255,255,0.12), inset 1px 0 2px rgba(0,0,0,0.8); }
+  .mc-glare { background: linear-gradient(115deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 42%); }
 
-  .iphone-bezel-cin {
-      background-color: #0A0A0A;
-      box-shadow:
-          inset 0 0 0 2px #3F3F46,
-          inset 0 0 0 7px #000,
-          0 40px 80px -15px rgba(0,0,0,0.95),
-          0 15px 25px -5px rgba(0,0,0,0.7);
-      transform-style: preserve-3d;
+  .mc-pill {
+    background: linear-gradient(145deg, hsl(var(--foreground) / 0.07) 0%, hsl(var(--foreground) / 0.02) 100%);
+    box-shadow: 0 0 0 1px hsl(var(--border)), 0 10px 24px -16px rgba(0,0,0,0.45), inset 0 1px 0 hsl(var(--foreground) / 0.12);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), box-shadow 0.45s cubic-bezier(0.16,1,0.3,1);
   }
+  @media (hover: hover) { .mc-pill:hover { transform: translateY(-2px); } }
 
-  .hardware-btn-cin {
-      background: linear-gradient(90deg, #404040 0%, #171717 100%);
-      box-shadow: -2px 0 5px rgba(0,0,0,0.8), inset -1px 0 1px rgba(255,255,255,0.12), inset 1px 0 2px rgba(0,0,0,0.8);
-      border-left: 1px solid rgba(255,255,255,0.04);
+  .mc-btn {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%); color: #0F172A;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.08), 0 14px 28px -8px rgba(0,0,0,0.28), inset 0 1px 1px #fff;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
   }
+  .mc-btn:hover { transform: translateY(-3px); }
+  .mc-btn:active { transform: translateY(0); }
 
-  .screen-glare-cin {
-      background: linear-gradient(110deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 45%);
-  }
-
-  /* Refined glass badge — unified, Apple-style */
-  .feature-badge-cin {
-      background: linear-gradient(145deg, hsl(var(--foreground) / 0.09) 0%, hsl(var(--foreground) / 0.03) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow:
-          0 0 0 1px hsl(var(--border)),
-          0 16px 32px -8px rgba(0,0,0,0.7),
-          inset 0 1px 0 hsl(var(--foreground) / 0.18),
-          inset 0 -1px 0 rgba(0,0,0,0.3);
-      /* Only animate non-transform props — GSAP owns transform/opacity on these nodes */
-      transition: background 0.4s cubic-bezier(0.25,1,0.5,1), box-shadow 0.4s cubic-bezier(0.25,1,0.5,1);
-  }
-  @media (hover: hover) {
-      .feature-badge-cin:hover {
-          background: linear-gradient(145deg, hsl(var(--foreground) / 0.14) 0%, hsl(var(--foreground) / 0.05) 100%);
-          box-shadow:
-              0 0 0 1px hsl(var(--border)),
-              0 24px 44px -10px rgba(0,0,0,0.8),
-              inset 0 1px 0 hsl(var(--foreground) / 0.28),
-              inset 0 -1px 0 rgba(0,0,0,0.3);
-      }
-  }
-
-  /* Horizontal chip rail for mobile — clean, no scrollbar, soft edge fade */
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .edge-fade-x {
-      -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
-      mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
-  }
-
-  .btn-app-store-cin {
-      background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
-      color: #0F172A;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.1), 0 12px 24px -4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,1), inset 0 -3px 6px rgba(0,0,0,0.06);
-      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-  .btn-app-store-cin:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 6px 12px -2px rgba(0,0,0,0.15), 0 20px 32px -6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,1), inset 0 -3px 6px rgba(0,0,0,0.06);
-  }
-  .btn-app-store-cin:active {
-      transform: translateY(1px);
-      background: linear-gradient(180deg, #F1F5F9 0%, #E2E8F0 100%);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1), inset 0 3px 6px rgba(0,0,0,0.1);
-  }
+  @keyframes mc-cue { 0%,100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(6px); opacity: 1; } }
+  .mc-cue { animation: mc-cue 1.8s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .mc-cue { animation: none; } }
 `;
 
-// Badge definitions — clean, aligned column; precise over jittery (Apple-style)
 const BADGES = [
   { Icon: Layers,      label: "Job Stacks",        color: "text-blue-600",    iconBg: "bg-blue-500/15    border-blue-500/30"    },
   { Icon: Tag,         label: "Shot Notes",        color: "text-amber-600",   iconBg: "bg-amber-500/15   border-amber-500/30"   },
@@ -140,161 +88,55 @@ const BADGES = [
   { Icon: Archive,     label: "Zip & Share",       color: "text-orange-600",  iconBg: "bg-orange-500/15  border-orange-500/30"  },
 ];
 
-// Mobile-only styles: an auto-cycling, seamless feature marquee + a lighter
-// hero card shadow that reads well on the light page background.
-const MOBILE_STYLES = `
-  @keyframes mc-badge-marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
-  .mc-marquee-mask {
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
-  }
-  @keyframes mc-badge-marquee-reverse {
-    from { transform: translateX(-50%); }
-    to   { transform: translateX(0); }
-  }
-  .mc-marquee-track {
-    display: flex;
-    flex-flow: row nowrap;
-    width: max-content;
-    animation: mc-badge-marquee 30s linear infinite;
-    will-change: transform;
-  }
-  .mc-marquee-track--reverse {
-    animation: mc-badge-marquee-reverse 34s linear infinite;
-  }
-  .mc-marquee-track:active { animation-play-state: paused; }
-  .mc-marquee-item { margin-right: 10px; }
-  .mc-hero-card {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    box-shadow:
-        0 24px 60px -20px rgba(0,0,0,0.35),
-        0 8px 20px -12px rgba(0,0,0,0.25),
-        inset 0 1px 2px hsl(var(--foreground) / 0.08);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .mc-marquee-track { animation: none; }
-  }
-`;
-
-// Phones can't run the pinned cinematic scroll timeline (it never engages, so the
-// card screen vanished entirely). Render a dedicated static mobile hero instead:
-// same copy, the app mockup, and an auto-cycling feature carousel.
-function MobileHero({
-  tagline1,
-  tagline2,
-  cardTagline,
-  cardDescription,
-  cardAudience,
-  ctaHeading,
-  ctaDescription,
-  appScreenSrc,
-  onJoinWaitlist,
-}) {
-  const loop = [...BADGES, ...BADGES];
-
+function PhoneMockup({ appScreenSrc }) {
   return (
-    <div className="relative w-full overflow-hidden font-sans text-foreground antialiased">
-      <style dangerouslySetInnerHTML={{ __html: INJECTED_STYLES + MOBILE_STYLES }} />
-      <div className="film-grain" aria-hidden="true" />
-      <div className="bg-grid-cinematic pointer-events-none absolute inset-0 z-0 opacity-40" aria-hidden="true" />
-
-      {/* PAGE 1 — Intro headline (mirrors the desktop first screen) */}
-      <section className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 text-center">
-        <h1 className="text-3d-matte-cin mb-1 text-4xl font-bold tracking-tight sm:text-5xl">
-          {tagline1}
-        </h1>
-        <h1 className="text-silver-matte-cin text-4xl font-extrabold tracking-tighter sm:text-5xl">
-          {tagline2}
-        </h1>
-      </section>
-
-      {/* PAGE 2 — "Feels familiar…" text + auto-cycling feature carousel */}
-      <section className="relative z-10 flex min-h-[100svh] flex-col justify-center px-4 py-10">
-        <div className="mc-hero-card relative flex flex-col items-center gap-8 overflow-hidden rounded-[28px] px-5 py-10">
-          {/* Text */}
-          <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-            <h2 className="text-3xl font-bold leading-[1.15] tracking-tight text-foreground">
-              {cardTagline}
-            </h2>
-            <div className="h-px w-10 bg-foreground/20" />
-            <p className="text-sm leading-relaxed text-foreground/70">
-              {cardDescription}
-            </p>
-            <p className="text-xs leading-relaxed text-foreground/40">
-              {cardAudience}
-            </p>
-          </div>
-
-          {/* Auto-cycling feature carousel — two rows drifting in opposite
-              directions so the tags are always visibly in motion. Inline flex
-              styles guarantee a horizontal track regardless of the cascade. */}
-          <div className="relative z-10 -mx-5 flex w-[calc(100%+2.5rem)] flex-col gap-3">
-            {[0, 1].map((row) => (
-              <div key={row} className="mc-marquee-mask">
-                <div
-                  className={cn("mc-marquee-track", row === 1 && "mc-marquee-track--reverse")}
-                  style={{ display: "flex", flexFlow: "row nowrap", width: "max-content" }}
-                >
-                  {loop.map(({ Icon, label, color, iconBg }, i) => (
-                    <div
-                      key={`${row}-${label}-${i}`}
-                      className="feature-badge-cin mc-marquee-item flex shrink-0 items-center gap-2 rounded-xl px-3 py-2"
-                    >
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconBg}`}>
-                        <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
-                      </div>
-                      <span className="whitespace-nowrap text-xs font-semibold tracking-tight text-foreground/90">
-                        {label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PAGE 3 — CTA ("Start capturing.") */}
-      <section className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 py-16 text-center">
-        <h2 className="text-silver-matte-cin mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-          {ctaHeading}
-        </h2>
-        <p className="mb-8 max-w-md font-light leading-relaxed text-muted-foreground">
-          {ctaDescription}
-        </p>
-        <div className="flex w-full max-w-xs flex-col gap-4">
-          <button
-            onClick={onJoinWaitlist}
-            className="btn-app-store-cin group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
-            aria-label="Join the waitlist"
-          >
-            <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
-              <rect width="28" height="28" rx="6" fill="#0F172A" />
-              <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
-              <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
-              <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
-              <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
-            </svg>
-            <div className="text-left">
-              <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
-              <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      className="flex items-center justify-center"
+    >
+      <div className="origin-center scale-[0.58] sm:scale-[0.72] md:scale-90 lg:scale-100">
+        <div className="relative flex h-[580px] w-[280px] flex-col rounded-[3rem] mc-bezel">
+          <div className="mc-hw absolute -left-[3px] top-[120px] z-0 h-[25px] w-[3px] rounded-l-md" aria-hidden="true" />
+          <div className="mc-hw absolute -left-[3px] top-[160px] z-0 h-[45px] w-[3px] rounded-l-md" aria-hidden="true" />
+          <div className="mc-hw absolute -left-[3px] top-[220px] z-0 h-[45px] w-[3px] rounded-l-md" aria-hidden="true" />
+          <div className="mc-hw absolute -right-[3px] top-[170px] z-0 h-[70px] w-[3px] scale-x-[-1] rounded-r-md" aria-hidden="true" />
+          <div className="absolute inset-[7px] z-10 overflow-hidden rounded-[2.5rem] shadow-[inset_0_0_6px_rgba(0,0,0,0.5)]" style={{ backgroundColor: "hsl(218, 12%, 8%)" }}>
+            <div className="mc-glare pointer-events-none absolute inset-0 z-40 opacity-30" aria-hidden="true" />
+            <div className="absolute left-1/2 top-[5px] z-50 h-[28px] w-[100px] -translate-x-1/2 rounded-full" style={{ background: "hsl(218, 12%, 8%)" }} aria-hidden="true">
+              <div className="absolute right-3 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
             </div>
-          </button>
-          <a
-            href="#features"
-            className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <span className="text-xl font-semibold tracking-tight">How It Works</span>
-          </a>
+            <img src={appScreenSrc} alt="Master Camera app interface" className="absolute inset-0 h-full w-full object-cover object-top" draggable={false} />
+          </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// One sticky card in the stack. `scale`/`radius` animate it in as it covers the
+// previous card; `dim` darkens this card as the *next* one covers it.
+function StackCard({ children, scale, radius, dim, dark, className, z }) {
+  return (
+    <motion.section
+      style={{ scale, borderRadius: radius, zIndex: z }}
+      className={cn(
+        // 100lvh (largest viewport height): each card always fully covers the
+        // screen on iOS Safari without reflowing as the address bar shows/hides
+        // (100svh would leave a gap at the bottom once the toolbar collapses).
+        "mc-card sticky top-0 flex h-[100lvh] w-full flex-col items-center justify-center overflow-hidden px-6 will-change-transform",
+        className
+      )}
+    >
+      {children}
+      {dim && (
+        <motion.div
+          style={{ opacity: dim }}
+          className={cn("pointer-events-none absolute inset-0 z-[60]", dark ? "bg-black" : "bg-foreground")}
+          aria-hidden="true"
+        />
+      )}
+    </motion.section>
   );
 }
 
@@ -302,323 +144,123 @@ export function CinematicHero({
   tagline1 = "Capture, organize, edit.",
   tagline2 = "No chaos. All offline.",
   cardTagline = <>The simplicity you want.<br />The features your work demands.</>,
-  cardLabel = "Field photography, redefined.",
   cardDescription = "Master Camera pairs the effortless feel of the native Camera app with powerful metadata workflows and total offline privacy.",
   cardAudience = "Engineered for DIY enthusiasts, scientists, and field professionals.",
   ctaHeading = "Start capturing.",
   ctaDescription = "Master Camera is coming to iOS. Join the waitlist and be the first to know when it launches.",
   appScreenSrc = "/app_screen.png",
-  className,
   onJoinWaitlist,
-  ...props
 }) {
-  const containerRef = useRef(null);
-  const mainCardRef = useRef(null);
-  const mockupRef = useRef(null);
-  const requestRef = useRef(0);
+  const stackRef = useRef(null);
+  // Progress 0 → 1 across the whole 3-card stack. 0 = card 1 full, 0.5 = card 2
+  // fully covering, 1 = card 3 fully covering.
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
 
-  // Phones (<768px) get a dedicated static hero — the pinned scroll timeline below
-  // never engages on mobile, so the cinematic card screen disappeared entirely.
-  const [isMobile, setIsMobile] = useState(
-    () => typeof window !== "undefined" && window.innerWidth < 768
-  );
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  // Mouse parallax + card sheen
-  useEffect(() => {
-    if (isMobile) return;
-    const handleMouseMove = (e) => {
-      if (window.scrollY > window.innerHeight * 2) return;
-      cancelAnimationFrame(requestRef.current);
-      requestRef.current = requestAnimationFrame(() => {
-        if (mainCardRef.current && mockupRef.current) {
-          const rect = mainCardRef.current.getBoundingClientRect();
-          mainCardRef.current.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-          mainCardRef.current.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-          const xVal = (e.clientX / window.innerWidth - 0.5) * 2;
-          const yVal = (e.clientY / window.innerHeight - 0.5) * 2;
-          gsap.to(mockupRef.current, { rotationY: xVal * 10, rotationX: -yVal * 10, ease: "power3.out", duration: 1.2 });
-        }
-      });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => { window.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(requestRef.current); };
-  }, [isMobile]);
-
-  // Cinematic scroll timeline
-  useEffect(() => {
-    if (isMobile) return;
-    const prefersReduced =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // Reduced motion: skip the cinematic scroll sequence entirely and just present
-    // the headline as a clean, static first screen (no pinning, no scrubbed motion).
-    if (prefersReduced) {
-      gsap.set([".text-track-cin", ".text-days-cin"], {
-        autoAlpha: 1,
-        clearProps: "transform,filter,clipPath",
-      });
-      gsap.set([".main-card-cin", ".cta-wrapper-cin"], { autoAlpha: 0 });
-      return;
-    }
-
-    // Animating `filter: blur()` is GPU-heavy on phones — only blur on desktop.
-    const blurIn = (px) => (isMobile ? "blur(0px)" : `blur(${px}px)`);
-
-    const ctx = gsap.context(() => {
-      gsap.set(".text-track-cin", { autoAlpha: 0, y: 60, scale: 0.85, filter: blurIn(20), rotationX: isMobile ? 0 : -20 });
-      gsap.set(".text-days-cin", { autoAlpha: 1, clipPath: "inset(0 100% 0 0)" });
-      gsap.set(".main-card-cin", { y: window.innerHeight + 200, autoAlpha: 0 });
-      gsap.set([".card-left-text-cin", ".mockup-scroll-wrapper-cin", ".floating-badge-cin"], { autoAlpha: 0 });
-      gsap.set(".cta-wrapper-cin", { autoAlpha: 0, scale: 0.8, filter: blurIn(30) });
-
-      // Intro entrance
-      const introTl = gsap.timeline({ delay: 0.3 });
-      introTl
-        .to(".text-track-cin", { duration: 1.8, autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", rotationX: 0, ease: "expo.out" })
-        .to(".text-days-cin", { duration: 1.4, clipPath: "inset(0 0% 0 0)", ease: "power4.inOut" }, "-=1.0");
-
-      // Scroll-driven timeline — total end reduced from 7000 → 4500
-      const scrollTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=2000",
-          pin: true,
-          scrub: 0.7,
-          anticipatePin: 1,
-        },
-      });
-
-      scrollTl
-        // Bg recedes as the card rises — blur only on desktop (heavy on mobile GPUs)
-        .to([".hero-text-wrapper-cin", ".bg-grid-cinematic"], { scale: 1.15, filter: blurIn(20), opacity: 0.2, ease: "power2.inOut", duration: 2 }, 0)
-        .to(".main-card-cin", { y: 0, ease: "power3.inOut", duration: 2 }, 0)
-        // Card expands fullscreen and fades in — never visible as a small floating box
-        .to(".main-card-cin", { width: "100%", height: "100%", borderRadius: "0px", autoAlpha: 1, ease: "power3.inOut", duration: 1.5 })
-        // Phone flies in — starts when card begins expanding so it's never a blank slate
-        .fromTo(".mockup-scroll-wrapper-cin",
-          { y: 300, z: -500, rotationX: 50, rotationY: -30, autoAlpha: 0, scale: 0.6 },
-          { y: 0, z: 0, rotationX: 0, rotationY: 0, autoAlpha: 1, scale: 1, ease: "expo.out", duration: 2.5 }, "<"
-        )
-        // Badges glide in from the right, top-down — precise, not scattered
-        .fromTo(".floating-badge-cin",
-          { x: 44, y: 12, autoAlpha: 0, scale: 0.96 },
-          { x: 0, y: 0, autoAlpha: 1, scale: 1, ease: "expo.out", duration: 1.1, stagger: { each: 0.08, from: "start" } },
-          "-=1.8"
-        )
-        // Left text slides in
-        .fromTo(".card-left-text-cin", { x: -50, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: "power4.out", duration: 1.5 }, "-=1.2")
-        // Brief hold before CTA swap
-        .to({}, { duration: 0.3 })
-        .set(".hero-text-wrapper-cin", { autoAlpha: 0 })
-        .set(".cta-wrapper-cin", { autoAlpha: 1 })
-        // Minimal hold before exit
-        .to({}, { duration: 0.1 })
-        // Card content exits
-        .to([".mockup-scroll-wrapper-cin", ".floating-badge-cin", ".card-left-text-cin"], {
-          scale: 0.9, y: -40, z: -200, autoAlpha: 0, ease: "power3.in", duration: 1.0, stagger: 0.04,
-        })
-        // Card fades out as it shrinks — CTA becomes visible immediately
-        .to(".main-card-cin", {
-          width: isMobile ? "92vw" : "85vw",
-          height: isMobile ? "92vh" : "85vh",
-          borderRadius: isMobile ? "32px" : "40px",
-          autoAlpha: 0,
-          ease: "expo.inOut", duration: 1.0,
-        }, "pullback")
-        .to(".cta-wrapper-cin", { scale: 1, filter: "blur(0px)", ease: "expo.inOut", duration: 1.0 }, "pullback")
-        // Card already invisible — tiny lift just to clean up position before pin releases
-        .to(".main-card-cin", { y: -120, ease: "power2.in", duration: 0.3 });
-
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [isMobile]);
-
-  if (isMobile) {
-    return (
-      <MobileHero
-        tagline1={tagline1}
-        tagline2={tagline2}
-        cardTagline={cardTagline}
-        cardDescription={cardDescription}
-        cardAudience={cardAudience}
-        ctaHeading={ctaHeading}
-        ctaDescription={ctaDescription}
-        appScreenSrc={appScreenSrc}
-        onJoinWaitlist={onJoinWaitlist}
-      />
-    );
-  }
+  // Card 2 enters over 0 → 0.5; card 3 enters over 0.5 → 1.
+  const c2scale = useTransform(scrollYProgress, [0, 0.5], [0.93, 1]);
+  const c2radius = useTransform(scrollYProgress, [0, 0.5], [44, 0]);
+  const c3scale = useTransform(scrollYProgress, [0.5, 1], [0.93, 1]);
+  const c3radius = useTransform(scrollYProgress, [0.5, 1], [44, 0]);
+  // Cards dim slightly as the next one rises (visible through the rounded corners).
+  const c1dim = useTransform(scrollYProgress, [0, 0.5], [0, 0.45]);
+  const c2dim = useTransform(scrollYProgress, [0.5, 1], [0, 0.45]);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        "relative w-screen h-screen overflow-hidden flex items-center justify-center text-foreground font-sans antialiased",
-        className
-      )}
-      style={{ perspective: "1500px" }}
-      {...props}
-    >
-      <style dangerouslySetInnerHTML={{ __html: INJECTED_STYLES }} />
-      <div className="film-grain" aria-hidden="true" />
-      <div className="bg-grid-cinematic absolute inset-0 z-0 pointer-events-none opacity-60" aria-hidden="true" />
+    <div className="relative w-full font-sans text-foreground antialiased">
+      <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
-      {/* Background: intro hero text */}
-      <div className="hero-text-wrapper-cin absolute z-10 flex flex-col items-center justify-center text-center w-screen px-4 will-change-transform">
-        <h1 className="text-track-cin gsap-reveal text-3d-matte-cin text-5xl md:text-7xl lg:text-[6rem] font-bold tracking-tight mb-2">
-          {tagline1}
-        </h1>
-        <h1 className="text-days-cin gsap-reveal text-silver-matte-cin text-5xl md:text-7xl lg:text-[6rem] font-extrabold tracking-tighter">
-          {tagline2}
-        </h1>
-      </div>
+      <div ref={stackRef} className="relative w-full">
+        {/* ===== CARD 1 — Headline + product ===== */}
+        <StackCard z={10} dim={c1dim} dark className="pt-24 pb-20 text-center">
+          <div className="mc-grid" aria-hidden="true" />
+          <div className="mc-spot" aria-hidden="true" />
+          <div className="mc-grain" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col items-center gap-8 md:gap-11">
+            <Reveal y={26}>
+              <h1 className="mx-auto max-w-4xl text-[2.5rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
+                {tagline1}
+                <span className="mt-1 block">{tagline2}</span>
+              </h1>
+            </Reveal>
+            <Reveal y={34} delay={0.12}>
+              <PhoneMockup appScreenSrc={appScreenSrc} />
+            </Reveal>
+          </div>
+          <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-muted-foreground">
+            <ChevronDown className="mc-cue h-6 w-6" strokeWidth={2} aria-hidden="true" />
+          </div>
+        </StackCard>
 
-      {/* CTA layer — revealed at end of scroll */}
-      <div className="cta-wrapper-cin absolute z-10 flex flex-col items-center justify-center text-center w-screen px-4 gsap-reveal pointer-events-auto will-change-transform">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight text-silver-matte-cin">
-          {ctaHeading}
-        </h2>
-        <p className="text-muted-foreground text-lg md:text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed">
-          {ctaDescription}
-        </p>
-        <div className="flex flex-col sm:flex-row gap-6">
-          <button
-            onClick={onJoinWaitlist}
-            className="btn-app-store-cin flex items-center justify-center gap-3 px-8 py-4 rounded-[1.25rem] group focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
-            aria-label="Join the waitlist"
-          >
-            <svg className="w-7 h-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
-              <rect width="28" height="28" rx="6" fill="#0F172A"/>
-              <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316"/>
-              <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7"/>
-              <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7"/>
-              <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4"/>
-            </svg>
-            <div className="text-left">
-              <div className="text-[10px] font-bold tracking-wider text-neutral-500 uppercase mb-[-2px]">Be the first with</div>
-              <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+        {/* ===== CARD 2 — Value proposition + feature grid ===== */}
+        <StackCard z={20} scale={c2scale} radius={c2radius} dim={c2dim} dark className="mc-card-shadow py-20 text-center">
+          <div className="mc-grid" aria-hidden="true" />
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-9 md:gap-12">
+            <div className="flex flex-col items-center gap-5">
+              <Reveal y={24}>
+                <h2 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+                  {cardTagline}
+                </h2>
+              </Reveal>
+              <Reveal y={18} delay={0.08}><div className="h-px w-12 bg-foreground/20" /></Reveal>
+              <Reveal y={18} delay={0.12}>
+                <p className="max-w-2xl text-[0.95rem] leading-relaxed text-foreground/70 sm:text-lg">{cardDescription}</p>
+              </Reveal>
+              <Reveal y={18} delay={0.16}>
+                <p className="max-w-xl text-xs leading-relaxed text-foreground/40 sm:text-sm">{cardAudience}</p>
+              </Reveal>
             </div>
-          </button>
-          <a
-            href="#features"
-            className="flex items-center justify-center gap-3 px-8 py-4 rounded-[1.25rem] border border-border bg-foreground/5 text-foreground hover:bg-foreground/10 transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-transparent"
-          >
-            <span className="text-xl font-semibold tracking-tight">How It Works</span>
-          </a>
-        </div>
-      </div>
-
-      {/* Foreground: deep card */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none" style={{ perspective: "1500px" }}>
-        <div
-          ref={mainCardRef}
-          className="main-card-cin premium-depth-card-cin relative overflow-hidden gsap-reveal flex items-center justify-center pointer-events-auto w-[92vw] md:w-[85vw] h-[92vh] md:h-[85vh] rounded-[32px] md:rounded-[40px]"
-        >
-          <div className="card-sheen-cin" aria-hidden="true" />
-
-          {/* Grid: text left | phone center | empty right (badges float over it) */}
-          <div className="relative w-full h-full max-w-7xl mx-auto px-4 lg:px-12 flex flex-col justify-evenly lg:grid lg:grid-cols-3 items-center lg:gap-8 z-10 py-6 lg:py-0">
-
-            {/* LEFT: text — slides in from left */}
-            <div className="card-left-text-cin gsap-reveal order-2 lg:order-1 flex flex-col justify-center text-center lg:text-left z-20 w-full px-4 lg:px-0 gap-5 lg:gap-6">
-              {/* Primary tagline — large, bold, high impact */}
-              <h2 className="text-foreground text-3xl md:text-4xl lg:text-[2.6rem] font-bold leading-[1.15] tracking-tight">
-                {cardTagline}
-              </h2>
-
-              {/* Divider */}
-              <div className="w-10 h-px bg-foreground/20 mx-auto lg:mx-0" />
-
-              {/* Description block */}
-              <div className="hidden md:flex flex-col gap-3">
-                <p className="text-foreground/70 text-sm lg:text-base leading-relaxed">
-                  {cardDescription}
-                </p>
-                <p className="text-foreground/35 text-sm leading-relaxed">
-                  {cardAudience}
-                </p>
-              </div>
-            </div>
-
-            {/* CENTER: phone */}
-            <div
-              className="mockup-scroll-wrapper-cin order-1 lg:order-2 relative w-full h-[320px] sm:h-[400px] lg:h-[600px] flex items-center justify-center z-10"
-              style={{ perspective: "1000px" }}
-            >
-              <div className="relative w-full h-full flex items-center justify-center transform scale-[0.58] sm:scale-[0.78] md:scale-[0.85] lg:scale-100">
-                <div
-                  ref={mockupRef}
-                  className="relative w-[280px] h-[580px] rounded-[3rem] iphone-bezel-cin flex flex-col will-change-transform"
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  {/* Hardware buttons */}
-                  <div className="absolute top-[120px] -left-[3px] w-[3px] h-[25px] hardware-btn-cin rounded-l-md z-0" aria-hidden="true" />
-                  <div className="absolute top-[160px] -left-[3px] w-[3px] h-[45px] hardware-btn-cin rounded-l-md z-0" aria-hidden="true" />
-                  <div className="absolute top-[220px] -left-[3px] w-[3px] h-[45px] hardware-btn-cin rounded-l-md z-0" aria-hidden="true" />
-                  <div className="absolute top-[170px] -right-[3px] w-[3px] h-[70px] hardware-btn-cin rounded-r-md z-0 scale-x-[-1]" aria-hidden="true" />
-
-                  {/* Screen */}
-                  <div className="absolute inset-[7px] rounded-[2.5rem] overflow-hidden shadow-[inset_0_0_6px_rgba(0,0,0,0.5)] z-10" style={{ backgroundColor: 'hsl(218, 12%, 8%)' }}>
-                    <div className="absolute inset-0 screen-glare-cin z-40 pointer-events-none opacity-30" aria-hidden="true" />
-                    {/* Dynamic Island */}
-                    <div className="absolute top-[5px] left-1/2 -translate-x-1/2 w-[100px] h-[28px] bg-black rounded-full z-50 shadow-[inset_0_-1px_2px_rgba(255,255,255,0.08)]" aria-hidden="true" style={{ background: 'hsl(218, 12%, 8%)' }}>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)] animate-pulse" />
+            <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
+              {BADGES.map(({ Icon, label, color, iconBg }, i) => (
+                <Reveal key={label} y={18} delay={0.05 * i} amount={0.1}>
+                  <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
+                      <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
                     </div>
-                    <img
-                      src={appScreenSrc}
-                      alt="Master Camera app interface"
-                      className="absolute inset-0 w-full h-full object-cover object-top"
-                      style={{ imageRendering: '-webkit-optimize-contrast' }}
-                      draggable={false}
-                    />
+                    <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">{label}</span>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT (desktop): feature badges — clean aligned column beside the phone */}
-            <div className="hidden lg:flex order-3 self-stretch flex-col justify-center gap-2.5 py-8 z-20 pl-3">
-              {BADGES.map(({ Icon, label, color, iconBg }) => (
-                <div
-                  key={label}
-                  className="floating-badge-cin feature-badge-cin rounded-2xl px-3.5 py-2.5 flex items-center gap-3"
-                >
-                  <div className={`w-9 h-9 rounded-[11px] flex items-center justify-center border shrink-0 ${iconBg}`}>
-                    <Icon className={`w-[18px] h-[18px] ${color}`} strokeWidth={1.75} />
-                  </div>
-                  <span className="text-foreground/90 text-sm font-semibold tracking-tight leading-tight">{label}</span>
-                </div>
+                </Reveal>
               ))}
             </div>
-
-            {/* RIGHT (mobile/tablet): feature chips — horizontal rail so features stay visible */}
-            <div className="lg:hidden order-3 w-full z-20">
-              <div className="edge-fade-x no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-1">
-                {BADGES.map(({ Icon, label, color, iconBg }) => (
-                  <div
-                    key={label}
-                    className="floating-badge-cin feature-badge-cin flex shrink-0 snap-start items-center gap-2 rounded-xl px-3 py-2"
-                  >
-                    <div className={`flex h-7 w-7 items-center justify-center rounded-lg border shrink-0 ${iconBg}`}>
-                      <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
-                    </div>
-                    <span className="whitespace-nowrap text-foreground/90 text-xs font-semibold tracking-tight">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
           </div>
-        </div>
+        </StackCard>
+
+        {/* ===== CARD 3 — CTA ===== */}
+        <StackCard z={30} scale={c3scale} radius={c3radius} className="mc-card-shadow py-20 text-center">
+          <div className="mc-grid" aria-hidden="true" />
+          <div className="mc-spot" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <Reveal y={24}>
+              <h2 className="mc-gradient-text text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{ctaHeading}</h2>
+            </Reveal>
+            <Reveal y={18} delay={0.1}>
+              <p className="max-w-md text-base font-light leading-relaxed text-muted-foreground sm:text-lg">{ctaDescription}</p>
+            </Reveal>
+            <Reveal y={22} delay={0.18}>
+              <div className="mt-2 flex w-full max-w-xs flex-col gap-4">
+                <button
+                  onClick={onJoinWaitlist}
+                  className="mc-btn group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
+                  aria-label="Join the waitlist"
+                >
+                  <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
+                    <rect width="28" height="28" rx="6" fill="#0F172A" />
+                    <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
+                    <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+                    <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+                    <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
+                  </svg>
+                  <div className="text-left">
+                    <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
+                    <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+                  </div>
+                </button>
+                <a href="#features" className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary">
+                  <span className="text-xl font-semibold tracking-tight">How It Works</span>
+                </a>
+              </div>
+            </Reveal>
+          </div>
+        </StackCard>
       </div>
     </div>
   );
