@@ -1,22 +1,20 @@
 // src/components/ui/cinematic-hero.jsx
 //
-// Apple-style hero: three full-screen "panels" (headline → value + features →
-// CTA) that scroll-snap one at a time on every screen size, with quiet
-// on-scroll reveals. Deliberately CSS/Intersection-driven — no pinned GSAP
-// timeline — so desktop and mobile share one robust, predictable layout.
-import React from "react";
+// Apple-style "stacked cards" hero. Three full-screen cards are sticky-pinned in
+// a tall track; as you scroll, each next card slides up and covers the previous
+// one, settling from rounded + slightly scaled-down into a full-bleed panel.
+// This reads as genuine card-by-card scrolling (not a continuous text flow),
+// stays buttery on iOS Safari (transform/opacity only, 100svh units, sticky —
+// all rock-solid there), and never traps scroll the way mandatory snap does.
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { cn } from "@/lib/utils";
 import Reveal from "@/components/Reveal";
 import {
   Layers, ShieldCheck, Signature, Tag, MapPin, Columns2, Archive, Captions, ChevronDown,
 } from "lucide-react";
 
 const STYLES = `
-  /* Page-by-page snapping for the three hero panels. proximity (not mandatory)
-     so the feature sections below the hero stay freely scrollable. Scoped to
-     .mc-snap-page so nothing else on the page becomes a snap target. */
-  html { scroll-snap-type: y proximity; }
-  .mc-snap-page { scroll-snap-align: start; scroll-snap-stop: always; }
-
   .mc-grain {
     position: absolute; inset: 0; pointer-events: none; z-index: 1;
     opacity: 0.035; mix-blend-mode: overlay;
@@ -24,63 +22,57 @@ const STYLES = `
   }
   .mc-grid {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    --line: hsl(var(--foreground) / 0.04);
+    --line: hsl(var(--foreground) / 0.045);
     background-size: 64px 64px;
     background-image:
       linear-gradient(to right, var(--line) 1px, transparent 1px),
       linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at center, black 0%, transparent 75%);
-    mask-image: radial-gradient(ellipse 80% 60% at center, black 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 85% 65% at center, black 0%, transparent 78%);
+    mask-image: radial-gradient(ellipse 85% 65% at center, black 0%, transparent 78%);
   }
+  /* coloured spotlight glow behind a headline — adds life without heaviness */
+  .mc-spot {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(560px circle at 50% 36%, hsl(var(--primary) / 0.12), transparent 62%);
+  }
+  .mc-card {
+    background:
+      radial-gradient(120% 80% at 50% 0%, hsl(var(--card)) 0%, hsl(var(--background)) 60%);
+  }
+  .mc-card-shadow { box-shadow: 0 -24px 60px -28px rgba(0,0,0,0.45), 0 -1px 0 hsl(var(--border)); }
 
-  /* Emphasis text — soft metallic gradient, Apple-ish depth */
   .mc-gradient-text {
     background: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.55) 100%);
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
   }
 
-  /* iPhone mockup */
   .mc-bezel {
     background-color: #0A0A0A;
-    box-shadow:
-      inset 0 0 0 2px #3F3F46, inset 0 0 0 7px #000,
+    box-shadow: inset 0 0 0 2px #3F3F46, inset 0 0 0 7px #000,
       0 50px 90px -20px rgba(0,0,0,0.55), 0 18px 30px -12px rgba(0,0,0,0.4);
   }
-  .mc-hw {
-    background: linear-gradient(90deg, #404040 0%, #171717 100%);
-    box-shadow: -2px 0 5px rgba(0,0,0,0.6), inset -1px 0 1px rgba(255,255,255,0.12), inset 1px 0 2px rgba(0,0,0,0.8);
-  }
+  .mc-hw { background: linear-gradient(90deg, #404040 0%, #171717 100%);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.6), inset -1px 0 1px rgba(255,255,255,0.12), inset 1px 0 2px rgba(0,0,0,0.8); }
   .mc-glare { background: linear-gradient(115deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 42%); }
 
-  /* Feature pill — unified glass, calm */
   .mc-pill {
     background: linear-gradient(145deg, hsl(var(--foreground) / 0.07) 0%, hsl(var(--foreground) / 0.02) 100%);
-    box-shadow:
-      0 0 0 1px hsl(var(--border)),
-      0 10px 24px -14px rgba(0,0,0,0.45),
-      inset 0 1px 0 hsl(var(--foreground) / 0.12);
+    box-shadow: 0 0 0 1px hsl(var(--border)), 0 10px 24px -16px rgba(0,0,0,0.45), inset 0 1px 0 hsl(var(--foreground) / 0.12);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), box-shadow 0.45s cubic-bezier(0.16,1,0.3,1);
   }
-  @media (hover: hover) {
-    .mc-pill:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 0 1px hsl(var(--border)), 0 18px 30px -16px rgba(0,0,0,0.5), inset 0 1px 0 hsl(var(--foreground) / 0.2);
-    }
-  }
+  @media (hover: hover) { .mc-pill:hover { transform: translateY(-2px); } }
 
-  /* Primary CTA — premium light button */
   .mc-btn {
     background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%); color: #0F172A;
     box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.08), 0 14px 28px -8px rgba(0,0,0,0.28), inset 0 1px 1px #fff;
     transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
   }
-  .mc-btn:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 36px -10px rgba(0,0,0,0.36), inset 0 1px 1px #fff; }
+  .mc-btn:hover { transform: translateY(-3px); }
   .mc-btn:active { transform: translateY(0); }
 
-  /* Scroll cue */
-  @keyframes mc-cue { 0%,100% { transform: translateY(0); opacity: 0.55; } 50% { transform: translateY(6px); opacity: 1; } }
+  @keyframes mc-cue { 0%,100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(6px); opacity: 1; } }
   .mc-cue { animation: mc-cue 1.8s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .mc-cue { animation: none; } }
 `;
@@ -98,31 +90,53 @@ const BADGES = [
 
 function PhoneMockup({ appScreenSrc }) {
   return (
-    <div className="flex items-center justify-center h-[360px] sm:h-[440px] md:h-[540px] lg:h-[600px]">
-      <div className="origin-center scale-[0.6] sm:scale-[0.74] md:scale-90 lg:scale-100">
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      className="flex items-center justify-center"
+    >
+      <div className="origin-center scale-[0.58] sm:scale-[0.72] md:scale-90 lg:scale-100">
         <div className="relative flex h-[580px] w-[280px] flex-col rounded-[3rem] mc-bezel">
-          {/* hardware buttons */}
           <div className="mc-hw absolute -left-[3px] top-[120px] z-0 h-[25px] w-[3px] rounded-l-md" aria-hidden="true" />
           <div className="mc-hw absolute -left-[3px] top-[160px] z-0 h-[45px] w-[3px] rounded-l-md" aria-hidden="true" />
           <div className="mc-hw absolute -left-[3px] top-[220px] z-0 h-[45px] w-[3px] rounded-l-md" aria-hidden="true" />
           <div className="mc-hw absolute -right-[3px] top-[170px] z-0 h-[70px] w-[3px] scale-x-[-1] rounded-r-md" aria-hidden="true" />
-          {/* screen */}
           <div className="absolute inset-[7px] z-10 overflow-hidden rounded-[2.5rem] shadow-[inset_0_0_6px_rgba(0,0,0,0.5)]" style={{ backgroundColor: "hsl(218, 12%, 8%)" }}>
             <div className="mc-glare pointer-events-none absolute inset-0 z-40 opacity-30" aria-hidden="true" />
-            {/* dynamic island */}
             <div className="absolute left-1/2 top-[5px] z-50 h-[28px] w-[100px] -translate-x-1/2 rounded-full" style={{ background: "hsl(218, 12%, 8%)" }} aria-hidden="true">
               <div className="absolute right-3 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
             </div>
-            <img
-              src={appScreenSrc}
-              alt="Master Camera app interface"
-              className="absolute inset-0 h-full w-full object-cover object-top"
-              draggable={false}
-            />
+            <img src={appScreenSrc} alt="Master Camera app interface" className="absolute inset-0 h-full w-full object-cover object-top" draggable={false} />
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
+  );
+}
+
+// One sticky card in the stack. `scale`/`radius` animate it in as it covers the
+// previous card; `dim` darkens this card as the *next* one covers it.
+function StackCard({ children, scale, radius, dim, dark, className, z }) {
+  return (
+    <motion.section
+      style={{ scale, borderRadius: radius, zIndex: z }}
+      className={cn(
+        // 100lvh (largest viewport height): each card always fully covers the
+        // screen on iOS Safari without reflowing as the address bar shows/hides
+        // (100svh would leave a gap at the bottom once the toolbar collapses).
+        "mc-card sticky top-0 flex h-[100lvh] w-full flex-col items-center justify-center overflow-hidden px-6 will-change-transform",
+        className
+      )}
+    >
+      {children}
+      {dim && (
+        <motion.div
+          style={{ opacity: dim }}
+          className={cn("pointer-events-none absolute inset-0 z-[60]", dark ? "bg-black" : "bg-foreground")}
+          aria-hidden="true"
+        />
+      )}
+    </motion.section>
   );
 }
 
@@ -137,124 +151,117 @@ export function CinematicHero({
   appScreenSrc = "/app_screen.png",
   onJoinWaitlist,
 }) {
+  const stackRef = useRef(null);
+  // Progress 0 → 1 across the whole 3-card stack. 0 = card 1 full, 0.5 = card 2
+  // fully covering, 1 = card 3 fully covering.
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
+
+  // Card 2 enters over 0 → 0.5; card 3 enters over 0.5 → 1.
+  const c2scale = useTransform(scrollYProgress, [0, 0.5], [0.93, 1]);
+  const c2radius = useTransform(scrollYProgress, [0, 0.5], [44, 0]);
+  const c3scale = useTransform(scrollYProgress, [0.5, 1], [0.93, 1]);
+  const c3radius = useTransform(scrollYProgress, [0.5, 1], [44, 0]);
+  // Cards dim slightly as the next one rises (visible through the rounded corners).
+  const c1dim = useTransform(scrollYProgress, [0, 0.5], [0, 0.45]);
+  const c2dim = useTransform(scrollYProgress, [0.5, 1], [0, 0.45]);
+
   return (
     <div className="relative w-full font-sans text-foreground antialiased">
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
-      {/* ===== PANEL 1 — Headline + product ===== */}
-      <section className="mc-snap-page relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pt-24 pb-14 text-center">
-        <div className="mc-grid" aria-hidden="true" />
-        <div className="mc-grain" aria-hidden="true" />
-
-        <div className="relative z-10 flex flex-col items-center gap-9 md:gap-12">
-          <Reveal y={28}>
-            <h1 className="mx-auto max-w-4xl text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
-              {tagline1}
-              <span className="mt-1 block">{tagline2}</span>
-            </h1>
-          </Reveal>
-
-          <Reveal y={36} delay={0.12}>
-            <PhoneMockup appScreenSrc={appScreenSrc} />
-          </Reveal>
-        </div>
-
-        {/* scroll cue */}
-        <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-muted-foreground">
-          <ChevronDown className="mc-cue h-6 w-6" strokeWidth={2} aria-hidden="true" />
-        </div>
-      </section>
-
-      {/* ===== PANEL 2 — Value proposition + feature grid ===== */}
-      <section className="mc-snap-page relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-        <div className="mc-grid" aria-hidden="true" />
-
-        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-10 md:gap-14">
-          <div className="flex flex-col items-center gap-5">
-            <Reveal y={24}>
-              <h2 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-                {cardTagline}
-              </h2>
+      <div ref={stackRef} className="relative w-full">
+        {/* ===== CARD 1 — Headline + product ===== */}
+        <StackCard z={10} dim={c1dim} dark className="pt-24 pb-20 text-center">
+          <div className="mc-grid" aria-hidden="true" />
+          <div className="mc-spot" aria-hidden="true" />
+          <div className="mc-grain" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col items-center gap-8 md:gap-11">
+            <Reveal y={26}>
+              <h1 className="mx-auto max-w-4xl text-[2.5rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
+                {tagline1}
+                <span className="mt-1 block">{tagline2}</span>
+              </h1>
             </Reveal>
-            <Reveal y={20} delay={0.08}>
-              <div className="h-px w-12 bg-foreground/20" />
-            </Reveal>
-            <Reveal y={20} delay={0.12}>
-              <p className="max-w-2xl text-base leading-relaxed text-foreground/70 sm:text-lg">
-                {cardDescription}
-              </p>
-            </Reveal>
-            <Reveal y={20} delay={0.16}>
-              <p className="max-w-xl text-sm leading-relaxed text-foreground/40">
-                {cardAudience}
-              </p>
+            <Reveal y={34} delay={0.12}>
+              <PhoneMockup appScreenSrc={appScreenSrc} />
             </Reveal>
           </div>
+          <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-muted-foreground">
+            <ChevronDown className="mc-cue h-6 w-6" strokeWidth={2} aria-hidden="true" />
+          </div>
+        </StackCard>
 
-          {/* Feature grid — 2 cols on mobile, 4 on desktop */}
-          <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
-            {BADGES.map(({ Icon, label, color, iconBg }, i) => (
-              <Reveal key={label} y={20} delay={0.04 * i} amount={0.1}>
-                <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
-                    <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
-                  </div>
-                  <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">
-                    {label}
-                  </span>
-                </div>
+        {/* ===== CARD 2 — Value proposition + feature grid ===== */}
+        <StackCard z={20} scale={c2scale} radius={c2radius} dim={c2dim} dark className="mc-card-shadow py-20 text-center">
+          <div className="mc-grid" aria-hidden="true" />
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-9 md:gap-12">
+            <div className="flex flex-col items-center gap-5">
+              <Reveal y={24}>
+                <h2 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+                  {cardTagline}
+                </h2>
               </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== PANEL 3 — CTA ===== */}
-      <section className="mc-snap-page relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-        <div className="mc-grid" aria-hidden="true" />
-        <div className="mc-grain" aria-hidden="true" />
-
-        <div className="relative z-10 flex flex-col items-center gap-6">
-          <Reveal y={24}>
-            <h2 className="mc-gradient-text text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              {ctaHeading}
-            </h2>
-          </Reveal>
-          <Reveal y={20} delay={0.1}>
-            <p className="max-w-md text-base font-light leading-relaxed text-muted-foreground sm:text-lg">
-              {ctaDescription}
-            </p>
-          </Reveal>
-
-          <Reveal y={24} delay={0.18}>
-            <div className="mt-2 flex w-full max-w-xs flex-col gap-4">
-              <button
-                onClick={onJoinWaitlist}
-                className="mc-btn group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
-                aria-label="Join the waitlist"
-              >
-                <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
-                  <rect width="28" height="28" rx="6" fill="#0F172A" />
-                  <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
-                  <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
-                  <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
-                  <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
-                </svg>
-                <div className="text-left">
-                  <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
-                  <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
-                </div>
-              </button>
-              <a
-                href="#features"
-                className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <span className="text-xl font-semibold tracking-tight">How It Works</span>
-              </a>
+              <Reveal y={18} delay={0.08}><div className="h-px w-12 bg-foreground/20" /></Reveal>
+              <Reveal y={18} delay={0.12}>
+                <p className="max-w-2xl text-[0.95rem] leading-relaxed text-foreground/70 sm:text-lg">{cardDescription}</p>
+              </Reveal>
+              <Reveal y={18} delay={0.16}>
+                <p className="max-w-xl text-xs leading-relaxed text-foreground/40 sm:text-sm">{cardAudience}</p>
+              </Reveal>
             </div>
-          </Reveal>
-        </div>
-      </section>
+            <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
+              {BADGES.map(({ Icon, label, color, iconBg }, i) => (
+                <Reveal key={label} y={18} delay={0.05 * i} amount={0.1}>
+                  <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
+                      <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
+                    </div>
+                    <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">{label}</span>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </StackCard>
+
+        {/* ===== CARD 3 — CTA ===== */}
+        <StackCard z={30} scale={c3scale} radius={c3radius} className="mc-card-shadow py-20 text-center">
+          <div className="mc-grid" aria-hidden="true" />
+          <div className="mc-spot" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <Reveal y={24}>
+              <h2 className="mc-gradient-text text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{ctaHeading}</h2>
+            </Reveal>
+            <Reveal y={18} delay={0.1}>
+              <p className="max-w-md text-base font-light leading-relaxed text-muted-foreground sm:text-lg">{ctaDescription}</p>
+            </Reveal>
+            <Reveal y={22} delay={0.18}>
+              <div className="mt-2 flex w-full max-w-xs flex-col gap-4">
+                <button
+                  onClick={onJoinWaitlist}
+                  className="mc-btn group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
+                  aria-label="Join the waitlist"
+                >
+                  <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
+                    <rect width="28" height="28" rx="6" fill="#0F172A" />
+                    <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
+                    <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+                    <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+                    <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
+                  </svg>
+                  <div className="text-left">
+                    <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
+                    <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+                  </div>
+                </button>
+                <a href="#features" className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary">
+                  <span className="text-xl font-semibold tracking-tight">How It Works</span>
+                </a>
+              </div>
+            </Reveal>
+          </div>
+        </StackCard>
+      </div>
     </div>
   );
 }
