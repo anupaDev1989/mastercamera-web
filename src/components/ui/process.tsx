@@ -92,7 +92,7 @@ const PROCESS_PHASES = [
   },
 ]
 
-const PEEK_OFFSET = 10
+const PEEK_OFFSET = 14
 
 const Process = () => {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -141,37 +141,37 @@ const Process = () => {
       >
         {/* Sticky viewport */}
         <div className="sticky top-0 h-screen overflow-hidden">
-          <div className="h-full mx-auto max-w-6xl px-6 sm:px-8 xl:px-12 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
+          <div className="h-full mx-auto max-w-6xl px-6 sm:px-8 xl:px-12 flex flex-col md:flex-row items-center justify-center gap-7 md:gap-12">
 
             {/* Image card stack — top on mobile, right on desktop */}
             <div className="order-1 md:order-2 flex-shrink-0 flex items-center justify-center">
               <div
                 className="relative"
                 style={{
-                  width: "min(320px, 72vw)",
-                  height: "min(440px, 96vw)",
+                  width: "min(300px, 64vw)",
+                  height: "min(420px, 46vh)",
                 }}
               >
                 {PROCESS_PHASES.map((phase, i) => {
-                  const d = activeIndex - i
-                  const isFuture = i > activeIndex
-                  const isPast = i < activeIndex
+                  // Only mount the active card and the ones already passed.
+                  // Future cards stay out of the DOM so they can never bleed
+                  // over the text — they animate in from below as you scroll.
+                  if (i > activeIndex) return null
+
+                  const d = activeIndex - i // 0 = active, >0 = past
 
                   return (
                     <motion.div
                       key={phase.id}
                       className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl"
+                      initial={{ y: "60%", scale: 0.92, opacity: 0 }}
                       animate={{
-                        y: isFuture ? "100%" : isPast ? -(d * PEEK_OFFSET) : 0,
-                        zIndex: isFuture
-                          ? 0
-                          : isPast
-                          ? PROCESS_PHASES.length - d
-                          : PROCESS_PHASES.length + 1,
-                        scale: isPast ? Math.max(0.94, 1 - d * 0.015) : 1,
-                        opacity: isFuture ? 0 : d > 4 ? 0 : 1,
+                        y: -(d * PEEK_OFFSET),
+                        zIndex: PROCESS_PHASES.length - d,
+                        scale: Math.max(0.9, 1 - d * 0.04),
+                        opacity: d > 3 ? 0 : 1,
                       }}
-                      transition={{ type: "spring", stiffness: 260, damping: 28 }}
+                      transition={{ type: "spring", stiffness: 280, damping: 30 }}
                     >
                       <img
                         src={phase.image}
