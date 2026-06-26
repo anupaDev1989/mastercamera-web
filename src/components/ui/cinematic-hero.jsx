@@ -140,33 +140,24 @@ const BADGES = [
   { Icon: Archive,     label: "Zip & Share",       color: "text-orange-600",  iconBg: "bg-orange-500/15  border-orange-500/30"  },
 ];
 
-// Mobile-only styles: an auto-cycling, seamless feature marquee + a lighter
-// hero card shadow that reads well on the light page background.
+// Mobile-only styles: the feature marquee track (motion is driven in JS via
+// requestAnimationFrame for reliability — CSS keyframe marquees were silently
+// frozen on devices with "Reduce Motion" enabled), a lighter hero card shadow
+// that reads well on the light page background, and page-by-page scroll snapping
+// so each hero screen lands one at a time like the desktop cinematic flow.
 const MOBILE_STYLES = `
-  @keyframes mc-badge-marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
   .mc-marquee-mask {
     overflow: hidden;
     -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
     mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
   }
-  @keyframes mc-badge-marquee-reverse {
-    from { transform: translateX(-50%); }
-    to   { transform: translateX(0); }
-  }
-  .mc-marquee-track {
+  .mc-marquee-row {
     display: flex;
     flex-flow: row nowrap;
     width: max-content;
-    animation: mc-badge-marquee 30s linear infinite;
     will-change: transform;
+    transform: translate3d(0, 0, 0);
   }
-  .mc-marquee-track--reverse {
-    animation: mc-badge-marquee-reverse 34s linear infinite;
-  }
-  .mc-marquee-track:active { animation-play-state: paused; }
   .mc-marquee-item { margin-right: 10px; }
   .mc-hero-card {
     background: hsl(var(--card));
@@ -176,14 +167,74 @@ const MOBILE_STYLES = `
         0 8px 20px -12px rgba(0,0,0,0.25),
         inset 0 1px 2px hsl(var(--foreground) / 0.08);
   }
-  @media (prefers-reduced-motion: reduce) {
-    .mc-marquee-track { animation: none; }
+
+  /* Page-by-page snapping on phones: each hero screen ("Your camera…",
+     "Feels familiar…", "Start capturing.") lands one at a time. */
+  @media (max-width: 767px) {
+    html { scroll-snap-type: y mandatory; }
+    .mc-snap-page { scroll-snap-align: start; scroll-snap-stop: always; }
   }
 `;
 
+// A continuously drifting row of feature badges. Motion is driven in JS (rAF)
+// rather than CSS keyframes so it always animates — CSS marquees were frozen on
+// devices with "Reduce Motion" on. The badge set is duplicated so the row can
+// wrap seamlessly when its offset passes one full set width.
+function FeatureMarquee({ reverse = false, speed = 26 }) {
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let raf = 0;
+    let last = 0;
+    let offset = 0; // px; both rows start aligned and drift apart immediately
+    const dir = reverse ? 1 : -1;
+
+    const step = (ts) => {
+      if (!last) last = ts;
+      const dt = Math.min(ts - last, 64); // clamp jumps after the tab was hidden
+      last = ts;
+      const half = track.scrollWidth / 2 || 1; // width of a single (un-duplicated) set
+      offset += dir * speed * (dt / 1000);
+      // Keep offset within (-half, 0]; the two sets are identical so wrapping is invisible.
+      if (offset <= -half) offset += half;
+      if (offset > 0) offset -= half;
+      track.style.transform = `translate3d(${offset}px, 0, 0)`;
+      raf = requestAnimationFrame(step);
+    };
+
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [reverse, speed]);
+
+  const loop = [...BADGES, ...BADGES];
+
+  return (
+    <div className="mc-marquee-mask">
+      <div ref={trackRef} className="mc-marquee-row">
+        {loop.map(({ Icon, label, color, iconBg }, i) => (
+          <div
+            key={`${label}-${i}`}
+            className="feature-badge-cin mc-marquee-item flex shrink-0 items-center gap-2 rounded-xl px-3 py-2"
+          >
+            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconBg}`}>
+              <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
+            </div>
+            <span className="whitespace-nowrap text-xs font-semibold tracking-tight text-foreground/90">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Phones can't run the pinned cinematic scroll timeline (it never engages, so the
 // card screen vanished entirely). Render a dedicated static mobile hero instead:
-// same copy, the app mockup, and an auto-cycling feature carousel.
+// same copy and an auto-cycling feature carousel, laid out as full-screen pages
+// that snap one at a time.
 function MobileHero({
   tagline1,
   tagline2,
@@ -195,8 +246,6 @@ function MobileHero({
   appScreenSrc,
   onJoinWaitlist,
 }) {
-  const loop = [...BADGES, ...BADGES];
-
   return (
     <div className="relative w-full overflow-hidden font-sans text-foreground antialiased">
       <style dangerouslySetInnerHTML={{ __html: INJECTED_STYLES + MOBILE_STYLES }} />
@@ -204,7 +253,7 @@ function MobileHero({
       <div className="bg-grid-cinematic pointer-events-none absolute inset-0 z-0 opacity-40" aria-hidden="true" />
 
       {/* PAGE 1 — Intro headline (mirrors the desktop first screen) */}
-      <section className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 text-center">
+      <section className="mc-snap-page relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 text-center">
         <h1 className="text-3d-matte-cin mb-1 text-4xl font-bold tracking-tight sm:text-5xl">
           {tagline1}
         </h1>
@@ -214,7 +263,7 @@ function MobileHero({
       </section>
 
       {/* PAGE 2 — "Feels familiar…" text + auto-cycling feature carousel */}
-      <section className="relative z-10 flex min-h-[100svh] flex-col justify-center px-4 py-10">
+      <section className="mc-snap-page relative z-10 flex min-h-[100svh] flex-col justify-center px-4 py-10">
         <div className="mc-hero-card relative flex flex-col items-center gap-8 overflow-hidden rounded-[28px] px-5 py-10">
           {/* Text */}
           <div className="relative z-10 flex flex-col items-center gap-4 text-center">
@@ -230,38 +279,17 @@ function MobileHero({
             </p>
           </div>
 
-          {/* Auto-cycling feature carousel — two rows drifting in opposite
-              directions so the tags are always visibly in motion. Inline flex
-              styles guarantee a horizontal track regardless of the cascade. */}
+          {/* Auto-cycling feature carousel — two JS-driven rows drifting in
+              opposite directions so the tags are always visibly in motion. */}
           <div className="relative z-10 -mx-5 flex w-[calc(100%+2.5rem)] flex-col gap-3">
-            {[0, 1].map((row) => (
-              <div key={row} className="mc-marquee-mask">
-                <div
-                  className={cn("mc-marquee-track", row === 1 && "mc-marquee-track--reverse")}
-                  style={{ display: "flex", flexFlow: "row nowrap", width: "max-content" }}
-                >
-                  {loop.map(({ Icon, label, color, iconBg }, i) => (
-                    <div
-                      key={`${row}-${label}-${i}`}
-                      className="feature-badge-cin mc-marquee-item flex shrink-0 items-center gap-2 rounded-xl px-3 py-2"
-                    >
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconBg}`}>
-                        <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
-                      </div>
-                      <span className="whitespace-nowrap text-xs font-semibold tracking-tight text-foreground/90">
-                        {label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <FeatureMarquee speed={26} />
+            <FeatureMarquee reverse speed={22} />
           </div>
         </div>
       </section>
 
       {/* PAGE 3 — CTA ("Start capturing.") */}
-      <section className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 py-16 text-center">
+      <section className="mc-snap-page relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 py-16 text-center">
         <h2 className="text-silver-matte-cin mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
           {ctaHeading}
         </h2>
