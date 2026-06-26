@@ -1,26 +1,30 @@
 // src/components/ui/cinematic-hero.jsx
 //
-// Apple-style "stacked cards" hero. Three full-screen cards are sticky-pinned in
-// a tall track; as you scroll, each next card slides up and covers the previous.
+// Hero: three full-screen "cards" that scroll-snap one at a time.
 //
-// Occlusion is guaranteed by giving the *sticky* element a solid, full-bleed,
-// opaque backstop (no transform on it). The scale/round animation lives on an
-// INNER card layer, so even while it's scaled down or rounded, the gap around it
-// reveals the opaque backstop — never the card beneath. (The earlier bug: the
-// background lived only on the scaled inner layer, so the surrounding gap was
-// transparent and the previous card bled through.)
-//
-// Card heights are measured in JS (px) and updated on resize, so every card
-// exactly fills the viewport in every browser without depending on svh/lvh/dvh.
-import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
-import { cn } from "@/lib/utils";
+// IMPORTANT (why this is built the way it is): earlier versions stacked the
+// cards as overlapping position:sticky layers. That looked fine in Chromium but
+// rendered translucent in Safari/WebKit (overlapping sticky + transform layers
+// composite differently there) — every card bled through the next. The robust
+// fix is to NOT overlap cards at all: each card is an ordinary, fully-opaque,
+// full-viewport section in normal flow. With no overlapping layers, bleed-through
+// is structurally impossible in any browser. Backgrounds use the project's
+// Tailwind `bg-*` tokens (which the rest of the page already renders correctly).
+// A slight negative margin + rounded top + top shadow gives the "next card rising
+// over the last" feel without any real overlap of content.
+import React from "react";
 import Reveal from "@/components/Reveal";
+import { motion } from "motion/react";
 import {
   Layers, ShieldCheck, Signature, Tag, MapPin, Columns2, Archive, Captions, ChevronDown,
 } from "lucide-react";
 
 const STYLES = `
+  /* Card-by-card snapping. proximity (not mandatory) so the feature sections
+     below the hero stay freely scrollable and never trap the scroll. */
+  html { scroll-snap-type: y proximity; }
+  .mc-snap { scroll-snap-align: start; scroll-snap-stop: always; }
+
   .mc-grain {
     position: absolute; inset: 0; pointer-events: none; z-index: 1;
     opacity: 0.035; mix-blend-mode: overlay;
@@ -40,18 +44,10 @@ const STYLES = `
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background: radial-gradient(560px circle at 50% 36%, hsl(var(--primary) / 0.12), transparent 62%);
   }
-
-  /* Solid opaque backstop on the sticky element — this is what guarantees a card
-     fully hides the ones beneath it. */
-  .mc-backstop { background-color: hsl(var(--background)); }
-
-  /* The visible card surface — a slightly lighter, elevated tone so the rounded
-     top edge reads as a card sliding up over the backstop. Fully opaque. */
-  .mc-card {
-    background-color: hsl(var(--card));
-    background-image: radial-gradient(130% 90% at 50% 0%, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
-  }
-  .mc-card-shadow { box-shadow: 0 -22px 50px -26px rgba(0,0,0,0.4), 0 -1px 0 hsl(var(--border)); }
+  /* The card edge: a rounded top + a soft shadow ABOVE the card, so the next card
+     reads as rising over the previous one. */
+  .mc-card-top { border-top-left-radius: 2.25rem; border-top-right-radius: 2.25rem;
+    box-shadow: 0 -22px 50px -26px rgba(0,0,0,0.45); }
 
   .mc-gradient-text {
     background: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.55) 100%);
@@ -126,31 +122,6 @@ function PhoneMockup({ appScreenSrc }) {
   );
 }
 
-// One card in the stack.
-//   • OUTER <section>: the only sticky element. Solid opaque backstop, fixed
-//     pixel height, NO transform → always fully occludes cards beneath it.
-//   • INNER motion.div: the visible card surface. Carries the scale/round
-//     animation; its rounded corners reveal the opaque backstop, never card 1.
-function StackCard({ children, height, scale, radius, z, shadow, className }) {
-  return (
-    <section
-      style={{ zIndex: z, height: height ? `${height}px` : "100svh", isolation: "isolate" }}
-      className="mc-backstop sticky top-0 w-full overflow-hidden"
-    >
-      <motion.div
-        style={{ scale, borderRadius: radius }}
-        className={cn(
-          "mc-card relative flex h-full w-full flex-col items-center justify-center overflow-hidden px-6",
-          shadow && "mc-card-shadow",
-          className
-        )}
-      >
-        {children}
-      </motion.div>
-    </section>
-  );
-}
-
 export function CinematicHero({
   tagline1 = "Capture, organize, edit.",
   tagline2 = "No chaos. All offline.",
@@ -162,127 +133,102 @@ export function CinematicHero({
   appScreenSrc = "/app_screen.png",
   onJoinWaitlist,
 }) {
-  const stackRef = useRef(null);
-
-  // Measure the viewport height so each card exactly fills the screen in every
-  // browser (no svh/lvh/dvh quirks). Client-only app, so window is available.
-  const [vh, setVh] = useState(() => (typeof window !== "undefined" ? window.innerHeight : 800));
-  useEffect(() => {
-    const onResize = () => setVh(window.innerHeight);
-    onResize();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("orientationchange", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
-    };
-  }, []);
-
-  // 0 = card 1 full, 0.5 = card 2 fully covering, 1 = card 3 fully covering.
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
-  const c2scale = useTransform(scrollYProgress, [0, 0.5], [0.96, 1]);
-  const c2radius = useTransform(scrollYProgress, [0, 0.5], [40, 0]);
-  const c3scale = useTransform(scrollYProgress, [0.5, 1], [0.96, 1]);
-  const c3radius = useTransform(scrollYProgress, [0.5, 1], [40, 0]);
-
   return (
     <div className="relative w-full font-sans text-foreground antialiased">
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
-      <div ref={stackRef} className="relative w-full">
-        {/* ===== CARD 1 — Headline ===== */}
-        <StackCard z={10} height={vh} className="pt-24 pb-20 text-center">
-          <div className="mc-grid" aria-hidden="true" />
-          <div className="mc-spot" aria-hidden="true" />
-          <div className="mc-grain" aria-hidden="true" />
-          <Reveal y={26} className="relative z-10">
-            <h1 className="mx-auto max-w-4xl text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
-              {tagline1}
-              <span className="mt-1 block">{tagline2}</span>
-            </h1>
-          </Reveal>
-          <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-muted-foreground">
-            <ChevronDown className="mc-cue h-6 w-6" strokeWidth={2} aria-hidden="true" />
-          </div>
-        </StackCard>
+      {/* ===== CARD 1 — Headline ===== */}
+      <section className="mc-snap relative z-[1] flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 pt-24 pb-20 text-center">
+        <div className="mc-grid" aria-hidden="true" />
+        <div className="mc-spot" aria-hidden="true" />
+        <div className="mc-grain" aria-hidden="true" />
+        <Reveal y={26} className="relative z-10">
+          <h1 className="mx-auto max-w-4xl text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
+            {tagline1}
+            <span className="mt-1 block">{tagline2}</span>
+          </h1>
+        </Reveal>
+        <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-muted-foreground">
+          <ChevronDown className="mc-cue h-6 w-6" strokeWidth={2} aria-hidden="true" />
+        </div>
+      </section>
 
-        {/* ===== CARD 2 — Value proposition + product + feature grid =====
-            Phone mockup lives here, desktop only (hidden on mobile). */}
-        <StackCard z={20} height={vh} scale={c2scale} radius={c2radius} shadow className="py-16 md:py-20">
-          <div className="mc-grid" aria-hidden="true" />
-          <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2 md:gap-14">
-            <div className="hidden md:flex md:justify-center">
-              <PhoneMockup appScreenSrc={appScreenSrc} />
+      {/* ===== CARD 2 — Value proposition + product + feature grid =====
+          Phone mockup is here, desktop only (hidden on mobile). */}
+      <section className="mc-snap mc-card-top relative z-[2] -mt-10 flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-card px-6 py-16 md:py-20">
+        <div className="mc-grid" aria-hidden="true" />
+        <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2 md:gap-14">
+          <div className="hidden md:flex md:justify-center">
+            <PhoneMockup appScreenSrc={appScreenSrc} />
+          </div>
+          <div className="flex flex-col items-center gap-8 text-center md:items-start md:text-left">
+            <div className="flex flex-col items-center gap-5 md:items-start">
+              <Reveal y={24}>
+                <h2 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+                  {cardTagline}
+                </h2>
+              </Reveal>
+              <Reveal y={18} delay={0.08}><div className="h-px w-12 bg-foreground/20" /></Reveal>
+              <Reveal y={18} delay={0.12}>
+                <p className="max-w-xl text-[0.95rem] leading-relaxed text-foreground/70 sm:text-base">{cardDescription}</p>
+              </Reveal>
+              <Reveal y={18} delay={0.16}>
+                <p className="max-w-lg text-xs leading-relaxed text-foreground/40 sm:text-sm">{cardAudience}</p>
+              </Reveal>
             </div>
-            <div className="flex flex-col items-center gap-8 text-center md:items-start md:text-left">
-              <div className="flex flex-col items-center gap-5 md:items-start">
-                <Reveal y={24}>
-                  <h2 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-                    {cardTagline}
-                  </h2>
-                </Reveal>
-                <Reveal y={18} delay={0.08}><div className="h-px w-12 bg-foreground/20" /></Reveal>
-                <Reveal y={18} delay={0.12}>
-                  <p className="max-w-xl text-[0.95rem] leading-relaxed text-foreground/70 sm:text-base">{cardDescription}</p>
-                </Reveal>
-                <Reveal y={18} delay={0.16}>
-                  <p className="max-w-lg text-xs leading-relaxed text-foreground/40 sm:text-sm">{cardAudience}</p>
-                </Reveal>
-              </div>
-              <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3">
-                {BADGES.map(({ Icon, label, color, iconBg }, i) => (
-                  <Reveal key={label} y={18} delay={0.05 * i} amount={0.1}>
-                    <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
-                        <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
-                      </div>
-                      <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">{label}</span>
+            <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3">
+              {BADGES.map(({ Icon, label, color, iconBg }, i) => (
+                <Reveal key={label} y={18} delay={0.05 * i} amount={0.1}>
+                  <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
+                      <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
                     </div>
-                  </Reveal>
-                ))}
-              </div>
+                    <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">{label}</span>
+                  </div>
+                </Reveal>
+              ))}
             </div>
           </div>
-        </StackCard>
+        </div>
+      </section>
 
-        {/* ===== CARD 3 — CTA ===== */}
-        <StackCard z={30} height={vh} scale={c3scale} radius={c3radius} shadow className="py-20 text-center">
-          <div className="mc-grid" aria-hidden="true" />
-          <div className="mc-spot" aria-hidden="true" />
-          <div className="relative z-10 flex flex-col items-center gap-6">
-            <Reveal y={24}>
-              <h2 className="mc-gradient-text text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{ctaHeading}</h2>
-            </Reveal>
-            <Reveal y={18} delay={0.1}>
-              <p className="max-w-md text-base font-light leading-relaxed text-muted-foreground sm:text-lg">{ctaDescription}</p>
-            </Reveal>
-            <Reveal y={22} delay={0.18}>
-              <div className="mt-2 flex w-full max-w-xs flex-col gap-4">
-                <button
-                  onClick={onJoinWaitlist}
-                  className="mc-btn group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
-                  aria-label="Join the waitlist"
-                >
-                  <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
-                    <rect width="28" height="28" rx="6" fill="#0F172A" />
-                    <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
-                    <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
-                    <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
-                    <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
-                  </svg>
-                  <div className="text-left">
-                    <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
-                    <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
-                  </div>
-                </button>
-                <a href="#features" className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary">
-                  <span className="text-xl font-semibold tracking-tight">How It Works</span>
-                </a>
-              </div>
-            </Reveal>
-          </div>
-        </StackCard>
-      </div>
+      {/* ===== CARD 3 — CTA ===== */}
+      <section className="mc-snap mc-card-top relative z-[3] -mt-10 flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-background px-6 py-20 text-center">
+        <div className="mc-grid" aria-hidden="true" />
+        <div className="mc-spot" aria-hidden="true" />
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <Reveal y={24}>
+            <h2 className="mc-gradient-text text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{ctaHeading}</h2>
+          </Reveal>
+          <Reveal y={18} delay={0.1}>
+            <p className="max-w-md text-base font-light leading-relaxed text-muted-foreground sm:text-lg">{ctaDescription}</p>
+          </Reveal>
+          <Reveal y={22} delay={0.18}>
+            <div className="mt-2 flex w-full max-w-xs flex-col gap-4">
+              <button
+                onClick={onJoinWaitlist}
+                className="mc-btn group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
+                aria-label="Join the waitlist"
+              >
+                <svg className="h-7 w-7 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden="true">
+                  <rect width="28" height="28" rx="6" fill="#0F172A" />
+                  <rect x="4" y="4" width="9" height="9" rx="2" fill="#F97316" />
+                  <rect x="15" y="4" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+                  <rect x="4" y="15" width="9" height="9" rx="2" fill="#FB923C" opacity="0.7" />
+                  <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
+                </svg>
+                <div className="text-left">
+                  <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first with</div>
+                  <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+                </div>
+              </button>
+              <a href="#features" className="flex items-center justify-center gap-3 rounded-[1.25rem] border border-border bg-foreground/5 px-8 py-4 text-foreground transition-all duration-300 hover:bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary">
+                <span className="text-xl font-semibold tracking-tight">How It Works</span>
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
     </div>
   );
 }
