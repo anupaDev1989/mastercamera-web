@@ -152,11 +152,19 @@ const MOBILE_STYLES = `
     -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
     mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
   }
+  @keyframes mc-badge-marquee-reverse {
+    from { transform: translateX(-50%); }
+    to   { transform: translateX(0); }
+  }
   .mc-marquee-track {
     display: flex;
+    flex-flow: row nowrap;
     width: max-content;
-    animation: mc-badge-marquee 26s linear infinite;
+    animation: mc-badge-marquee 30s linear infinite;
     will-change: transform;
+  }
+  .mc-marquee-track--reverse {
+    animation: mc-badge-marquee-reverse 34s linear infinite;
   }
   .mc-marquee-track:active { animation-play-state: paused; }
   .mc-marquee-item { margin-right: 10px; }
@@ -195,8 +203,8 @@ function MobileHero({
       <div className="film-grain" aria-hidden="true" />
       <div className="bg-grid-cinematic pointer-events-none absolute inset-0 z-0 opacity-40" aria-hidden="true" />
 
-      {/* Intro headline */}
-      <section className="relative z-10 flex flex-col items-center px-5 pt-24 pb-10 text-center">
+      {/* PAGE 1 — Intro headline (mirrors the desktop first screen) */}
+      <section className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 text-center">
         <h1 className="text-3d-matte-cin mb-1 text-4xl font-bold tracking-tight sm:text-5xl">
           {tagline1}
         </h1>
@@ -205,9 +213,9 @@ function MobileHero({
         </h1>
       </section>
 
-      {/* Card — same text, app mockup, auto-cycling feature carousel */}
-      <section className="relative z-10 px-4 pb-12">
-        <div className="mc-hero-card relative flex flex-col items-center gap-7 overflow-hidden rounded-[28px] px-5 py-8">
+      {/* PAGE 2 — "Feels familiar…" text + auto-cycling feature carousel */}
+      <section className="relative z-10 flex min-h-[100svh] flex-col justify-center px-4 py-10">
+        <div className="mc-hero-card relative flex flex-col items-center gap-8 overflow-hidden rounded-[28px] px-5 py-10">
           {/* Text */}
           <div className="relative z-10 flex flex-col items-center gap-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.15] tracking-tight text-foreground">
@@ -222,31 +230,38 @@ function MobileHero({
             </p>
           </div>
 
-          {/* Auto-cycling feature carousel */}
-          <div className="relative z-10 -mx-5 w-[calc(100%+2.5rem)]">
-            <div className="mc-marquee-mask">
-              <div className="mc-marquee-track">
-                {loop.map(({ Icon, label, color, iconBg }, i) => (
-                  <div
-                    key={`${label}-${i}`}
-                    className="feature-badge-cin mc-marquee-item flex shrink-0 items-center gap-2 rounded-xl px-3 py-2"
-                  >
-                    <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconBg}`}>
-                      <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
+          {/* Auto-cycling feature carousel — two rows drifting in opposite
+              directions so the tags are always visibly in motion. Inline flex
+              styles guarantee a horizontal track regardless of the cascade. */}
+          <div className="relative z-10 -mx-5 flex w-[calc(100%+2.5rem)] flex-col gap-3">
+            {[0, 1].map((row) => (
+              <div key={row} className="mc-marquee-mask">
+                <div
+                  className={cn("mc-marquee-track", row === 1 && "mc-marquee-track--reverse")}
+                  style={{ display: "flex", flexFlow: "row nowrap", width: "max-content" }}
+                >
+                  {loop.map(({ Icon, label, color, iconBg }, i) => (
+                    <div
+                      key={`${row}-${label}-${i}`}
+                      className="feature-badge-cin mc-marquee-item flex shrink-0 items-center gap-2 rounded-xl px-3 py-2"
+                    >
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconBg}`}>
+                        <Icon className={`h-[15px] w-[15px] ${color}`} strokeWidth={1.75} />
+                      </div>
+                      <span className="whitespace-nowrap text-xs font-semibold tracking-tight text-foreground/90">
+                        {label}
+                      </span>
                     </div>
-                    <span className="whitespace-nowrap text-xs font-semibold tracking-tight text-foreground/90">
-                      {label}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative z-10 flex flex-col items-center px-5 pt-2 pb-16 text-center">
+      {/* PAGE 3 — CTA ("Start capturing.") */}
+      <section className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-5 py-16 text-center">
         <h2 className="text-silver-matte-cin mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
           {ctaHeading}
         </h2>
