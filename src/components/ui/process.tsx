@@ -141,23 +141,17 @@ const Process = () => {
       >
         {/* Sticky viewport */}
         <div className="sticky top-0 h-screen overflow-hidden">
-          <div className="h-full mx-auto max-w-5xl px-6 sm:px-8 xl:px-12 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-14">
+          <div className="h-full mx-auto max-w-6xl px-6 sm:px-8 xl:px-12 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
 
             {/* Image card stack — top on mobile, right on desktop */}
             <div className="order-1 md:order-2 flex-shrink-0 flex items-center justify-center">
               <div
                 className="relative"
                 style={{
-                  width: "min(240px, 52vw)",
-                  height: "min(320px, 68vw)",
+                  width: "min(320px, 72vw)",
+                  height: "min(440px, 96vw)",
                 }}
               >
-                {/* Extra top space so peeking cards are visible */}
-                <div
-                  className="absolute inset-0"
-                  style={{ top: `-${(PROCESS_PHASES.length - 1) * PEEK_OFFSET}px` }}
-                />
-
                 {PROCESS_PHASES.map((phase, i) => {
                   const d = activeIndex - i
                   const isFuture = i > activeIndex
@@ -168,14 +162,14 @@ const Process = () => {
                       key={phase.id}
                       className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl"
                       animate={{
-                        y: isFuture ? "110%" : isPast ? -(d * PEEK_OFFSET) : 0,
+                        y: isFuture ? "100%" : isPast ? -(d * PEEK_OFFSET) : 0,
                         zIndex: isFuture
                           ? 0
                           : isPast
                           ? PROCESS_PHASES.length - d
                           : PROCESS_PHASES.length + 1,
                         scale: isPast ? Math.max(0.94, 1 - d * 0.015) : 1,
-                        opacity: d > 4 ? 0 : 1,
+                        opacity: isFuture ? 0 : d > 4 ? 0 : 1,
                       }}
                       transition={{ type: "spring", stiffness: 260, damping: 28 }}
                     >
@@ -193,50 +187,67 @@ const Process = () => {
             </div>
 
             {/* Text panel — bottom on mobile, left on desktop */}
-            <div className="order-2 md:order-1 flex-1 min-w-0">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeIndex}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -14 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="space-y-3"
-                >
-                  <p className="text-xs text-muted-foreground tracking-widest uppercase">
-                    {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                    {String(PROCESS_PHASES.length).padStart(2, "0")}
-                  </p>
-                  <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                    {activePhase.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-foreground/80 sm:text-base">
-                    {activePhase.description}
-                  </p>
-                  <ul className="space-y-1.5 text-sm sm:text-base">
-                    {activePhase.bullets.map((b) => (
-                      <li key={b} className="flex gap-2 items-start">
-                        <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Progress dots */}
-              <div className="mt-5 flex gap-1.5 items-center">
+            <div className="order-2 md:order-1 flex-1 min-w-0 flex gap-5 items-start">
+              {/* Vertical progress bar */}
+              <div className="hidden md:flex flex-col gap-1.5 pt-2 flex-shrink-0">
                 {PROCESS_PHASES.map((_, i) => (
                   <div
                     key={i}
                     className={cn(
                       "rounded-full transition-all duration-300",
                       i === activeIndex
-                        ? "w-4 h-1.5 bg-primary"
+                        ? "w-1.5 h-5 bg-primary"
                         : "w-1.5 h-1.5 bg-muted-foreground/30"
                     )}
                   />
                 ))}
+              </div>
+
+              <div className="flex-1">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeIndex}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -14 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="space-y-4"
+                  >
+                    <p className="text-xs text-muted-foreground tracking-widest uppercase">
+                      {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                      {String(PROCESS_PHASES.length).padStart(2, "0")}
+                    </p>
+                    <h3 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                      {activePhase.title}
+                    </h3>
+                    <p className="text-base leading-relaxed text-foreground/80 sm:text-lg">
+                      {activePhase.description}
+                    </p>
+                    <ul className="space-y-2 text-base sm:text-lg">
+                      {activePhase.bullets.map((b) => (
+                        <li key={b} className="flex gap-2.5 items-start">
+                          <span className="mt-[9px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Mobile progress dots (horizontal) */}
+                <div className="mt-5 flex md:hidden gap-1.5 items-center">
+                  {PROCESS_PHASES.map((_, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "rounded-full transition-all duration-300",
+                        i === activeIndex
+                          ? "w-4 h-1.5 bg-primary"
+                          : "w-1.5 h-1.5 bg-muted-foreground/30"
+                      )}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
