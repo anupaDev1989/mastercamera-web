@@ -1,12 +1,18 @@
 // src/components/ui/cinematic-hero.jsx
 //
 // Apple-style "stacked cards" hero. Three full-screen cards are sticky-pinned in
-// a tall track; as you scroll, each next card slides up and covers the previous
-// one, settling from rounded + slightly scaled-down into a full-bleed panel.
-// This reads as genuine card-by-card scrolling (not a continuous text flow),
-// stays buttery on iOS Safari (transform/opacity only, 100svh units, sticky —
-// all rock-solid there), and never traps scroll the way mandatory snap does.
-import React, { useRef } from "react";
+// a tall track; as you scroll, each next card slides up and covers the previous.
+//
+// Occlusion is guaranteed by giving the *sticky* element a solid, full-bleed,
+// opaque backstop (no transform on it). The scale/round animation lives on an
+// INNER card layer, so even while it's scaled down or rounded, the gap around it
+// reveals the opaque backstop — never the card beneath. (The earlier bug: the
+// background lived only on the scaled inner layer, so the surrounding gap was
+// transparent and the previous card bled through.)
+//
+// Card heights are measured in JS (px) and updated on resize, so every card
+// exactly fills the viewport in every browser without depending on svh/lvh/dvh.
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
 import Reveal from "@/components/Reveal";
@@ -30,18 +36,22 @@ const STYLES = `
     -webkit-mask-image: radial-gradient(ellipse 85% 65% at center, black 0%, transparent 78%);
     mask-image: radial-gradient(ellipse 85% 65% at center, black 0%, transparent 78%);
   }
-  /* coloured spotlight glow behind a headline — adds life without heaviness */
   .mc-spot {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background: radial-gradient(560px circle at 50% 36%, hsl(var(--primary) / 0.12), transparent 62%);
   }
-  /* Solid opaque base FIRST (guarantees cards fully occlude the ones beneath —
-     a gradient alone rendered translucent on iOS Safari), with a soft tint on top. */
+
+  /* Solid opaque backstop on the sticky element — this is what guarantees a card
+     fully hides the ones beneath it. */
+  .mc-backstop { background-color: hsl(var(--background)); }
+
+  /* The visible card surface — a slightly lighter, elevated tone so the rounded
+     top edge reads as a card sliding up over the backstop. Fully opaque. */
   .mc-card {
-    background-color: hsl(var(--background));
-    background-image: radial-gradient(120% 80% at 50% 0%, hsl(var(--card)) 0%, transparent 62%);
+    background-color: hsl(var(--card));
+    background-image: radial-gradient(130% 90% at 50% 0%, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
   }
-  .mc-card-shadow { box-shadow: 0 -24px 60px -28px rgba(0,0,0,0.45), 0 -1px 0 hsl(var(--border)); }
+  .mc-card-shadow { box-shadow: 0 -22px 50px -26px rgba(0,0,0,0.4), 0 -1px 0 hsl(var(--border)); }
 
   .mc-gradient-text {
     background: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.55) 100%);
@@ -97,7 +107,7 @@ function PhoneMockup({ appScreenSrc }) {
       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       className="flex items-center justify-center"
     >
-      <div className="origin-center scale-[0.58] sm:scale-[0.72] md:scale-90 lg:scale-100">
+      <div className="origin-center scale-[0.72] md:scale-90 lg:scale-100">
         <div className="relative flex h-[580px] w-[280px] flex-col rounded-[3rem] mc-bezel">
           <div className="mc-hw absolute -left-[3px] top-[120px] z-0 h-[25px] w-[3px] rounded-l-md" aria-hidden="true" />
           <div className="mc-hw absolute -left-[3px] top-[160px] z-0 h-[45px] w-[3px] rounded-l-md" aria-hidden="true" />
@@ -117,31 +127,25 @@ function PhoneMockup({ appScreenSrc }) {
 }
 
 // One card in the stack.
-//   • The OUTER <section> is the only sticky element and carries NO transform —
-//     on iOS Safari a transform (or will-change) on a sticky node breaks its
-//     opaque compositing, which made the stacked cards look translucent/messy.
-//   • The INNER motion.div carries the scale/round animation and a solid,
-//     opaque background, so each card cleanly occludes the ones beneath it.
-// 100lvh keeps every card covering the screen on iOS without reflowing as the
-// address bar shows/hides.
-function StackCard({ children, scale, radius, dim, className, z }) {
+//   • OUTER <section>: the only sticky element. Solid opaque backstop, fixed
+//     pixel height, NO transform → always fully occludes cards beneath it.
+//   • INNER motion.div: the visible card surface. Carries the scale/round
+//     animation; its rounded corners reveal the opaque backstop, never card 1.
+function StackCard({ children, height, scale, radius, z, shadow, className }) {
   return (
-    <section style={{ zIndex: z }} className="sticky top-0 h-[100lvh] w-full">
+    <section
+      style={{ zIndex: z, height: height ? `${height}px` : "100svh", isolation: "isolate" }}
+      className="mc-backstop sticky top-0 w-full overflow-hidden"
+    >
       <motion.div
         style={{ scale, borderRadius: radius }}
         className={cn(
           "mc-card relative flex h-full w-full flex-col items-center justify-center overflow-hidden px-6",
+          shadow && "mc-card-shadow",
           className
         )}
       >
         {children}
-        {dim && (
-          <motion.div
-            style={{ opacity: dim }}
-            className="pointer-events-none absolute inset-0 z-[60] bg-black"
-            aria-hidden="true"
-          />
-        )}
       </motion.div>
     </section>
   );
@@ -159,18 +163,27 @@ export function CinematicHero({
   onJoinWaitlist,
 }) {
   const stackRef = useRef(null);
-  // Progress 0 → 1 across the whole 3-card stack. 0 = card 1 full, 0.5 = card 2
-  // fully covering, 1 = card 3 fully covering.
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
 
-  // Card 2 enters over 0 → 0.5; card 3 enters over 0.5 → 1.
-  const c2scale = useTransform(scrollYProgress, [0, 0.5], [0.93, 1]);
-  const c2radius = useTransform(scrollYProgress, [0, 0.5], [44, 0]);
-  const c3scale = useTransform(scrollYProgress, [0.5, 1], [0.93, 1]);
-  const c3radius = useTransform(scrollYProgress, [0.5, 1], [44, 0]);
-  // Cards dim slightly as the next one rises (visible through the rounded corners).
-  const c1dim = useTransform(scrollYProgress, [0, 0.5], [0, 0.45]);
-  const c2dim = useTransform(scrollYProgress, [0.5, 1], [0, 0.45]);
+  // Measure the viewport height so each card exactly fills the screen in every
+  // browser (no svh/lvh/dvh quirks). Client-only app, so window is available.
+  const [vh, setVh] = useState(() => (typeof window !== "undefined" ? window.innerHeight : 800));
+  useEffect(() => {
+    const onResize = () => setVh(window.innerHeight);
+    onResize();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, []);
+
+  // 0 = card 1 full, 0.5 = card 2 fully covering, 1 = card 3 fully covering.
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
+  const c2scale = useTransform(scrollYProgress, [0, 0.5], [0.96, 1]);
+  const c2radius = useTransform(scrollYProgress, [0, 0.5], [40, 0]);
+  const c3scale = useTransform(scrollYProgress, [0.5, 1], [0.96, 1]);
+  const c3radius = useTransform(scrollYProgress, [0.5, 1], [40, 0]);
 
   return (
     <div className="relative w-full font-sans text-foreground antialiased">
@@ -178,7 +191,7 @@ export function CinematicHero({
 
       <div ref={stackRef} className="relative w-full">
         {/* ===== CARD 1 — Headline ===== */}
-        <StackCard z={10} dim={c1dim} className="pt-24 pb-20 text-center">
+        <StackCard z={10} height={vh} className="pt-24 pb-20 text-center">
           <div className="mc-grid" aria-hidden="true" />
           <div className="mc-spot" aria-hidden="true" />
           <div className="mc-grain" aria-hidden="true" />
@@ -194,16 +207,13 @@ export function CinematicHero({
         </StackCard>
 
         {/* ===== CARD 2 — Value proposition + product + feature grid =====
-            Phone mockup lives here now, and only on desktop (hidden on mobile). */}
-        <StackCard z={20} scale={c2scale} radius={c2radius} dim={c2dim} className="mc-card-shadow py-16 md:py-20">
+            Phone mockup lives here, desktop only (hidden on mobile). */}
+        <StackCard z={20} height={vh} scale={c2scale} radius={c2radius} shadow className="py-16 md:py-20">
           <div className="mc-grid" aria-hidden="true" />
           <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2 md:gap-14">
-            {/* product shot — desktop only */}
             <div className="hidden md:flex md:justify-center">
               <PhoneMockup appScreenSrc={appScreenSrc} />
             </div>
-
-            {/* copy + features */}
             <div className="flex flex-col items-center gap-8 text-center md:items-start md:text-left">
               <div className="flex flex-col items-center gap-5 md:items-start">
                 <Reveal y={24}>
@@ -236,7 +246,7 @@ export function CinematicHero({
         </StackCard>
 
         {/* ===== CARD 3 — CTA ===== */}
-        <StackCard z={30} scale={c3scale} radius={c3radius} className="mc-card-shadow py-20 text-center">
+        <StackCard z={30} height={vh} scale={c3scale} radius={c3radius} shadow className="py-20 text-center">
           <div className="mc-grid" aria-hidden="true" />
           <div className="mc-spot" aria-hidden="true" />
           <div className="relative z-10 flex flex-col items-center gap-6">
