@@ -35,9 +35,11 @@ const STYLES = `
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background: radial-gradient(560px circle at 50% 36%, hsl(var(--primary) / 0.12), transparent 62%);
   }
+  /* Solid opaque base FIRST (guarantees cards fully occlude the ones beneath —
+     a gradient alone rendered translucent on iOS Safari), with a soft tint on top. */
   .mc-card {
-    background:
-      radial-gradient(120% 80% at 50% 0%, hsl(var(--card)) 0%, hsl(var(--background)) 60%);
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(120% 80% at 50% 0%, hsl(var(--card)) 0%, transparent 62%);
   }
   .mc-card-shadow { box-shadow: 0 -24px 60px -28px rgba(0,0,0,0.45), 0 -1px 0 hsl(var(--border)); }
 
@@ -114,29 +116,34 @@ function PhoneMockup({ appScreenSrc }) {
   );
 }
 
-// One sticky card in the stack. `scale`/`radius` animate it in as it covers the
-// previous card; `dim` darkens this card as the *next* one covers it.
-function StackCard({ children, scale, radius, dim, dark, className, z }) {
+// One card in the stack.
+//   • The OUTER <section> is the only sticky element and carries NO transform —
+//     on iOS Safari a transform (or will-change) on a sticky node breaks its
+//     opaque compositing, which made the stacked cards look translucent/messy.
+//   • The INNER motion.div carries the scale/round animation and a solid,
+//     opaque background, so each card cleanly occludes the ones beneath it.
+// 100lvh keeps every card covering the screen on iOS without reflowing as the
+// address bar shows/hides.
+function StackCard({ children, scale, radius, dim, className, z }) {
   return (
-    <motion.section
-      style={{ scale, borderRadius: radius, zIndex: z }}
-      className={cn(
-        // 100lvh (largest viewport height): each card always fully covers the
-        // screen on iOS Safari without reflowing as the address bar shows/hides
-        // (100svh would leave a gap at the bottom once the toolbar collapses).
-        "mc-card sticky top-0 flex h-[100lvh] w-full flex-col items-center justify-center overflow-hidden px-6 will-change-transform",
-        className
-      )}
-    >
-      {children}
-      {dim && (
-        <motion.div
-          style={{ opacity: dim }}
-          className={cn("pointer-events-none absolute inset-0 z-[60]", dark ? "bg-black" : "bg-foreground")}
-          aria-hidden="true"
-        />
-      )}
-    </motion.section>
+    <section style={{ zIndex: z }} className="sticky top-0 h-[100lvh] w-full">
+      <motion.div
+        style={{ scale, borderRadius: radius }}
+        className={cn(
+          "mc-card relative flex h-full w-full flex-col items-center justify-center overflow-hidden px-6",
+          className
+        )}
+      >
+        {children}
+        {dim && (
+          <motion.div
+            style={{ opacity: dim }}
+            className="pointer-events-none absolute inset-0 z-[60] bg-black"
+            aria-hidden="true"
+          />
+        )}
+      </motion.div>
+    </section>
   );
 }
 
@@ -170,56 +177,60 @@ export function CinematicHero({
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
       <div ref={stackRef} className="relative w-full">
-        {/* ===== CARD 1 — Headline + product ===== */}
-        <StackCard z={10} dim={c1dim} dark className="pt-24 pb-20 text-center">
+        {/* ===== CARD 1 — Headline ===== */}
+        <StackCard z={10} dim={c1dim} className="pt-24 pb-20 text-center">
           <div className="mc-grid" aria-hidden="true" />
           <div className="mc-spot" aria-hidden="true" />
           <div className="mc-grain" aria-hidden="true" />
-          <div className="relative z-10 flex flex-col items-center gap-8 md:gap-11">
-            <Reveal y={26}>
-              <h1 className="mx-auto max-w-4xl text-[2.5rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
-                {tagline1}
-                <span className="mt-1 block">{tagline2}</span>
-              </h1>
-            </Reveal>
-            <Reveal y={34} delay={0.12}>
-              <PhoneMockup appScreenSrc={appScreenSrc} />
-            </Reveal>
-          </div>
+          <Reveal y={26} className="relative z-10">
+            <h1 className="mx-auto max-w-4xl text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
+              {tagline1}
+              <span className="mt-1 block">{tagline2}</span>
+            </h1>
+          </Reveal>
           <div className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-muted-foreground">
             <ChevronDown className="mc-cue h-6 w-6" strokeWidth={2} aria-hidden="true" />
           </div>
         </StackCard>
 
-        {/* ===== CARD 2 — Value proposition + feature grid ===== */}
-        <StackCard z={20} scale={c2scale} radius={c2radius} dim={c2dim} dark className="mc-card-shadow py-20 text-center">
+        {/* ===== CARD 2 — Value proposition + product + feature grid =====
+            Phone mockup lives here now, and only on desktop (hidden on mobile). */}
+        <StackCard z={20} scale={c2scale} radius={c2radius} dim={c2dim} className="mc-card-shadow py-16 md:py-20">
           <div className="mc-grid" aria-hidden="true" />
-          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center gap-9 md:gap-12">
-            <div className="flex flex-col items-center gap-5">
-              <Reveal y={24}>
-                <h2 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-                  {cardTagline}
-                </h2>
-              </Reveal>
-              <Reveal y={18} delay={0.08}><div className="h-px w-12 bg-foreground/20" /></Reveal>
-              <Reveal y={18} delay={0.12}>
-                <p className="max-w-2xl text-[0.95rem] leading-relaxed text-foreground/70 sm:text-lg">{cardDescription}</p>
-              </Reveal>
-              <Reveal y={18} delay={0.16}>
-                <p className="max-w-xl text-xs leading-relaxed text-foreground/40 sm:text-sm">{cardAudience}</p>
-              </Reveal>
+          <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-8 md:grid-cols-2 md:gap-14">
+            {/* product shot — desktop only */}
+            <div className="hidden md:flex md:justify-center">
+              <PhoneMockup appScreenSrc={appScreenSrc} />
             </div>
-            <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
-              {BADGES.map(({ Icon, label, color, iconBg }, i) => (
-                <Reveal key={label} y={18} delay={0.05 * i} amount={0.1}>
-                  <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
-                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
-                      <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
-                    </div>
-                    <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">{label}</span>
-                  </div>
+
+            {/* copy + features */}
+            <div className="flex flex-col items-center gap-8 text-center md:items-start md:text-left">
+              <div className="flex flex-col items-center gap-5 md:items-start">
+                <Reveal y={24}>
+                  <h2 className="text-[2.1rem] font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+                    {cardTagline}
+                  </h2>
                 </Reveal>
-              ))}
+                <Reveal y={18} delay={0.08}><div className="h-px w-12 bg-foreground/20" /></Reveal>
+                <Reveal y={18} delay={0.12}>
+                  <p className="max-w-xl text-[0.95rem] leading-relaxed text-foreground/70 sm:text-base">{cardDescription}</p>
+                </Reveal>
+                <Reveal y={18} delay={0.16}>
+                  <p className="max-w-lg text-xs leading-relaxed text-foreground/40 sm:text-sm">{cardAudience}</p>
+                </Reveal>
+              </div>
+              <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3">
+                {BADGES.map(({ Icon, label, color, iconBg }, i) => (
+                  <Reveal key={label} y={18} delay={0.05 * i} amount={0.1}>
+                    <div className="mc-pill flex h-full items-center gap-2.5 rounded-2xl px-3.5 py-3 text-left">
+                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${iconBg}`}>
+                        <Icon className={`h-[18px] w-[18px] ${color}`} strokeWidth={1.75} />
+                      </div>
+                      <span className="text-sm font-semibold leading-tight tracking-tight text-foreground/90">{label}</span>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </StackCard>
