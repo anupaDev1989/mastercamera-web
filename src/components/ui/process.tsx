@@ -104,7 +104,7 @@ const FeatureText = ({
   setActiveIndex: (index: number) => void
 }) => {
   const ref = useRef<HTMLDivElement>(null)
-  // useInView triggers when the element is halfway through the viewport
+  // useInView triggers when the element is halfway through the viewport (for desktop)
   const isInView = useInView(ref, { margin: "-50% 0px -50% 0px" })
 
   useEffect(() => {
@@ -114,28 +114,25 @@ const FeatureText = ({
   }, [isInView, index, setActiveIndex])
 
   return (
-    <div className="h-[100vh] w-full flex flex-col md:flex-row pointer-events-none">
-      {/* Spacer to keep the text away from the sticky image area */}
-      <div className="h-[45vh] md:h-full md:w-1/2 w-full shrink-0"></div>
-
-      {/* Text Content */}
-      <div
-        ref={ref}
-        className="flex-1 md:w-1/2 w-full flex flex-col justify-center p-6 sm:p-8 md:p-12 lg:p-20 pointer-events-auto"
-      >
-        <div
-          className={cn(
-            "max-w-md space-y-5 transition-all duration-700 ease-out",
-            activeIndex === index
-              ? "opacity-100 translate-y-0"
-              : "opacity-20 translate-y-8"
-          )}
-        >
+    <>
+      {/* Mobile Layout (Standard Vertical Flow) */}
+      <div className="flex flex-col md:hidden w-full py-16 px-4 sm:px-6 items-center border-b border-border/10 last:border-0">
+        <Reveal>
+          <div className="w-full max-w-[320px] sm:max-w-[360px] aspect-[3/4] rounded-[2rem] shadow-xl overflow-hidden border border-border/20 mb-8 bg-muted/20 mx-auto">
+            <img
+              src={phase.image}
+              alt={phase.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </Reveal>
+        
+        <Reveal delay={0.1} className="w-full max-w-md space-y-4">
           <p className="text-xs text-primary font-bold tracking-widest uppercase">
-            {String(index + 1).padStart(2, "0")} /{" "}
-            {String(PROCESS_PHASES.length).padStart(2, "0")}
+            {String(index + 1).padStart(2, "0")} / {String(PROCESS_PHASES.length).padStart(2, "0")}
           </p>
-          <h3 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
+          <h3 className="text-3xl font-extrabold tracking-tight text-foreground">
             {phase.title}
           </h3>
           <p className="text-lg leading-relaxed text-muted-foreground">
@@ -143,18 +140,58 @@ const FeatureText = ({
           </p>
           <ul className="space-y-3 pt-2">
             {phase.bullets.map((b) => (
-              <li
-                key={b}
-                className="flex gap-3 items-start text-muted-foreground text-base"
-              >
+              <li key={b} className="flex gap-3 items-start text-muted-foreground text-base">
                 <span className="mt-[8px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary/80 shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
                 <span>{b}</span>
               </li>
             ))}
           </ul>
+        </Reveal>
+      </div>
+
+      {/* Desktop Layout (Sticky Scrolljacking) */}
+      <div className="hidden md:flex h-[100vh] w-full flex-row pointer-events-none">
+        {/* Spacer to keep the left side empty for the sticky image */}
+        <div className="w-1/2 h-full shrink-0"></div>
+
+        {/* Text Content */}
+        <div
+          ref={ref}
+          className="w-1/2 h-full flex flex-col justify-center p-8 lg:p-20 pointer-events-auto"
+        >
+          <div
+            className={cn(
+              "max-w-md space-y-5 transition-all duration-700 ease-out",
+              activeIndex === index
+                ? "opacity-100 translate-y-0"
+                : "opacity-20 translate-y-8"
+            )}
+          >
+            <p className="text-xs text-primary font-bold tracking-widest uppercase">
+              {String(index + 1).padStart(2, "0")} /{" "}
+              {String(PROCESS_PHASES.length).padStart(2, "0")}
+            </p>
+            <h3 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl text-foreground">
+              {phase.title}
+            </h3>
+            <p className="text-lg leading-relaxed text-muted-foreground">
+              {phase.description}
+            </p>
+            <ul className="space-y-3 pt-2">
+              {phase.bullets.map((b) => (
+                <li
+                  key={b}
+                  className="flex gap-3 items-start text-muted-foreground text-base"
+                >
+                  <span className="mt-[8px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary/80 shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -164,7 +201,7 @@ const Process = () => {
   return (
     <section className="w-full bg-background relative" id="features">
       {/* Header section */}
-      <div className="mx-auto max-w-5xl px-4 pt-24 pb-8 sm:px-6 xl:px-12 text-center">
+      <div className="mx-auto max-w-5xl px-4 pt-24 pb-12 sm:px-6 xl:px-12 text-center relative z-20">
         <Reveal>
           <h5 className="text-sm font-semibold tracking-widest text-muted-foreground uppercase mb-4">
             The Master Camera way
@@ -180,16 +217,16 @@ const Process = () => {
       </div>
 
       <div className="relative w-full max-w-7xl mx-auto">
-        {/* Sticky Media Container */}
-        <div className="sticky top-0 h-screen w-full flex flex-col md:flex-row items-center pointer-events-none z-0">
-          <div className="h-[45vh] md:h-screen w-full md:w-1/2 flex items-center justify-center p-6 sm:p-8 md:p-12 z-0 relative">
-            <div className="relative w-full h-full max-w-[260px] md:max-w-[340px] aspect-[9/16] rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/20 bg-muted/20">
+        {/* Sticky Media Container - ONLY VISIBLE ON DESKTOP */}
+        <div className="hidden md:flex sticky top-0 h-screen w-full flex-row items-center pointer-events-none z-0">
+          <div className="w-1/2 h-screen flex items-center justify-center p-8 lg:p-12 z-0 relative">
+            <div className="relative w-full max-w-[380px] xl:max-w-[420px] aspect-[3/4] rounded-[2rem] shadow-2xl overflow-hidden border border-border/20 bg-muted/20">
               {PROCESS_PHASES.map((phase, i) => (
                 <motion.img
                   key={phase.id}
                   src={phase.image}
                   alt={phase.title}
-                  className="absolute inset-0 w-full h-full object-cover rounded-[2.5rem]"
+                  className="absolute inset-0 w-full h-full object-cover rounded-[2rem]"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{
                     opacity: activeIndex === i ? 1 : 0,
@@ -203,11 +240,12 @@ const Process = () => {
               ))}
             </div>
           </div>
-          <div className="hidden md:block md:w-1/2"></div>
+          {/* Spacer for the right side where text scrolls */}
+          <div className="w-1/2"></div>
         </div>
 
         {/* Scrolling Text Container */}
-        <div className="relative z-10 w-full -mt-[100vh]">
+        <div className="relative z-10 w-full md:-mt-[100vh]">
           {PROCESS_PHASES.map((phase, i) => (
             <FeatureText
               key={phase.id}
