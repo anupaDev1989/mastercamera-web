@@ -47,7 +47,7 @@ const scaleIn = {
 
 // ─── Feature badges ────────────────────────────────────────────────────────
 const BADGES = [
-  { Icon: Layers,      label: "Job Stacks",        color: "text-blue-500",    iconBg: "bg-blue-500/10 border-blue-500/20"    },
+  { Icon: Layers,      label: "Organized",         color: "text-blue-500",    iconBg: "bg-blue-500/10 border-blue-500/20"    },
   { Icon: Tag,         label: "Shot Notes",        color: "text-amber-500",   iconBg: "bg-amber-500/10 border-amber-500/20"  },
   { Icon: Captions,    label: "Metadata Overlays", color: "text-cyan-500",    iconBg: "bg-cyan-500/10 border-cyan-500/20"    },
   { Icon: ShieldCheck, label: "Stay Private",      color: "text-emerald-500", iconBg: "bg-emerald-500/10 border-emerald-500/20" },

@@ -32,11 +32,11 @@ const PROCESS_PHASES = [
   },
   {
     id: "feature-4",
-    title: "Organized in Stacks",
+    title: "Organized by Category",
     description:
       "Group photos and video by project, event, or site. Your work, structured exactly how you think about it.",
     bullets: [
-      "Stacks for jobs, events, and locations",
+      "Categories for jobs, events, and locations",
       "Tags and custom fields",
       "Searchable from the first shot",
     ],
@@ -74,7 +74,7 @@ const PROCESS_PHASES = [
     bullets: [
       "Bulk compare multiple pairs at once",
       "Custom Before/After labels and banner",
-      "Saves as a new image in your Stack",
+      "Saves as a new image in your collection",
     ],
     image: "/feature-images/feature-6.jpg",
   },
