@@ -134,7 +134,7 @@ const Process = () => {
         className="relative w-full max-w-7xl mx-auto"
       >
         {/* The Sticky Viewport */}
-        <div className="sticky top-0 h-[100vh] sm:h-screen w-full flex flex-col md:flex-row items-center justify-center overflow-hidden">
+        <div className="sticky top-0 h-[100vh] sm:h-screen w-full flex flex-col md:flex-row items-center justify-center overflow-hidden pt-20 md:pt-0">
           
           {/* Images Container - Fixed left/top area */}
           <div className="w-full md:w-1/2 h-[45vh] md:h-full flex items-center justify-center relative p-4 sm:p-8 z-0">
@@ -142,25 +142,27 @@ const Process = () => {
               {PROCESS_PHASES.map((phase, i) => {
                 const start = i / PROCESS_PHASES.length
                 const end = (i + 1) / PROCESS_PHASES.length
-                const fadeMargin = 0.4 / PROCESS_PHASES.length
+                
+                // Crossfade images perfectly
+                const imgFadeMargin = 0.2 / PROCESS_PHASES.length
 
-                const p1 = start - fadeMargin
-                const p2 = start
-                const p3 = end - fadeMargin
-                const p4 = end
+                const p1 = i === 0 ? 0 : start - imgFadeMargin
+                const p2 = i === 0 ? 0 : start + imgFadeMargin
+                const p3 = i === PROCESS_PHASES.length - 1 ? 1 : end - imgFadeMargin
+                const p4 = i === PROCESS_PHASES.length - 1 ? 1 : end + imgFadeMargin
 
                 const keyframes = [
-                  i === 0 ? 0 : p1,
-                  i === 0 ? 0 : p2,
-                  i === PROCESS_PHASES.length - 1 ? 1 : p3,
-                  i === PROCESS_PHASES.length - 1 ? 1 : p4,
+                  p1,
+                  p2,
+                  p3,
+                  p4,
                 ]
 
                 const opacityVals = [
-                  i === 0 ? 1 : 0,
+                  0,
                   1,
                   1,
-                  i === PROCESS_PHASES.length - 1 ? 1 : 0
+                  0
                 ]
 
                 const opacity = useTransform(smoothProgress, keyframes, opacityVals)
@@ -185,32 +187,34 @@ const Process = () => {
              {PROCESS_PHASES.map((phase, i) => {
                 const start = i / PROCESS_PHASES.length
                 const end = (i + 1) / PROCESS_PHASES.length
-                const fadeMargin = 0.4 / PROCESS_PHASES.length
+                
+                // No overlap for text: fade out finishes at end, fade in starts at end
+                const textFadeMargin = 0.15 / PROCESS_PHASES.length
 
-                const p1 = start - fadeMargin
-                const p2 = start
-                const p3 = end - fadeMargin
-                const p4 = end
+                const p1 = i === 0 ? 0 : start
+                const p2 = i === 0 ? 0 : start + textFadeMargin
+                const p3 = i === PROCESS_PHASES.length - 1 ? 1 : end - textFadeMargin
+                const p4 = i === PROCESS_PHASES.length - 1 ? 1 : end
 
                 const keyframes = [
-                  i === 0 ? 0 : p1,
-                  i === 0 ? 0 : p2,
-                  i === PROCESS_PHASES.length - 1 ? 1 : p3,
-                  i === PROCESS_PHASES.length - 1 ? 1 : p4,
+                  p1,
+                  p2,
+                  p3,
+                  p4,
                 ]
 
                 const opacityVals = [
-                  i === 0 ? 1 : 0,
+                  0,
                   1,
                   1,
-                  i === PROCESS_PHASES.length - 1 ? 1 : 0
+                  0
                 ]
 
                 const yVals = [
-                  i === 0 ? 0 : 30,  // Slide in from bottom
+                  i === 0 ? 0 : 20,  // Slide in from bottom
                   0,                 // Settle perfectly
                   0,
-                  i === PROCESS_PHASES.length - 1 ? 0 : -30 // Slide out to top
+                  i === PROCESS_PHASES.length - 1 ? 0 : -20 // Slide out to top
                 ]
 
                 const opacity = useTransform(smoothProgress, keyframes, opacityVals)
