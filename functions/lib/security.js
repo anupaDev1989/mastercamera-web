@@ -180,6 +180,41 @@ export async function verifyTurnstileToken(token, clientIP, env) {
     }
 }
 
+// Verify a shared app key for native (non-browser) clients.
+//
+// The iOS app has no Origin/Turnstile, so it authenticates with a static key sent
+// in the `X-App-Key` header, compared against env.APP_FEEDBACK_KEY. This is NOT a
+// true secret (it ships inside the app binary and can be extracted), but combined
+// with rate limiting it raises the bar enough for low-stakes feedback. Comparison is
+// constant-time to avoid leaking the key via timing.
+export function verifyAppKey(request, env) {
+    const provided = request.headers.get('X-App-Key');
+
+    if (!env.APP_FEEDBACK_KEY) {
+        console.error('APP_FEEDBACK_KEY not configured - failing closed');
+        return false;
+    }
+
+    if (!provided || typeof provided !== 'string') {
+        return false;
+    }
+
+    return constantTimeEqual(provided, env.APP_FEEDBACK_KEY);
+}
+
+// Constant-time string comparison (length-independent short-circuit only on mismatch
+// length, which does not reveal the secret's contents).
+function constantTimeEqual(a, b) {
+    if (a.length !== b.length) {
+        return false;
+    }
+    let mismatch = 0;
+    for (let i = 0; i < a.length; i++) {
+        mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return mismatch === 0;
+}
+
 // Generate security headers with proper CORS
 export function getSecurityHeaders(origin, env) {
     const headers = {
