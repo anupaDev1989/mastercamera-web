@@ -66,9 +66,6 @@ const STYLES = `
     scroll-snap-align: start;
     scroll-snap-stop: always;
   }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-snap-type: none; }
-  }
 
   /* Grain texture overlay */
   .mc-grain {
@@ -181,7 +178,6 @@ const STYLES = `
   /* Scroll cue */
   @keyframes mc-cue { 0%,100% { transform: translateY(0); opacity: 0.35; } 50% { transform: translateY(7px); opacity: 0.85; } }
   .mc-cue { animation: mc-cue 1.8s ease-in-out infinite; }
-  @media (prefers-reduced-motion: reduce) { .mc-cue { animation: none; } }
 
   /* Pagination dots */
   .mc-pag {

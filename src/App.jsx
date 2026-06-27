@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MotionConfig } from 'motion/react';
 import Navbar from './components/Navbar';
 import Hero from './sections/Hero';
 import Features from './sections/Features';
@@ -26,18 +25,16 @@ function App() {
   }
 
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="app">
-        <Navbar onPrivacyClick={goToPrivacyPolicy} />
-        <main>
-          <Hero />
-          <Features />
-          <Platforms />
-          <Wishlist />
-        </main>
-        <Footer onPrivacyClick={goToPrivacyPolicy} />
-      </div>
-    </MotionConfig>
+    <div className="app">
+      <Navbar onPrivacyClick={goToPrivacyPolicy} />
+      <main>
+        <Hero />
+        <Features />
+        <Platforms />
+        <Wishlist />
+      </main>
+      <Footer onPrivacyClick={goToPrivacyPolicy} />
+    </div>
   );
 }
 
