@@ -243,7 +243,7 @@ function PhoneMockup({ appScreenSrc }) {
 // ─── Screen 1 — The Statement ───────────────────────────────────────────────
 function Screen1({ sectionRef, isActive, tagline1, tagline2 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.45 });
+  const isInView = useInView(ref, { once: true, amount: 0.15, margin: "0px 0px -10% 0px" });
   const show = isInView;
 
   return (
@@ -315,7 +315,7 @@ function Screen1({ sectionRef, isActive, tagline1, tagline2 }) {
 // ─── Screen 2 — The Product ─────────────────────────────────────────────────
 function Screen2({ sectionRef, cardTagline, cardDescription, cardAudience, appScreenSrc }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.35 });
+  const isInView = useInView(ref, { once: true, amount: 0.15, margin: "0px 0px -10% 0px" });
   const show = isInView;
 
   return (
@@ -397,7 +397,7 @@ function Screen2({ sectionRef, cardTagline, cardDescription, cardAudience, appSc
 // ─── Screen 3 — The Invitation ──────────────────────────────────────────────
 function Screen3({ sectionRef, ctaHeading, ctaDescription, onJoinWaitlist }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.45 });
+  const isInView = useInView(ref, { once: true, amount: 0.15, margin: "0px 0px -10% 0px" });
   const show = isInView;
 
   return (

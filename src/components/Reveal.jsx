@@ -6,14 +6,14 @@ import { motion } from 'motion/react';
  * animation, which janks on mobile). Fires once when the element scrolls into view.
  * Respects prefers-reduced-motion via the app-level <MotionConfig reducedMotion="user">.
  */
-const Reveal = ({ children, className, delay = 0, y = 24, as = 'div', amount = 0.3 }) => {
+const Reveal = ({ children, className, delay = 0, y = 24, as = 'div', amount = 0.1 }) => {
     const MotionTag = motion[as] || motion.div;
     return (
         <MotionTag
             className={className}
             initial={{ opacity: 0, y }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount }}
+            viewport={{ once: true, amount, margin: "0px 0px -10% 0px" }}
             transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
         >
             {children}
