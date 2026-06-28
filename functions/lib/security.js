@@ -39,8 +39,10 @@ export function validateFieldLength(field, maxLength) {
     return typeof field === 'string' && field.length <= maxLength;
 }
 
-// Rate limiting using Cloudflare KV
-export async function checkRateLimit(ip, env) {
+// Rate limiting using Cloudflare KV.
+// `keyPrefix` isolates independent buckets so, e.g., feedback spam can't lock a user
+// out of the waitlist. Defaults to 'ratelimit' to preserve existing waitlist behaviour.
+export async function checkRateLimit(ip, env, keyPrefix = 'ratelimit') {
     if (!ip) {
         console.error('No IP provided for rate limiting');
         return { allowed: false, error: 'Unable to verify request source' };
@@ -53,7 +55,7 @@ export async function checkRateLimit(ip, env) {
     }
 
     try {
-        const key = `ratelimit:${ip}`;
+        const key = `${keyPrefix}:${ip}`;
         const now = Date.now();
         const hourAgo = now - (60 * 60 * 1000); // 1 hour ago
 
@@ -91,14 +93,14 @@ export async function checkRateLimit(ip, env) {
     }
 }
 
-// Update rate limit counter
-export async function updateRateLimit(ip, env) {
+// Update rate limit counter. `keyPrefix` must match the one passed to checkRateLimit.
+export async function updateRateLimit(ip, env, keyPrefix = 'ratelimit') {
     if (!ip || !env.RATE_LIMIT) {
         return;
     }
 
     try {
-        const key = `ratelimit:${ip}`;
+        const key = `${keyPrefix}:${ip}`;
         const now = Date.now();
         const hourAgo = now - (60 * 60 * 1000);
 

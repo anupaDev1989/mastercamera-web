@@ -56,7 +56,8 @@ export async function onRequest({ request, env }) {
 
     try {
         const clientIP = getClientIP(request);
-        const rateLimitResult = await checkRateLimit(clientIP, env);
+        // Own bucket, separate from the waitlist, so the two can't exhaust each other.
+        const rateLimitResult = await checkRateLimit(clientIP, env, 'feedback_ratelimit');
 
         if (!rateLimitResult.allowed) {
             return new Response(JSON.stringify({
@@ -136,8 +137,13 @@ export async function onRequest({ request, env }) {
             });
         }
 
-        const sanitizedMessage = sanitizeInput(message);
+        // Store the message verbatim (just trimmed). SQL injection is already prevented by
+        // the parameterized .bind() below, and destructive input-stripping would corrupt
+        // legitimate bug reports that contain code or symbols (e.g. "<Camera> crashes").
+        // Anything that later renders this in HTML MUST output-encode it at render time.
+        const cleanMessage = message.trim();
         const sanitizedEmail = contactEmail ? contactEmail.toLowerCase().trim() : null;
+        // Metadata fields are constrained (versions/model identifiers) — keep them stripped.
         const sanitizedAppVersion = appVersion ? sanitizeInput(appVersion) : null;
         const sanitizedOsVersion = osVersion ? sanitizeInput(osVersion) : null;
         const sanitizedDeviceModel = deviceModel ? sanitizeInput(deviceModel) : null;
@@ -148,7 +154,7 @@ export async function onRequest({ request, env }) {
             .prepare(
                 'INSERT INTO feedback (type, message, contact_email, app_version, os_version, device_model) VALUES (?, ?, ?, ?, ?, ?)'
             )
-            .bind(type, sanitizedMessage, sanitizedEmail, sanitizedAppVersion, sanitizedOsVersion, sanitizedDeviceModel)
+            .bind(type, cleanMessage, sanitizedEmail, sanitizedAppVersion, sanitizedOsVersion, sanitizedDeviceModel)
             .run();
 
         if (!result.success) {
@@ -158,7 +164,7 @@ export async function onRequest({ request, env }) {
             });
         }
 
-        await updateRateLimit(clientIP, env);
+        await updateRateLimit(clientIP, env, 'feedback_ratelimit');
 
         return new Response(JSON.stringify({ success: true, message: 'Thanks for your feedback!' }), {
             status: 200,
