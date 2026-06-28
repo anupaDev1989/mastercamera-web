@@ -12,12 +12,12 @@ const PrivacyPolicy = ({ onBack }) => {
         </button>
 
         <h1 className="text-4xl font-bold mb-2">Master Camera Privacy Policy</h1>
-        <p className="text-muted-foreground text-sm mb-8">Last updated: 13 June 2026</p>
+        <p className="text-muted-foreground text-sm mb-8">Last updated: 28 June 2026</p>
 
         <div className="space-y-8 prose prose-invert max-w-none">
           <section>
             <h2 className="text-2xl font-semibold mt-8 mb-4">Summary</h2>
-            <p>Master Camera is designed to keep your work private. Everything you capture stays on your device. We do not have a server, we do not require an account, and we do not collect, transmit, sell, or share your personal data.</p>
+            <p>Master Camera is designed to keep your work private. Everything you capture stays on your device. We do not require an account, and we never collect, sell, or share your personal data. The one time information leaves your device automatically is if you choose to send us feedback — described in "Feedback you send us" below. Otherwise, your content only leaves the device when you share or export it yourself.</p>
           </section>
 
           <section>
@@ -44,7 +44,19 @@ const PrivacyPolicy = ({ onBack }) => {
 
           <section>
             <h2 className="text-2xl font-semibold mt-8 mb-4">How your data leaves the device</h2>
-            <p className="text-muted-foreground">Your content only leaves your device when you choose to share or export it — for example using the share sheet to send a photo, or exporting a zip of media. At that point the content is handled by the app or service you send it to, under that service's own privacy terms. Master Camera does not transmit your data anywhere on its own.</p>
+            <p className="text-muted-foreground">Your captured content only leaves your device when you choose to share or export it — for example using the share sheet to send a photo, or exporting a zip of media. At that point the content is handled by the app or service you send it to, under that service's own privacy terms. Master Camera does not transmit your photos, videos, notes, or location anywhere on its own. The single exception is the optional feedback you send us, covered next.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Feedback you send us</h2>
+            <p className="text-muted-foreground">Master Camera includes an optional "Feedback &amp; Feature Request" feature (Settings → Help). It is the only part of the app that sends information to us, and only when you fill it in and tap Send.</p>
+            <p className="text-muted-foreground mt-4">When you do, we receive:</p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground mt-2">
+              <li>The message you write and the category you pick (bug, feature request, or general).</li>
+              <li>Your email address — only if you choose to enter one so we can reply. You can leave it blank and send anonymously.</li>
+              <li>Basic technical details to help us investigate: the app version, your iOS version, and your device model (for example "iPhone 16 Pro Max"). No photos, location, or other content from your library is included.</li>
+            </ul>
+            <p className="text-muted-foreground mt-4">This is sent securely to our own server and stored only so we can read your feedback, reply if you asked us to, and improve the app. We do not sell or share it, and we do not use it for advertising or tracking. If you never open this feature, nothing is sent.</p>
           </section>
 
           <section>
