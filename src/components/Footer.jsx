@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Footer = ({ onPrivacyClick }) => {
+const Footer = ({ onPrivacyClick, onTermsClick }) => {
     return (
         <footer className="border-t border-border bg-muted/30 pt-16 pb-8">
             <div className="container mx-auto px-4">
@@ -42,7 +42,7 @@ const Footer = ({ onPrivacyClick }) => {
                         <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">Legal</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><button onClick={onPrivacyClick} className="hover:text-primary transition-colors cursor-pointer">Privacy</button></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Terms</a></li>
+                            <li><button onClick={onTermsClick} className="hover:text-primary transition-colors cursor-pointer">Terms</button></li>
                         </ul>
                     </div>
                 </div>

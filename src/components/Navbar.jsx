@@ -70,15 +70,23 @@ const Navbar = ({ onPrivacyClick }) => {
                     <ComingSoonPill className="animate-fade-in" />
                 </div>
 
-                {/* RIGHT: CTA */}
-                <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={scrollToWishlist}
-                    className="flex-shrink-0 whitespace-nowrap transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] hover:shadow-md active:scale-95"
-                >
-                    Join waitlist
-                </Button>
+                {/* RIGHT: Guide link + CTA */}
+                <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+                    <a
+                        href="/guide/"
+                        className="whitespace-nowrap text-xs font-medium text-muted-foreground transition-colors hover:text-primary sm:text-sm"
+                    >
+                        Guide
+                    </a>
+                    <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={scrollToWishlist}
+                        className="flex-shrink-0 whitespace-nowrap transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] hover:shadow-md active:scale-95"
+                    >
+                        Join waitlist
+                    </Button>
+                </div>
             </div>
 
             {/* MOBILE (<sm): Coming Soon pill floats just below the bar — no horizontal collision */}
