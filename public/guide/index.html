@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0d0e11" />
   <link rel="icon" type="image/png" href="/favicon.png" />
 
   <!-- ==========================================================
@@ -40,270 +42,61 @@
   }
   </script>
 
-  <style>
-    :root {
-      --bg: #0b1020;
-      --bg-soft: #121a33;
-      --card: #16203d;
-      --card-2: #1b2749;
-      --line: #26325a;
-      --text: #eaf0ff;
-      --muted: #a9b6da;
-      --brand: #4f8cff;
-      --brand-2: #7c5cff;
-      --accent: #35d0a5;
-      --radius: 16px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --maxw: 1080px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, #1a2c5a 0, transparent 60%), var(--bg);
-      color: var(--text);
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: var(--brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
-
-    /* ---------- Hero ---------- */
-    header.hero {
-      background:
-        radial-gradient(900px 500px at 15% -20%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(700px 400px at 90% 0%, rgba(79,140,255,.30), transparent 55%),
-        var(--bg-soft);
-      border-bottom: 1px solid var(--line);
-      padding: 64px 0 56px;
-      text-align: center;
-    }
-    .badge {
-      display: inline-block;
-      font-size: 13px;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: rgba(53,208,165,.10);
-      border: 1px solid rgba(53,208,165,.3);
-      padding: 6px 12px;
-      border-radius: 999px;
-      margin-bottom: 18px;
-    }
-    header.hero h1 {
-      font-size: clamp(30px, 5vw, 48px);
-      line-height: 1.1;
-      margin: 0 0 14px;
-      letter-spacing: -.02em;
-    }
-    header.hero p.lede {
-      font-size: clamp(16px, 2.3vw, 20px);
-      color: var(--muted);
-      max-width: 720px;
-      margin: 0 auto 26px;
-    }
-    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      display: inline-block;
-      padding: 12px 22px;
-      border-radius: 12px;
-      font-weight: 600;
-      border: 1px solid transparent;
-    }
-    .btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; }
-    .btn-primary:hover { text-decoration: none; opacity: .95; }
-    .btn-ghost { border-color: var(--line); color: var(--text); }
-    .btn-ghost:hover { text-decoration: none; border-color: var(--brand); }
-
-    /* ---------- Section scaffolding ---------- */
-    section { padding: 56px 0; border-bottom: 1px solid var(--line); }
-    section h2 {
-      font-size: clamp(24px, 3.6vw, 34px);
-      margin: 0 0 8px;
-      letter-spacing: -.01em;
-    }
-    section .sub { color: var(--muted); margin: 0 0 32px; max-width: 720px; }
-    .eyebrow {
-      color: var(--brand);
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    /* ---------- Feature blocks ---------- */
-    .feature {
-      display: grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 36px;
-      align-items: center;
-      margin-bottom: 26px;
-    }
-    .feature.reverse { grid-template-columns: .95fr 1.05fr; }
-    .feature.reverse .copy { order: 2; }
-    .feature.reverse .shot { order: 1; }
-    .feature h3 { font-size: 22px; margin: 4px 0 10px; }
-    .feature ul { margin: 14px 0 0; padding-left: 18px; color: var(--muted); }
-    .feature ul li { margin-bottom: 7px; }
-    .pill {
-      display: inline-block; font-size: 12px; color: var(--accent);
-      background: rgba(53,208,165,.08); border: 1px solid rgba(53,208,165,.25);
-      padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
-    }
-    @media (max-width: 780px) {
-      .feature, .feature.reverse { grid-template-columns: 1fr; gap: 18px; }
-      .feature.reverse .copy { order: 1; }
-      .feature.reverse .shot { order: 2; }
-    }
-
-    /* ---------- Image placeholder ---------- */
-    .shot {
-      background:
-        repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 12px, transparent 12px 24px),
-        linear-gradient(160deg, var(--card-2), var(--card));
-      border: 1px dashed var(--line);
-      border-radius: var(--radius);
-      min-height: 260px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-    .shot .frame-icn {
-      width: 46px; height: 46px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 12px;
-    }
-    .shot .cap-title { font-weight: 700; margin-bottom: 6px; }
-    .shot .cap-desc { color: var(--muted); font-size: 14px; max-width: 300px; }
-    .shot .cap-tag {
-      margin-top: 12px; font-size: 11px; letter-spacing: .06em;
-      text-transform: uppercase; color: var(--muted);
-      border: 1px solid var(--line); padding: 4px 9px; border-radius: 6px;
-    }
-
-    /* ---------- Steps ---------- */
-    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .step {
-      background: var(--card); border: 1px solid var(--line);
-      border-radius: var(--radius); padding: 20px;
-    }
-    .step .n {
-      width: 34px; height: 34px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; margin-bottom: 12px;
-    }
-    .step h4 { margin: 0 0 6px; font-size: 17px; }
-    .step p { margin: 0; color: var(--muted); font-size: 14px; }
-    @media (max-width: 780px) { .steps { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 460px) { .steps { grid-template-columns: 1fr; } }
-
-    /* ---------- Use cases ---------- */
-    .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .case {
-      background: linear-gradient(160deg, var(--card-2), var(--card));
-      border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 22px;
-    }
-    .case .ic { font-size: 26px; margin-bottom: 10px; }
-    .case h4 { margin: 0 0 8px; font-size: 18px; }
-    .case p { margin: 0; color: var(--muted); font-size: 14.5px; }
-    @media (max-width: 780px) { .cases { grid-template-columns: 1fr; } }
-
-    /* ---------- FAQ ---------- */
-    details {
-      background: var(--card); border: 1px solid var(--line);
-      border-radius: 12px; padding: 4px 18px; margin-bottom: 12px;
-    }
-    details summary {
-      cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none;
-    }
-    details summary::-webkit-details-marker { display: none; }
-    details summary::after { content: "+"; float: right; color: var(--muted); font-weight: 700; }
-    details[open] summary::after { content: "\2013"; }
-    details p { color: var(--muted); margin: 0 0 16px; }
-
-    /* ---------- Footer ---------- */
-    footer { padding: 40px 0 60px; text-align: center; color: var(--muted); font-size: 14px; }
-    .kw { color: var(--muted); font-size: 12.5px; max-width: 820px; margin: 18px auto 0; opacity: .8; }
-  </style>
+  <link rel="stylesheet" href="/guide/guide.css" />
 </head>
 
 <body>
 
+  <!-- ======================= TOP BAR ======================= -->
+  <div class="topbar">
+    <div class="wrap">
+      <a class="back" href="/">
+        <span class="chev" aria-hidden="true">&lsaquo;</span>
+        Master Camera
+      </a>
+      <span class="label">Guide</span>
+    </div>
+  </div>
+
   <!-- ======================= HERO ======================= -->
   <header class="hero">
     <div class="wrap">
-      <a href="/" style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;margin-bottom:18px;">&larr; Back to Master Camera</a>
-      <br />
-      <span class="badge">Quick Start Guide</span>
-      <h1>Master Camera — capture fast, stay organized, find anything</h1>
+      <span class="eyebrow">Quick Start Guide</span>
+      <h1>Get started with<br />Master Camera</h1>
       <p class="lede">
-        Master Camera is the fast photo &amp; video capture app that keeps your work
-        organized. Snap in seconds, sort into projects and tags, add markup and voice
-        notes, and retrieve any shot instantly — all synced privately with iCloud.
+        Capture in seconds, organize with projects and tags, mark up photos, add
+        voice notes, and find any shot instantly — all synced privately with iCloud.
       </p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#capture">Get started</a>
+        <a class="btn btn-primary" href="#how">Start the walkthrough</a>
         <a class="btn btn-ghost" href="#faq">Read the FAQ</a>
       </div>
     </div>
   </header>
 
-  <!-- ======================= OVERVIEW / SCREENSHOT ======================= -->
-  <section id="overview">
+  <!-- ======================= HOW IT WORKS ======================= -->
+  <section class="section" id="how">
     <div class="wrap">
-      <p class="eyebrow">Overview</p>
-      <h2>One camera app for capturing and organizing your visual work</h2>
-      <p class="sub">
-        Built for iPhone and iPad, Master Camera bridges <strong>speed</strong> and
-        <strong>structure</strong>. Whether you're documenting a job site, collecting
-        research, or capturing creative references, you get instant capture without
-        losing control of your library.
-      </p>
-
-      <!-- IMAGE PLACEHOLDER -->
-      <div class="shot" style="min-height:300px;">
-        <div class="frame-icn">📱</div>
-        <div class="cap-title">Screenshot — App home with bottom tab bar</div>
-        <div class="cap-desc">
-          Show the six tabs (Camera, Inbox, All, Projects, Search, Settings) at the bottom,
-          with the Camera tab active. A clean hero shot that establishes the app layout.
-        </div>
-        <div class="cap-tag">Placeholder · Main tab bar</div>
+      <div class="section-head">
+        <span class="eyebrow">The workflow</span>
+        <h2>Four steps, start to finish</h2>
+        <p class="sub">Capture, organize, enrich, find. The whole loop is designed to take seconds — not minutes.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ======================= HOW IT WORKS (4 STEPS) ======================= -->
-  <section id="how">
-    <div class="wrap">
-      <p class="eyebrow">In 4 steps</p>
-      <h2>How Master Camera works</h2>
-      <p class="sub">Capture &rarr; Organize &rarr; Enrich &rarr; Find. The whole workflow is designed to take seconds, not minutes.</p>
       <div class="steps">
         <div class="step">
           <div class="n">1</div>
           <h4>Capture</h4>
-          <p>Tap the shutter in Rapid Mode. Photos and videos save straight to your Inbox — no setup required.</p>
+          <p>Tap the shutter in Rapid Mode. Photos and videos save straight to your Inbox — no setup.</p>
         </div>
         <div class="step">
           <div class="n">2</div>
           <h4>Organize</h4>
-          <p>Assign captures to projects, add tags, notes, and custom fields to keep everything sorted.</p>
+          <p>Assign captures to projects, then add tags, notes, and custom fields to keep everything sorted.</p>
         </div>
         <div class="step">
           <div class="n">3</div>
           <h4>Enrich</h4>
-          <p>Mark up photos with the pencil tool and attach voice notes so context is never lost.</p>
+          <p>Mark up photos with the pencil and attach voice notes so context is never lost.</p>
         </div>
         <div class="step">
           <div class="n">4</div>
@@ -314,253 +107,251 @@
     </div>
   </section>
 
-  <!-- ======================= FEATURE: CAMERA / CAPTURE ======================= -->
-  <section id="capture">
+  <!-- ======================= OVERVIEW / TAB MAP ======================= -->
+  <section class="section" id="overview">
     <div class="wrap">
-      <p class="eyebrow">Feature 1 · Camera</p>
-      <h2>Rapid capture &amp; Context capture</h2>
-      <p class="sub">Two ways to shoot so you never have to choose between speed and detail.</p>
+      <div class="section-head">
+        <span class="eyebrow">The basics</span>
+        <h2>Find your way around</h2>
+        <p class="sub">Everything lives within reach across six simple tabs along the bottom of the app.</p>
+      </div>
 
-      <div class="feature">
-        <div class="copy">
-          <span class="pill">Camera tab</span>
-          <h3>Shoot first, sort later with Rapid Mode</h3>
-          <p>Open the app and start shooting immediately. Every photo and video lands in your <strong>Inbox</strong>, ready to organize whenever you have a moment. Perfect for fast-moving job sites and busy shoots.</p>
-          <ul>
-            <li><strong>Rapid Mode:</strong> One-tap photo &amp; video capture to Inbox.</li>
-            <li><strong>Context Mode:</strong> Assign a project, tags, and notes at the moment of capture.</li>
-            <li>Optional location stamp for every capture (toggle on/off).</li>
-            <li>Works fully offline — captures sync later automatically.</li>
-          </ul>
-        </div>
-        <!-- IMAGE PLACEHOLDER -->
-        <div class="shot">
-          <div class="frame-icn">📸</div>
-          <div class="cap-title">Screenshot — Camera screen (Rapid Mode)</div>
-          <div class="cap-desc">
-            Live viewfinder with a large shutter button, a photo/video toggle,
-            and a small "Rapid / Context" mode switch. Show the Inbox counter badge in a corner.
+      <div class="device-wrap">
+        <div class="device">
+          <div class="device-screen">
+            <div class="glyph" aria-hidden="true">📱</div>
+            <div class="d-title">Six tabs</div>
+            <div class="d-cap">Camera · Inbox · All · Projects · Search · Settings</div>
           </div>
-          <div class="cap-tag">Placeholder · Camera / capture</div>
         </div>
+      </div>
+
+      <div class="tabs">
+        <span class="tab"><span class="t-ic" aria-hidden="true">📸</span> <b>Camera</b> <span>· Capture</span></span>
+        <span class="tab"><span class="t-ic" aria-hidden="true">🗂️</span> <b>Inbox</b> <span>· Sort</span></span>
+        <span class="tab"><span class="t-ic" aria-hidden="true">🖼️</span> <b>All</b> <span>· Library</span></span>
+        <span class="tab"><span class="t-ic" aria-hidden="true">📁</span> <b>Projects</b> <span>· Organize</span></span>
+        <span class="tab"><span class="t-ic" aria-hidden="true">🔍</span> <b>Search</b> <span>· Find</span></span>
+        <span class="tab"><span class="t-ic" aria-hidden="true">⚙️</span> <b>Settings</b> <span>· Sync</span></span>
       </div>
     </div>
   </section>
 
-  <!-- ======================= FEATURE: INBOX ======================= -->
-  <section id="inbox">
+  <!-- ======================= FEATURES ======================= -->
+  <section class="section" id="features">
     <div class="wrap">
-      <p class="eyebrow">Feature 2 · Inbox</p>
-      <h2>Your capture zero — the Inbox</h2>
-      <div class="feature reverse">
-        <div class="shot">
-          <div class="frame-icn">🗂️</div>
-          <div class="cap-title">Screenshot — Inbox grid</div>
-          <div class="cap-desc">
-            A grid of recently captured thumbnails with a count of unsorted items.
-            Show a selection state with an "Assign to project" action bar at the bottom.
-          </div>
-          <div class="cap-tag">Placeholder · Inbox grid</div>
-        </div>
+      <div class="section-head">
+        <span class="eyebrow">Feature by feature</span>
+        <h2>Every tab, explained</h2>
+        <p class="sub">A closer look at what each part of Master Camera does — and how to get the most from it.</p>
+      </div>
+
+      <!-- 1 · Camera -->
+      <div class="feature" id="capture">
         <div class="copy">
-          <span class="pill">Inbox tab</span>
-          <h3>Sort at your own pace</h3>
-          <p>The Inbox holds everything you capture in Rapid Mode. Clear it in bulk — select multiple items and assign them to a project, tag them, or add a note in one action. An empty Inbox means everything is filed.</p>
-          <ul>
+          <span class="pill">Camera</span>
+          <h3>Shoot first, sort later with Rapid Mode</h3>
+          <p class="lead">Open the app and start shooting immediately. Every photo and video lands in your Inbox, ready to organize whenever you have a moment — perfect for fast-moving job sites.</p>
+          <ul class="checks">
+            <li><strong>Rapid Mode:</strong> one-tap photo &amp; video capture to Inbox.</li>
+            <li><strong>Context Mode:</strong> assign a project, tags, and notes as you shoot.</li>
+            <li>Optional location stamp on every capture (toggle on or off).</li>
+            <li>Works fully offline — captures sync later automatically.</li>
+          </ul>
+        </div>
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">📸</div>
+              <div class="d-title">Rapid Mode</div>
+              <div class="d-cap">One tap → straight to your Inbox</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 · Inbox -->
+      <div class="feature reverse" id="inbox">
+        <div class="copy">
+          <span class="pill">Inbox</span>
+          <h3>Your capture zero</h3>
+          <p class="lead">The Inbox holds everything you shoot in Rapid Mode. Clear it in bulk — select multiple items and assign them to a project, tag them, or add a note in a single action.</p>
+          <ul class="checks">
             <li>See all unsorted captures in one scrollable grid.</li>
             <li>Multi-select to batch-assign projects and tags.</li>
             <li>Swipe into any item to enrich or edit it.</li>
             <li>A clear goal: shrink your Inbox to zero.</li>
           </ul>
         </div>
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">🗂️</div>
+              <div class="d-title">Inbox</div>
+              <div class="d-cap">Everything unsorted, in one place</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ======================= FEATURE: ALL / GALLERY ======================= -->
-  <section id="gallery">
-    <div class="wrap">
-      <p class="eyebrow">Feature 3 · All Media</p>
-      <h2>Browse your whole library</h2>
-      <div class="feature">
+      <!-- 3 · All Media -->
+      <div class="feature" id="gallery">
         <div class="copy">
-          <span class="pill">All tab</span>
-          <h3>Every photo and video, beautifully organized</h3>
-          <p>The <strong>All</strong> gallery shows your complete library, segmented by type and date. Smooth, lazy-loading thumbnails keep scrolling fast even across thousands of items.</p>
-          <ul>
-            <li>Browse by date or media type (photo / video).</li>
+          <span class="pill">All Media</span>
+          <h3>Every photo and video, in one place</h3>
+          <p class="lead">The All gallery shows your complete library, segmented by type and date. Smooth, lazy-loading thumbnails keep scrolling fast across thousands of items.</p>
+          <ul class="checks">
+            <li>Browse by date or media type — photo or video.</li>
             <li>Fast, lazy-loaded thumbnails built for large libraries.</li>
             <li>See markup and voice-note indicators at a glance.</li>
             <li>Tap any item to open full detail and editing.</li>
           </ul>
         </div>
-        <div class="shot">
-          <div class="frame-icn">🖼️</div>
-          <div class="cap-title">Screenshot — All Media gallery</div>
-          <div class="cap-desc">
-            Date-grouped thumbnail grid. Include small badge icons on a few tiles
-            (pencil = has markup, mic = has voice note, video = clip) to show metadata cues.
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">🖼️</div>
+              <div class="d-title">All Media</div>
+              <div class="d-cap">Your library, grouped by date</div>
+            </div>
           </div>
-          <div class="cap-tag">Placeholder · Gallery / All</div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ======================= FEATURE: DETAIL / MARKUP / VOICE ======================= -->
-  <section id="detail">
-    <div class="wrap">
-      <p class="eyebrow">Feature 4 · Detail, Markup &amp; Voice Notes</p>
-      <h2>Add context that sticks</h2>
-      <div class="feature reverse">
-        <div class="shot">
-          <div class="frame-icn">✏️</div>
-          <div class="cap-title">Screenshot — Media detail with markup</div>
-          <div class="cap-desc">
-            A full photo with pencil annotations (arrows, circles), a note field below,
-            tag chips, an assigned project label, and a voice-note player bar.
-          </div>
-          <div class="cap-tag">Placeholder · Detail + markup</div>
-        </div>
+      <!-- 4 · Detail / Markup / Voice -->
+      <div class="feature reverse" id="detail">
         <div class="copy">
           <span class="pill">Detail view</span>
-          <h3>Markup, voice notes, and rich metadata</h3>
-          <p>Open any capture to preview it full-screen and enrich it. Draw directly on photos to highlight what matters, record a quick voice note instead of typing, and edit every field in one place.</p>
-          <ul>
-            <li><strong>Photo markup</strong> with a pencil tool — circle, arrow, annotate.</li>
-            <li><strong>Voice notes</strong> — record and play back spoken context.</li>
+          <h3>Markup, voice notes &amp; rich metadata</h3>
+          <p class="lead">Open any capture to preview it full-screen and enrich it. Draw directly on photos, record a voice note instead of typing, and edit every field in one place.</p>
+          <ul class="checks">
+            <li><strong>Photo markup</strong> with a pencil — circle, arrow, annotate.</li>
+            <li><strong>Voice notes</strong> — record and replay spoken context.</li>
             <li>Typed notes, tags, and project assignment.</li>
-            <li>Custom fields show right alongside the media.</li>
+            <li>Custom fields shown right alongside the media.</li>
           </ul>
         </div>
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">✏️</div>
+              <div class="d-title">Markup &amp; Voice</div>
+              <div class="d-cap">Annotate and narrate any shot</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ======================= FEATURE: PROJECTS / CUSTOM FIELDS ======================= -->
-  <section id="projects">
-    <div class="wrap">
-      <p class="eyebrow">Feature 5 · Projects &amp; Custom Fields</p>
-      <h2>Structure that fits your workflow</h2>
-      <div class="feature">
+      <!-- 5 · Projects / Custom Fields -->
+      <div class="feature" id="projects">
         <div class="copy">
-          <span class="pill">Projects tab</span>
+          <span class="pill">Projects</span>
           <h3>Projects, subfolders &amp; custom fields</h3>
-          <p>Group captures into <strong>projects</strong>, nest them with subfolders, and define your own <strong>custom fields</strong> — text, number, date, yes/no, or pick-list — to record exactly the data your work needs.</p>
-          <ul>
+          <p class="lead">Group captures into projects, nest them with subfolders, and define your own custom fields — text, number, date, yes/no, or pick-list — to record exactly the data your work needs.</p>
+          <ul class="checks">
             <li>Create and organize projects with nested subfolders.</li>
-            <li>Define custom fields per project (e.g., Room #, Job Code, Status).</li>
+            <li>Define custom fields per project (Room #, Job Code, Status…).</li>
             <li>Tags work across every project for flexible cross-filtering.</li>
             <li>Everything stays searchable — including custom field values.</li>
           </ul>
         </div>
-        <div class="shot">
-          <div class="frame-icn">📁</div>
-          <div class="cap-title">Screenshot — Projects list &amp; custom fields</div>
-          <div class="cap-desc">
-            Left: a list of projects with subfolders and item counts. Right (or a second frame):
-            the "Add custom field" editor showing field types (text, number, date, bool, picklist).
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">📁</div>
+              <div class="d-title">Projects</div>
+              <div class="d-cap">Folders and custom fields</div>
+            </div>
           </div>
-          <div class="cap-tag">Placeholder · Projects</div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ======================= FEATURE: SEARCH / FILTER ======================= -->
-  <section id="search">
-    <div class="wrap">
-      <p class="eyebrow">Feature 6 · Search &amp; Filter</p>
-      <h2>Find any shot in seconds</h2>
-      <div class="feature reverse">
-        <div class="shot">
-          <div class="frame-icn">🔍</div>
-          <div class="cap-title">Screenshot — Search with filters</div>
-          <div class="cap-desc">
-            A search bar with results, plus a filter panel showing chips: Project, Date range,
-            Media type, Has markup, Has voice, Inbox only. Show a few matching thumbnails.
-          </div>
-          <div class="cap-tag">Placeholder · Search / filter</div>
-        </div>
+      <!-- 6 · Search / Filter -->
+      <div class="feature reverse" id="search">
         <div class="copy">
-          <span class="pill">Search tab</span>
-          <h3>Powerful search across everything</h3>
-          <p>Type to search notes, tags, project names, and custom field values at once. Then narrow the results with filters so you always land on exactly the right capture.</p>
-          <ul>
+          <span class="pill">Search</span>
+          <h3>Find any shot in seconds</h3>
+          <p class="lead">Type to search notes, tags, project names, and custom field values at once, then narrow the results with filters so you always land on exactly the right capture.</p>
+          <ul class="checks">
             <li>Full-text search over notes, tags, projects &amp; custom values.</li>
             <li>Filter by project, date range, and media type.</li>
             <li>Filter by has-markup, has-voice, or Inbox-only.</li>
             <li>Results return in under a second, even on large libraries.</li>
           </ul>
         </div>
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">🔍</div>
+              <div class="d-title">Search</div>
+              <div class="d-cap">Type. Filter. Found.</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ======================= FEATURE: SETTINGS / SYNC ======================= -->
-  <section id="settings">
-    <div class="wrap">
-      <p class="eyebrow">Feature 7 · Settings &amp; iCloud Sync</p>
-      <h2>Private sync, your way</h2>
-      <div class="feature">
+      <!-- 7 · Settings / Sync -->
+      <div class="feature" id="settings">
         <div class="copy">
-          <span class="pill">Settings tab</span>
-          <h3>Offline-first with private iCloud sync</h3>
-          <p>Master Camera works offline first and syncs privately through your own <strong>iCloud</strong> account — no third-party servers. Choose how the app launches and control your privacy from Settings.</p>
-          <ul>
-            <li>Set your default launch view (Camera or Gallery).</li>
+          <span class="pill">Settings</span>
+          <h3>Offline-first, private iCloud sync</h3>
+          <p class="lead">Master Camera works offline first and syncs privately through your own iCloud account — no third-party servers. Control how the app launches and manage privacy from Settings.</p>
+          <ul class="checks">
+            <li>Set your default launch view — Camera or Gallery.</li>
             <li>Toggle location capture on or off.</li>
             <li>See iCloud sync status, last sync time &amp; storage usage.</li>
             <li>Background sync keeps every device up to date automatically.</li>
           </ul>
         </div>
-        <div class="shot">
-          <div class="frame-icn">⚙️</div>
-          <div class="cap-title">Screenshot — Settings &amp; iCloud status</div>
-          <div class="cap-desc">
-            Settings list showing "Default launch view", a "Location" toggle, and an
-            "iCloud" section with sync status, last-synced time, and a storage-usage bar.
+        <div class="device-wrap">
+          <div class="device">
+            <div class="device-screen">
+              <div class="glyph" aria-hidden="true">⚙️</div>
+              <div class="d-title">iCloud Sync</div>
+              <div class="d-cap">Private and offline-first</div>
+            </div>
           </div>
-          <div class="cap-tag">Placeholder · Settings</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ======================= USE CASES ======================= -->
-  <section id="use-cases">
+  <section class="section" id="use-cases">
     <div class="wrap">
-      <p class="eyebrow">Who it's for</p>
-      <h2>Real ways people use Master Camera</h2>
-      <p class="sub">A flexible camera app that adapts to how you work.</p>
-      <div class="cases">
-        <div class="case">
-          <div class="ic">👷</div>
+      <div class="section-head">
+        <span class="eyebrow">Who it's for</span>
+        <h2>Real ways people use Master Camera</h2>
+        <p class="sub">A flexible camera app that adapts to how you work.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="ic" aria-hidden="true">👷</div>
           <h4>Contractors &amp; field pros</h4>
-          <p>Document a job site room by room in Rapid Mode, then batch-assign photos to the project, tag "before/after", and mark up defects with arrows. Custom fields track room numbers and job codes for tidy handoffs.</p>
+          <p>Document a job site room by room in Rapid Mode, batch-assign photos to the project, tag before/after, and mark up defects. Custom fields track room numbers and job codes for tidy handoffs.</p>
         </div>
-        <div class="case">
-          <div class="ic">📐</div>
+        <div class="card">
+          <div class="ic" aria-hidden="true">📐</div>
           <h4>Architects &amp; engineers</h4>
-          <p>Capture site surveys with location stamps, annotate measurements directly on photos, and add voice notes while your hands are full. Find any inspection shot later by project or date in one search.</p>
+          <p>Capture site surveys with location stamps, annotate measurements directly on photos, and add voice notes while your hands are full. Find any inspection shot later by project or date.</p>
         </div>
-        <div class="case">
-          <div class="ic">🎓</div>
+        <div class="card">
+          <div class="ic" aria-hidden="true">🎓</div>
           <h4>Students &amp; researchers</h4>
           <p>Collect visual references fast into the Inbox, then sort into projects by topic. Tag sources, add typed notes, and retrieve everything for your paper with full-text search.</p>
         </div>
-        <div class="case">
-          <div class="ic">🏠</div>
+        <div class="card">
+          <div class="ic" aria-hidden="true">🏠</div>
           <h4>Real estate &amp; property</h4>
-          <p>Shoot a whole property, group each listing as a project with subfolders per room, and filter by "has markup" to review flagged issues before publishing.</p>
+          <p>Shoot a whole property, group each listing as a project with subfolders per room, and filter by has-markup to review flagged issues before publishing.</p>
         </div>
-        <div class="case">
-          <div class="ic">🎨</div>
+        <div class="card">
+          <div class="ic" aria-hidden="true">🎨</div>
           <h4>Creators &amp; hobbyists</h4>
           <p>Build a lightweight visual library without cloud lock-in. Organize inspiration into projects and tags, and keep everything synced privately across iPhone and iPad.</p>
         </div>
-        <div class="case">
-          <div class="ic">🔧</div>
+        <div class="card">
+          <div class="ic" aria-hidden="true">🔧</div>
           <h4>Maintenance &amp; inspection</h4>
           <p>Log recurring inspections with custom checklist fields, attach voice notes for quick reporting, and pull up a location's full history by filtering on its project.</p>
         </div>
@@ -569,23 +360,26 @@
   </section>
 
   <!-- ======================= TIPS ======================= -->
-  <section id="tips">
+  <section class="section" id="tips">
     <div class="wrap">
-      <p class="eyebrow">Pro tips</p>
-      <h2>Get the most out of Master Camera</h2>
-      <div class="cases">
-        <div class="case">
-          <div class="ic">⚡</div>
-          <h4>Keep Rapid Mode as your default</h4>
+      <div class="section-head">
+        <span class="eyebrow">Pro tips</span>
+        <h2>Get the most out of it</h2>
+        <p class="sub">Three small habits that make Master Camera even faster.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="ic" aria-hidden="true">⚡</div>
+          <h4>Keep Rapid Mode default</h4>
           <p>Set the Camera as your launch view in Settings so you're always one tap from a shot. Sort from the Inbox when you have a spare minute.</p>
         </div>
-        <div class="case">
-          <div class="ic">🏷️</div>
-          <h4>Build a small, reusable tag set</h4>
-          <p>A handful of consistent tags (e.g., "before", "issue", "approved") makes filtering across every project effortless.</p>
+        <div class="card">
+          <div class="ic" aria-hidden="true">🏷️</div>
+          <h4>Build a small tag set</h4>
+          <p>A handful of consistent tags — like before, issue, approved — makes filtering across every project effortless.</p>
         </div>
-        <div class="case">
-          <div class="ic">🎙️</div>
+        <div class="card">
+          <div class="ic" aria-hidden="true">🎙️</div>
           <h4>Speak instead of type</h4>
           <p>On-site with gloves on? Add a voice note instead of typing — it's searchable context you can capture in seconds.</p>
         </div>
@@ -594,51 +388,56 @@
   </section>
 
   <!-- ======================= FAQ ======================= -->
-  <section id="faq">
+  <section class="section" id="faq">
     <div class="wrap">
-      <p class="eyebrow">FAQ</p>
-      <h2>Frequently asked questions</h2>
-      <p class="sub">Everything you need to know about capturing and organizing with Master Camera.</p>
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Frequently asked questions</h2>
+        <p class="sub">Everything you need to know about capturing and organizing with Master Camera.</p>
+      </div>
 
-      <details open>
-        <summary>Is Master Camera free to use?</summary>
-        <p>You can download Master Camera and start capturing right away. Check the App Store listing for the latest pricing and any premium options.</p>
-      </details>
-      <details>
-        <summary>Where are my photos and videos stored?</summary>
-        <p>Your media is stored on your device and synced privately through your own iCloud account using Apple's secure infrastructure. There are no third-party servers involved.</p>
-      </details>
-      <details>
-        <summary>Does Master Camera work offline?</summary>
-        <p>Yes. Master Camera is offline-first. You can capture, organize, mark up, and add voice notes with no connection — everything syncs automatically once you're back online.</p>
-      </details>
-      <details>
-        <summary>Can I mark up photos and add voice notes?</summary>
-        <p>Absolutely. Open any capture in the detail view to draw annotations with the pencil tool and record a voice note for spoken context.</p>
-      </details>
-      <details>
-        <summary>How do projects and custom fields work?</summary>
-        <p>Projects group your captures and can contain subfolders. Each project can define custom fields — text, number, date, yes/no, or pick-list — so you can record exactly the data your workflow needs, and every value is searchable.</p>
-      </details>
-      <details>
-        <summary>What devices are supported?</summary>
-        <p>Master Camera is built for iPhone and iPad running iOS 17 or later, with seamless iCloud sync across your devices.</p>
-      </details>
-      <details>
-        <summary>Can I search for a specific photo later?</summary>
-        <p>Yes. Search across notes, tags, project names, and custom field values, then filter by project, date, media type, markup, voice note, or Inbox status to find any shot in seconds.</p>
-      </details>
+      <div class="faq">
+        <details open>
+          <summary>Is Master Camera free to use?</summary>
+          <p>You can download Master Camera and start capturing right away. Check the App Store listing for the latest pricing and any premium options.</p>
+        </details>
+        <details>
+          <summary>Where are my photos and videos stored?</summary>
+          <p>Your media is stored on your device and synced privately through your own iCloud account using Apple's secure infrastructure. There are no third-party servers involved.</p>
+        </details>
+        <details>
+          <summary>Does Master Camera work offline?</summary>
+          <p>Yes. Master Camera is offline-first. You can capture, organize, mark up, and add voice notes with no connection — everything syncs automatically once you're back online.</p>
+        </details>
+        <details>
+          <summary>Can I mark up photos and add voice notes?</summary>
+          <p>Absolutely. Open any capture in the detail view to draw annotations with the pencil tool and record a voice note for spoken context.</p>
+        </details>
+        <details>
+          <summary>How do projects and custom fields work?</summary>
+          <p>Projects group your captures and can contain subfolders. Each project can define custom fields — text, number, date, yes/no, or pick-list — so you can record exactly the data your workflow needs, and every value is searchable.</p>
+        </details>
+        <details>
+          <summary>What devices are supported?</summary>
+          <p>Master Camera is built for iPhone and iPad running iOS 17 or later, with seamless iCloud sync across your devices.</p>
+        </details>
+        <details>
+          <summary>Can I search for a specific photo later?</summary>
+          <p>Yes. Search across notes, tags, project names, and custom field values, then filter by project, date, media type, markup, voice note, or Inbox status to find any shot in seconds.</p>
+        </details>
+      </div>
     </div>
   </section>
 
   <!-- ======================= FOOTER CTA ======================= -->
-  <footer>
+  <footer class="foot">
     <div class="wrap">
-      <p style="font-size:18px;color:var(--text);margin-bottom:6px;"><strong>Ready to capture smarter?</strong></p>
-      <p>Download Master Camera and turn scattered photos into an organized, searchable library.</p>
-      <div class="cta-row" style="margin-top:16px;">
+      <p class="cta-title">Ready to capture smarter?</p>
+      <p class="f-sub">Turn scattered photos into an organized, searchable library.</p>
+      <div class="cta-row">
         <a class="btn btn-primary" href="/#wishlist">Join the waitlist</a>
       </div>
+      <a class="back-link" href="/"><span aria-hidden="true">&larr;</span> Back to Master Camera</a>
       <p class="kw">
         Master Camera — fast camera app &amp; photo organizer for iPhone and iPad. Capture
         photos and videos to an Inbox, organize with projects, tags, notes and custom fields,
