@@ -7,6 +7,8 @@
    ========================================================================== */
 
 :root {
+  color-scheme: light;
+
   --bg:            #d0d5dd;
   --bg-lift:       #eef1f5;
   --card:          #e8ebf0;
@@ -38,38 +40,6 @@
   --radius:        16px;
   --maxw:          1040px;
   --ease:          cubic-bezier(.22, 1, .36, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg:          #121417;
-    --bg-lift:     #22262c;
-    --card:        #1c1f24;
-    --card-hover:  #24282f;
-    --line:        #2c323a;
-    --line-strong: #3c424a;
-
-    --text:        #f4f6f9;
-    --muted:       #c4c6c9;
-    --muted-2:     #949699;
-
-    --brand:       #fd7269;
-    --brand-hover: #e3665e;
-    --brand-strong:#ff8b83;
-    --brand-soft:  rgba(253, 114, 105, .14);
-    --brand-line:  rgba(253, 114, 105, .26);
-
-    --gold:        #f2b23e;
-    --gold-soft:   rgba(242, 178, 62, .14);
-    --gold-line:   rgba(242, 178, 62, .30);
-
-    --blue:        #6ea8ff;
-    --blue-soft:   rgba(110, 168, 255, .12);
-    --blue-line:   rgba(110, 168, 255, .28);
-
-    --topbar-bg:   rgba(18, 20, 23, .72);
-    --btn-shadow:  none;
-  }
 }
 
 * { box-sizing: border-box; }
