@@ -12,7 +12,7 @@ const TermsOfUse = ({ onBack }) => {
         </button>
 
         <h1 className="text-4xl font-bold mb-2">Master Camera Terms of Use</h1>
-        <p className="text-muted-foreground text-sm mb-8">Last updated: 18 June 2026</p>
+        <p className="text-muted-foreground text-sm mb-8">Last updated: 25 July 2026</p>
 
         <div className="space-y-8 prose prose-invert max-w-none">
           <section>
@@ -22,7 +22,7 @@ const TermsOfUse = ({ onBack }) => {
 
           <section>
             <h2 className="text-2xl font-semibold mt-8 mb-4">2. The app</h2>
-            <p className="text-muted-foreground">Master Camera is a camera and media-organizer for field work. It captures photos, videos, document scans, and voice notes, and lets you organize them with projects, tags, notes, locations, and other metadata. The App runs entirely on your device: it requires no account and has no backend service. Your content is stored only on your device, as described in our Privacy Policy.</p>
+            <p className="text-muted-foreground">Master Camera is a camera and media-organizer for field work. It captures photos, videos, document scans, and voice notes, and lets you organize them with projects, tags, notes, locations, and other metadata. The App runs on your device: it requires no account, and the only feature that communicates with us is the optional in-app feedback form described in our Privacy Policy. Your content is stored only on your device, as described in our Privacy Policy.</p>
           </section>
 
           <section>
@@ -31,44 +31,50 @@ const TermsOfUse = ({ onBack }) => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">4. Your content and responsibilities</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">4. Purchases</h2>
+            <p className="text-muted-foreground">The App offers an optional one-time in-app purchase, Master Camera Premium, which unlocks additional features. It is not a subscription: you pay once and the unlock remains tied to your Apple Account, and you can restore it on any device signed into the same Apple Account using "Restore Purchases" in the App.</p>
+            <p className="text-muted-foreground mt-4">Payment is charged to your Apple Account and processed by Apple; we never receive your payment details. Refunds are handled by Apple under the Apple Media Services Terms and Conditions — you can request one at <a href="https://reportaproblem.apple.com" className="text-primary hover:underline">reportaproblem.apple.com</a>. Prices and the set of features included in the free and Premium tiers may change over time, but features you have already purchased will not be removed from your unlock.</p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">5. Your content and responsibilities</h2>
             <p className="text-muted-foreground">You own the photos, videos, recordings, notes, and other content you create with the App. We claim no rights over it.</p>
             <p className="text-muted-foreground mt-4">You are responsible for your content and for how you use the App, including obtaining any consent required to photograph or record people, property, or locations, and complying with all laws and any site, employer, or client rules that apply to you.</p>
             <p className="text-muted-foreground mt-4">You are responsible for backing up your content. Because the App stores data only on your device, uninstalling the App, losing the device, or a device fault may permanently delete your content.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">5. Acceptable use</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">6. Acceptable use</h2>
             <p className="text-muted-foreground">You agree not to use the App for any unlawful purpose, to infringe anyone's rights, or in any way that violates these Terms or applicable law.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">6. Privacy</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">7. Privacy</h2>
             <p className="text-muted-foreground">Your use of the App is also governed by our Privacy Policy, which explains what the App stores on your device and the permissions it requests.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">7. Disclaimers</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">8. Disclaimers</h2>
             <p className="text-muted-foreground">The App is provided "as is" and "as available," without warranties of any kind, whether express or implied, including any implied warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the App will be uninterrupted, error-free, or that it will meet your requirements, and we are not responsible for any loss of data stored on your device.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">8. Limitation of liability</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">9. Limitation of liability</h2>
             <p className="text-muted-foreground">To the maximum extent permitted by law, we will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any loss of data, profits, or business, arising out of or related to your use of (or inability to use) the App. Nothing in these Terms limits liability that cannot be limited under applicable law.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">9. Changes</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">10. Changes</h2>
             <p className="text-muted-foreground">We may update the App and these Terms from time to time. When we do, we will revise the "Last updated" date above and post the updated Terms. Your continued use of the App after changes take effect means you accept the revised Terms.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">10. Termination</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">11. Termination</h2>
             <p className="text-muted-foreground">These Terms apply for as long as you use the App. You may end them at any time by deleting the App. We may suspend or end the license if you breach these Terms.</p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mt-8 mb-4">11. Contact</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">12. Contact</h2>
             <p className="text-muted-foreground">Questions about these Terms? Email <a href="mailto:support@mastercamera.app" className="text-primary hover:underline">support@mastercamera.app</a>.</p>
           </section>
 
