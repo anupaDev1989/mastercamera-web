@@ -449,6 +449,32 @@ figure.shot.full figcaption { max-width: 260px; margin-left: auto; margin-right:
   transition: color .2s var(--ease);
 }
 .foot .back-link:hover { color: var(--brand); }
+.support-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 40px;
+  padding: 20px 32px;
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-line);
+  border-radius: var(--radius);
+}
+.support-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.support-email {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--brand-strong);
+}
+.support-email:hover { color: var(--brand-hover); text-decoration: underline; }
+
 .foot .kw {
   max-width: 780px;
   margin: 48px auto 0;
