@@ -95,10 +95,9 @@ const Wishlist = () => {
             <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                     <Reveal>
-                        <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-4xl">Get Early Access</h2>
+                        <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-4xl">Stay in the Loop</h2>
                         <p className="mb-8 text-lg text-muted-foreground">
-                            Master Camera is launching on the App Store soon. Join the waitlist to be among the first to try it and get notified the moment it's available.
-                            Early access members will receive special launch discounts and direct input on features.
+                            Master Camera is available now on the App Store. Sign up to hear about new features, updates, and special offers.
                         </p>
                     </Reveal>
 
@@ -106,7 +105,7 @@ const Wishlist = () => {
                         {status === 'success' ? (
                             <div className="text-center animate-fade-in">
                                 <h3 className="mb-2 text-xl font-semibold text-foreground">You're on the list! 🎉</h3>
-                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll let you know as soon as Master Camera is available.</p>
+                                <p className="mb-6 text-muted-foreground">Thanks for your interest. We'll keep you posted on new features and updates.</p>
                                 <Button variant="secondary" onClick={() => setStatus('idle')} className="w-full">
                                     Add another email
                                 </Button>
@@ -172,7 +171,7 @@ const Wishlist = () => {
                                     className="w-full"
                                     disabled={status === 'loading'}
                                 >
-                                    {status === 'loading' ? 'Joining...' : 'Join the waitlist'}
+                                    {status === 'loading' ? 'Signing up...' : 'Sign up for updates'}
                                 </Button>
                                 {errorMessage && (
                                     <p className="text-sm text-destructive" role="alert">{errorMessage}</p>

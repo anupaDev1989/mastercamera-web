@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-const Button = ({ children, variant = 'primary', size = 'default', onClick, type = 'button', className = '', disabled }) => {
+const Button = ({ children, as: Component = 'button', variant = 'primary', size = 'default', onClick, type = 'button', className = '', disabled, ...rest }) => {
     const baseStyles = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
     const variants = {
@@ -19,15 +19,17 @@ const Button = ({ children, variant = 'primary', size = 'default', onClick, type
         icon: "h-9 w-9",
     };
 
+    const typeProps = Component === 'button' ? { type, disabled } : {};
+
     return (
-        <button
+        <Component
             className={cn(baseStyles, variants[variant], sizes[size], className)}
             onClick={onClick}
-            type={type}
-            disabled={disabled}
+            {...typeProps}
+            {...rest}
         >
             {children}
-        </button>
+        </Component>
     );
 };
 

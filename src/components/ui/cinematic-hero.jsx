@@ -390,8 +390,10 @@ function Screen2({ sectionRef, cardTagline, cardDescription, cardAudience, appSc
   );
 }
 
+const APP_STORE_URL = "https://apps.apple.com/app/master-camera-for-work/id6782051494";
+
 // ─── Screen 3 — The Invitation ──────────────────────────────────────────────
-function Screen3({ sectionRef, ctaHeading, ctaDescription, onJoinWaitlist }) {
+function Screen3({ sectionRef, ctaHeading, ctaDescription }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15, margin: "0px 0px -10% 0px" });
   const show = isInView;
@@ -415,7 +417,7 @@ function Screen3({ sectionRef, ctaHeading, ctaDescription, onJoinWaitlist }) {
         {/* Label */}
         <motion.div variants={fadeIn(0.4)} className="mc-label">
           <div className="mc-label-dot" aria-hidden />
-          Coming to iOS
+          Available on iOS
         </motion.div>
 
         {/* Headline */}
@@ -442,10 +444,12 @@ function Screen3({ sectionRef, ctaHeading, ctaDescription, onJoinWaitlist }) {
           variants={slideUpSm(0.6)}
           className="mt-1 flex w-full max-w-[280px] flex-col gap-3"
         >
-          <button
-            onClick={onJoinWaitlist}
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="mc-btn group flex items-center justify-center gap-3 rounded-[1.25rem] px-8 py-4 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
-            aria-label="Join the waitlist"
+            aria-label="Download Master Camera on the App Store"
           >
             <svg className="h-7 w-7 shrink-0 transition-transform group-hover:scale-105" fill="none" viewBox="0 0 28 28" aria-hidden>
               <rect width="28" height="28" rx="6" fill="#0F172A" />
@@ -455,10 +459,10 @@ function Screen3({ sectionRef, ctaHeading, ctaDescription, onJoinWaitlist }) {
               <rect x="15" y="15" width="9" height="9" rx="2" fill="#F97316" opacity="0.4" />
             </svg>
             <div className="text-left">
-              <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Be the first</div>
-              <div className="text-xl font-bold leading-none tracking-tight">Join Waitlist</div>
+              <div className="mb-[-2px] text-[10px] font-bold uppercase tracking-wider text-neutral-500">Available now</div>
+              <div className="text-xl font-bold leading-none tracking-tight">Get the App</div>
             </div>
-          </button>
+          </a>
 
           <a
             href="#features"
@@ -502,9 +506,8 @@ export function CinematicHero({
   cardDescription = "Open it and shoot — no setup, no distractions. When your work needs more, it's all right there: categorization, metadata overlays, shot notes, markups, watermarks. Private. Offline. Yours.",
   cardAudience = "Engineered for DIY enthusiasts, scientists, and field professionals.",
   ctaHeading = "Start capturing.",
-  ctaDescription = "Master Camera is coming to iOS. Join the waitlist and be the first to know when it launches.",
+  ctaDescription = "Master Camera is available now on iOS. Download it and start shooting smarter today.",
   appScreenSrc = "/app_screen.png",
-  onJoinWaitlist,
 }) {
   const [active, setActive] = useState(0);
   const refs = [useRef(null), useRef(null), useRef(null)];
@@ -551,7 +554,6 @@ export function CinematicHero({
         isActive={active === 2}
         ctaHeading={ctaHeading}
         ctaDescription={ctaDescription}
-        onJoinWaitlist={onJoinWaitlist}
       />
     </div>
   );
