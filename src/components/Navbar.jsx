@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from './Button';
 
-const ComingSoonPill = ({ className = '' }) => (
-    <span
-        className={`inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-gradient-to-r from-primary/90 via-primary to-primary/90 px-3.5 py-1 text-[11px] font-semibold tracking-wide text-primary-foreground shadow-[0_4px_16px_-4px_hsl(var(--primary)/0.6)] ${className}`}
-    >
-        <span aria-hidden="true">🚀</span>
-        Coming Soon
-    </span>
-);
+const APP_STORE_URL = 'https://apps.apple.com/app/master-camera-for-work/id6782051494';
 
 const Navbar = ({ onPrivacyClick }) => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -21,13 +14,6 @@ const Navbar = ({ onPrivacyClick }) => {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    const scrollToWishlist = () => {
-        const element = document.getElementById('wishlist');
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
 
     return (
         <nav
@@ -61,15 +47,6 @@ const Navbar = ({ onPrivacyClick }) => {
                     </span>
                 </a>
 
-                {/* CENTER (sm+): Coming Soon pill, absolutely centered in the bar */}
-                <div
-                    className={`pointer-events-none absolute inset-x-0 top-0 hidden h-full items-center justify-center transition-opacity duration-500 sm:flex ${isScrolled ? 'opacity-0' : 'opacity-100'
-                        }`}
-                    aria-hidden={isScrolled}
-                >
-                    <ComingSoonPill className="animate-fade-in" />
-                </div>
-
                 {/* RIGHT: Guide link + CTA */}
                 <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
                     <a
@@ -79,23 +56,17 @@ const Navbar = ({ onPrivacyClick }) => {
                         Guide
                     </a>
                     <Button
+                        as="a"
+                        href={APP_STORE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         variant="primary"
                         size="sm"
-                        onClick={scrollToWishlist}
                         className="flex-shrink-0 whitespace-nowrap transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] hover:shadow-md active:scale-95"
                     >
-                        Join waitlist
+                        Download
                     </Button>
                 </div>
-            </div>
-
-            {/* MOBILE (<sm): Coming Soon pill floats just below the bar — no horizontal collision */}
-            <div
-                className={`pointer-events-none absolute left-1/2 top-full flex -translate-x-1/2 justify-center pt-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:hidden ${isScrolled ? '-translate-y-3 opacity-0' : 'translate-y-0 opacity-100'
-                    }`}
-                aria-hidden={isScrolled}
-            >
-                <ComingSoonPill className="animate-fade-in" />
             </div>
         </nav>
     );

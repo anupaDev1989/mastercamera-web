@@ -21,11 +21,12 @@ const Footer = ({ onPrivacyClick, onTermsClick }) => {
                             <li><a href="#wishlist" className="hover:text-primary transition-colors">Pricing</a></li>
                             <li>
                                 <a
-                                    href="#wishlist"
-                                    aria-disabled="true"
-                                    className="cursor-not-allowed opacity-60"
+                                    href="https://apps.apple.com/app/master-camera-for-work/id6782051494"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-primary transition-colors"
                                 >
-                                    Download (Coming soon)
+                                    Download
                                 </a>
                             </li>
                         </ul>
