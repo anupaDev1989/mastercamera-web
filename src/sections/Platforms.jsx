@@ -1,6 +1,10 @@
 import React from 'react';
 import Reveal from '../components/Reveal';
 
+const trackDownloadClick = () => {
+  fetch('/api/track-download', { method: 'POST' }).catch(() => {});
+};
+
 const Platforms = () => {
   return (
     <section id="platforms" className="relative z-10 py-20 md:py-24 bg-background">
@@ -19,6 +23,7 @@ const Platforms = () => {
             href="https://apps.apple.com/app/master-camera-for-work/id6782051494"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackDownloadClick}
             className="flex items-center gap-4 rounded-full border border-border bg-card/90 px-7 py-3 shadow-lg transition-transform duration-300 ease-out hover:-translate-y-0.5"
           >
             <img
