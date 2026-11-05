@@ -43,6 +43,7 @@
   </script>
 
   <link rel="stylesheet" href="/guide/guide.css" />
+  <script src="/guide/guide.js" defer></script>
 </head>
 
 <body>
@@ -100,31 +101,45 @@
           <span class="eyebrow">Start here</span>
           <h2>The three tabs</h2>
         </div>
-        <p class="lead">The app has three tabs along the bottom. Settings opens with the gear icon from the Camera or Gallery screen.</p>
+        <div class="split split--intro">
+          <div class="split-body">
+            <p class="lead">The app has three tabs along the bottom. Settings opens with the gear icon from the Camera or Gallery screen.</p>
 
-        <div class="mini-cards">
-          <div class="mini-card">
-            <div class="ic" aria-hidden="true">📷</div>
-            <h4>Camera</h4>
-            <p>Take photos and video. Save instantly, or file them as you shoot.</p>
+            <div class="mini-cards mini-cards--stack">
+              <div class="mini-card">
+                <div class="ic" aria-hidden="true">📷</div>
+                <div>
+                  <h4>Camera</h4>
+                  <p>Take photos and video. Save instantly, or file them as you shoot.</p>
+                </div>
+              </div>
+              <div class="mini-card">
+                <div class="ic" aria-hidden="true">🖼️</div>
+                <div>
+                  <h4>Gallery</h4>
+                  <p>Browse everything. Two views: <strong>All</strong> (every photo) and <strong>Stacks</strong> (your projects).</p>
+                </div>
+              </div>
+              <div class="mini-card">
+                <div class="ic" aria-hidden="true">🔍</div>
+                <div>
+                  <h4>Search</h4>
+                  <p>Find any photo by note, tag, stack, or custom field — with filters.</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="mini-card">
-            <div class="ic" aria-hidden="true">🖼️</div>
-            <h4>Gallery</h4>
-            <p>Browse everything. Two views: <strong>All</strong> (every photo) and <strong>Stacks</strong> (your projects).</p>
-          </div>
-          <div class="mini-card">
-            <div class="ic" aria-hidden="true">🔍</div>
-            <h4>Search</h4>
-            <p>Find any photo by note, tag, stack, or custom field — with filters.</p>
-          </div>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/gallery-stacks.jpg" width="704" height="1527" alt="The Gallery tab showing project stacks, with the tab bar at the bottom" loading="lazy" />
+            <figcaption>Fig&nbsp;1 — The app at a glance</figcaption>
+          </figure>
         </div>
 
         <div class="callout callout--note"><strong>The loop:</strong> capture → sort into a stack → enrich with notes and markup → search to find it later. Everything works fully offline.</div>
 
         <figure class="shot detail">
           <img class="shot-img" src="/guide/images/tab-bar.png" width="1320" height="340" alt="The bottom tab bar with Camera, Gallery, and Search tabs" loading="lazy" />
-          <figcaption>Fig&nbsp;1 — The three tabs</figcaption>
+          <figcaption>Fig&nbsp;2 — The three tabs</figcaption>
         </figure>
       </div>
     </section>
@@ -137,46 +152,56 @@
           <h2>Taking photos &amp; video</h2>
         </div>
 
-        <h3>Take a quick photo (Rapid Mode)</h3>
-        <ol class="steps-list">
-          <li>Open the <strong>Camera</strong> tab.</li>
-          <li>Make sure the mode is set to <strong>Rapid</strong>.</li>
-          <li>Tap the shutter. The photo saves straight to your library — no prompts. Keep tapping to shoot as fast as you like.</li>
-        </ol>
-
-        <h3>File a photo as you shoot (Context Mode)</h3>
-        <ol class="steps-list">
-          <li>Switch the mode to <strong>Context</strong>.</li>
-          <li>Tap the shutter — a context card appears the moment the photo is taken.</li>
-          <li>Assign a <strong>stack</strong>, add <strong>tags</strong> and a <strong>note</strong>, then save. The photo is filed with everything already attached.</li>
-        </ol>
-        <div class="callout callout--note"><strong>What you'll see:</strong> Your capture-mode choice is remembered between sessions, so the camera opens in whichever mode you used last.</div>
-
-        <div class="shot-row">
-          <figure class="shot full">
+        <div class="split">
+          <div class="split-body">
+            <h3>Take a quick photo (Rapid Mode)</h3>
+            <ol class="steps-list">
+              <li>Open the <strong>Camera</strong> tab.</li>
+              <li>Make sure the mode is set to <strong>Rapid</strong>.</li>
+              <li>Tap the shutter. The photo saves straight to your library — no prompts. Keep tapping to shoot as fast as you like.</li>
+            </ol>
+          </div>
+          <figure class="shot full split-media">
             <img class="shot-img" src="/guide/images/camera-rapid-mode.png" width="414" height="900" alt="The camera screen with the shutter and the Rapid/Context toggle visible" loading="lazy" />
-            <figcaption>Fig&nbsp;2 — Rapid Mode capture</figcaption>
-          </figure>
-          <figure class="shot full">
-            <img class="shot-img" src="/guide/images/context-card.png" width="414" height="900" alt="The Add Context card with stack picker, note field, and tags" loading="lazy" />
-            <figcaption>Fig&nbsp;3 — Filing a shot in Context Mode</figcaption>
+            <figcaption>Fig&nbsp;3 — Rapid Mode capture</figcaption>
           </figure>
         </div>
+
+        <div class="split split--flip">
+          <div class="split-body">
+            <h3>File a photo as you shoot (Context Mode)</h3>
+            <ol class="steps-list">
+              <li>Switch the mode to <strong>Context</strong>.</li>
+              <li>Tap the shutter — a context card appears the moment the photo is taken.</li>
+              <li>Assign a <strong>stack</strong>, add <strong>tags</strong> and a <strong>note</strong>, then save. The photo is filed with everything already attached.</li>
+            </ol>
+            <div class="callout callout--note"><strong>What you'll see:</strong> Your capture-mode choice is remembered between sessions, so the camera opens in whichever mode you used last.</div>
+          </div>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/context-card.png" width="414" height="900" alt="The Add Context card with stack picker, note field, and tags" loading="lazy" />
+            <figcaption>Fig&nbsp;4 — Filing a shot in Context Mode</figcaption>
+          </figure>
+        </div>
+
         <figure class="shot detail">
           <img class="shot-img" src="/guide/images/mode-toggle.png" width="1174" height="174" alt="The Rapid and Context mode toggle pills, shown side by side" loading="lazy" />
-          <figcaption>Fig&nbsp;4 — Switching capture mode</figcaption>
+          <figcaption>Fig&nbsp;5 — Switching capture mode</figcaption>
         </figure>
 
-        <h3>Record video</h3>
-        <ol class="steps-list">
-          <li>Tap the <strong>video</strong> icon next to the shutter to switch to video mode.</li>
-          <li>Tap the shutter to start recording; tap again to stop.</li>
-          <li>Tap the <strong>camera</strong> icon to switch back to photos.</li>
-        </ol>
-        <figure class="shot full">
-          <img class="shot-img" src="/guide/images/video-toggle.png" width="414" height="900" alt="The camera screen with an arrow pointing to the video icon next to the shutter" loading="lazy" />
-          <figcaption>Fig&nbsp;5 — Switching to video</figcaption>
-        </figure>
+        <div class="split">
+          <div class="split-body">
+            <h3>Record video</h3>
+            <ol class="steps-list">
+              <li>Tap the <strong>video</strong> icon next to the shutter to switch to video mode.</li>
+              <li>Tap the shutter to start recording; tap again to stop.</li>
+              <li>Tap the <strong>camera</strong> icon to switch back to photos.</li>
+            </ol>
+          </div>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/video-toggle.png" width="414" height="900" alt="The camera screen with an arrow pointing to the video icon next to the shutter" loading="lazy" />
+            <figcaption>Fig&nbsp;6 — Switching to video</figcaption>
+          </figure>
+        </div>
 
         <h3>Camera overlays &amp; tools</h3>
         <p class="lead">Tap the <strong>sliders</strong> button near the shutter to open the quick-control tray:</p>
@@ -192,7 +217,7 @@
         </div>
         <figure class="shot crop">
           <img class="shot-img" src="/guide/images/quick-control-tray.png" width="1320" height="875" alt="The quick-control tray open, showing Grid, Guides, QR, Scan, and Macro toggles" loading="lazy" />
-          <figcaption>Fig&nbsp;6 — Camera overlays &amp; tools</figcaption>
+          <figcaption>Fig&nbsp;7 — Camera overlays &amp; tools</figcaption>
         </figure>
 
         <div class="callout callout--perm"><strong>Permissions:</strong> The camera needs Camera access on first launch. Video also needs Microphone access.</div>
@@ -209,53 +234,40 @@
         </div>
         <p class="lead">A <strong>stack</strong> is a project — a job, a site, a topic. Every photo lives in exactly one stack (new captures land in <strong>General</strong> until you move them).</p>
 
-        <h3>Browse your library</h3>
-        <ol class="steps-list">
-          <li>Open the <strong>Gallery</strong> tab.</li>
-          <li>Swipe between <strong>All</strong> (every photo, grouped by date) and <strong>Stacks</strong> (your projects).</li>
-          <li>Tap any photo to open it full screen. Badges show which photos have <strong>markup</strong> or <strong>edits</strong>.</li>
-        </ol>
-        <div class="shot-row">
-          <figure class="shot full">
-            <div class="ph">
-              <span class="icon" aria-hidden="true">🖼️</span>
-              <span class="kind full">Full screen</span>
-              <span class="what">Gallery — All view</span>
-              <span class="spec">The All grid with the All / Stacks segmented control visible at the top.</span>
-            </div>
-            <figcaption>Fig&nbsp;7 — Browsing All</figcaption>
-          </figure>
-          <figure class="shot full">
-            <div class="ph">
-              <span class="icon" aria-hidden="true">🗂️</span>
-              <span class="kind full">Full screen</span>
-              <span class="what">Gallery — Stacks view</span>
-              <span class="spec">The Stacks view showing a few project stacks as cards.</span>
-            </div>
+        <div class="split">
+          <div class="split-body">
+            <h3>Browse your library</h3>
+            <ol class="steps-list">
+              <li>Open the <strong>Gallery</strong> tab.</li>
+              <li>Swipe between <strong>All</strong> (every photo, grouped by date) and <strong>Stacks</strong> (your projects).</li>
+              <li>Tap any photo to open it full screen. Badges show which photos have <strong>markup</strong> or <strong>edits</strong>.</li>
+            </ol>
+
+            <h3>Create a stack</h3>
+            <ol class="steps-list">
+              <li>On the <strong>Stacks</strong> view, tap <strong>New Stack</strong> (the <strong>+</strong> button).</li>
+              <li>Give it a name. Open its settings any time to add tags, custom fields, a watermark, and metadata options.</li>
+            </ol>
+          </div>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/stacks-view.jpg" width="701" height="1216" alt="The Gallery Stacks view showing project stacks as cards" loading="lazy" />
             <figcaption>Fig&nbsp;8 — Browsing Stacks</figcaption>
           </figure>
         </div>
 
-        <h3>Create a stack</h3>
-        <ol class="steps-list">
-          <li>On the <strong>Stacks</strong> view, tap <strong>New Stack</strong>.</li>
-          <li>Give it a name. Open its settings any time to add tags, custom fields, a watermark, and metadata options.</li>
-        </ol>
-
-        <h3>Move several photos at once</h3>
-        <ol class="steps-list">
-          <li>Tap <strong>Select</strong>, then tap the photos you want (or drag to sweep-select a range).</li>
-          <li>Use the action bar to <strong>assign a stack</strong>, <strong>add tags</strong>, compare, export, or delete.</li>
-        </ol>
-        <figure class="shot crop">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">☑️</span>
-            <span class="kind crop">Cropped region</span>
-            <span class="what">Multi-select action bar</span>
-            <span class="spec">Selection mode active with a few photos checked and the bottom action bar (Assign stack / Tags / Compare / Export) visible. Crop to the grid + action bar.</span>
+        <div class="split split--flip">
+          <div class="split-body">
+            <h3>Move several photos at once</h3>
+            <ol class="steps-list">
+              <li>Tap <strong>Select</strong>, then tap the photos you want (or drag to sweep-select a range).</li>
+              <li>Use the action bar to <strong>assign a stack</strong>, <strong>add tags</strong>, compare, export, or delete.</li>
+            </ol>
           </div>
-          <figcaption>Fig&nbsp;9 — Batch actions on selected photos</figcaption>
-        </figure>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/multi-select.jpg" width="720" height="1564" alt="Selection mode with three photos checked and the action bar at the bottom" loading="lazy" />
+            <figcaption>Fig&nbsp;9 — Batch actions on selected photos</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -268,40 +280,38 @@
         </div>
         <p class="lead">Open a photo full screen to enrich it. Everything you add here is searchable.</p>
 
-        <h3>Mark up a photo</h3>
-        <ol class="steps-list">
-          <li>Open the photo and tap <strong>Markup</strong> (it reads <strong>Markup Again</strong> if the photo already has edits).</li>
-          <li>Use the tools: <strong>draw</strong> (pencil), <strong>crop</strong>, <strong>stickers</strong>, <strong>text</strong>, <strong>mosaic</strong> (blur), and <strong>adjust</strong> (brightness, contrast, saturation).</li>
-          <li>Save. The annotated version is kept alongside the original.</li>
-        </ol>
-        <figure class="shot crop">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">✏️</span>
-            <span class="kind crop">Cropped region</span>
-            <span class="what">Markup editor toolbar</span>
-            <span class="spec">The editor open on a photo with the tool row visible (draw, crop, stickers, text, mosaic, adjust). Crop to show the photo plus the toolbar.</span>
+        <div class="split">
+          <div class="split-body">
+            <h3>Mark up a photo</h3>
+            <ol class="steps-list">
+              <li>Open the photo and tap <strong>Markup</strong> (it reads <strong>Markup Again</strong> if the photo already has edits).</li>
+              <li>Use the tools: <strong>draw</strong> (pencil), <strong>crop</strong>, <strong>stickers</strong>, <strong>text</strong>, <strong>mosaic</strong> (blur), and <strong>adjust</strong> (brightness, contrast, saturation).</li>
+              <li>Save. The annotated version is kept alongside the original.</li>
+            </ol>
           </div>
-          <figcaption>Fig&nbsp;10 — The markup tools</figcaption>
-        </figure>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/markup.jpg" width="720" height="1564" alt="The markup editor with a hand-drawn circle and an Approved sticker on a photo" loading="lazy" />
+            <figcaption>Fig&nbsp;10 — The markup tools</figcaption>
+          </figure>
+        </div>
 
-        <h3>Add notes — type or dictate</h3>
-        <ol class="steps-list">
-          <li>Open the photo's notes field and type, or tap the <strong>microphone</strong> to dictate.</li>
-          <li>Dictation transcribes your speech to text as you talk. Tap the mic again to stop.</li>
-        </ol>
-        <div class="callout callout--perm"><strong>Permissions:</strong> Dictation needs <strong>Microphone</strong> and <strong>Speech Recognition</strong> access the first time you use it. If either is off, the app shows a prompt to open Settings.</div>
-        <figure class="shot detail">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">🎙️</span>
-            <span class="kind detail">Cropped detail</span>
-            <span class="what">The notes field with the mic button</span>
-            <span class="spec">Close-up of the note input showing the microphone button, ideally mid-dictation with the active (waveform) state.</span>
+        <div class="split split--flip">
+          <div class="split-body">
+            <h3>Add notes — type or dictate</h3>
+            <ol class="steps-list">
+              <li>Open the photo's notes field and type, or tap the <strong>microphone</strong> to dictate.</li>
+              <li>Dictation transcribes your speech to text as you talk. Tap the mic again to stop.</li>
+            </ol>
+            <div class="callout callout--perm"><strong>Permissions:</strong> Dictation needs <strong>Microphone</strong> and <strong>Speech Recognition</strong> access the first time you use it. If either is off, the app shows a prompt to open Settings.</div>
+
+            <h3>Tags</h3>
+            <p>Add tags to any photo to label and filter across every stack. Manage your full tag list in <a href="#settings">Settings → Tags</a>.</p>
           </div>
-          <figcaption>Fig&nbsp;11 — Dictating a note</figcaption>
-        </figure>
-
-        <h3>Tags</h3>
-        <p>Add tags to any photo to label and filter across every stack. Manage your full tag list in <a href="#settings">Settings → Tags</a>.</p>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/photo-details.jpg" width="704" height="1531" alt="A photo's Details screen showing its stack, note, tags, and location on a map" loading="lazy" />
+            <figcaption>Fig&nbsp;11 — Notes, tags &amp; location on a photo</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -321,15 +331,16 @@
           <li>Optionally mark it <strong>Required</strong> so it must be filled when filing a photo.</li>
         </ol>
         <div class="callout callout--pro"><strong>Field limits:</strong> Free stacks get <strong>1 custom field</strong> each. <a href="#premium">Master Camera Premium</a> raises this to <strong>6 fields per stack</strong>.</div>
-        <figure class="shot crop">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">🧾</span>
-            <span class="kind crop">Cropped region</span>
-            <span class="what">Custom field setup</span>
-            <span class="spec">The add/edit field screen showing the type choice (Text / Multiple Choice) and the Required toggle. Crop to the form, no need for the whole stack settings page.</span>
-          </div>
-          <figcaption>Fig&nbsp;12 — Creating a custom field</figcaption>
-        </figure>
+        <div class="shot-row shot-row--phones">
+          <figure class="shot full">
+            <img class="shot-img" src="/guide/images/custom-field-setup.jpg" width="720" height="1564" alt="Stack Settings with a required multiple-choice Status field and the Add Custom Field button" loading="lazy" />
+            <figcaption>Fig&nbsp;12 — Setting up a field</figcaption>
+          </figure>
+          <figure class="shot full">
+            <img class="shot-img" src="/guide/images/custom-field-in-action.jpg" width="720" height="1564" alt="The Add Context card with the Status field's pick-list open: Completed, On Hold, Pending, Waiting" loading="lazy" />
+            <figcaption>Fig&nbsp;13 — Filling it in as you shoot</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -340,21 +351,20 @@
           <span class="eyebrow">Search tab</span>
           <h2>Finding photos</h2>
         </div>
-        <ol class="steps-list">
-          <li>Open the <strong>Search</strong> tab and type any word — it matches across <strong>notes, tags, stack names, and custom field values</strong>.</li>
-          <li>Narrow the results with filter chips: <strong>stack, tag, date range, media type, location, and note/markup presence</strong>.</li>
-          <li>Tap a result to open it full screen.</li>
-        </ol>
-        <div class="callout callout--note"><strong>What you'll see:</strong> Results update as you type and return near-instantly, even on large libraries.</div>
-        <figure class="shot crop">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">🔍</span>
-            <span class="kind crop">Cropped region</span>
-            <span class="what">Search with filter chips</span>
-            <span class="spec">The search field with a query typed, the filter chips row (stack, tag, date, type, location) below it, and a few results. Crop to the top of the screen through the first result row.</span>
+        <div class="split">
+          <div class="split-body">
+            <ol class="steps-list">
+              <li>Open the <strong>Search</strong> tab and type any word — it matches across <strong>notes, tags, stack names, and custom field values</strong>.</li>
+              <li>Narrow the results with filter chips: <strong>stack, tag, date range, media type, location, and note/markup presence</strong>.</li>
+              <li>Tap a result to open it full screen.</li>
+            </ol>
+            <div class="callout callout--note"><strong>What you'll see:</strong> Results update as you type and return near-instantly, even on large libraries.</div>
           </div>
-          <figcaption>Fig&nbsp;13 — Searching and filtering</figcaption>
-        </figure>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/search.jpg" width="712" height="1428" alt="The Search tab with a query typed, filter chips below, and matching results highlighted" loading="lazy" />
+            <figcaption>Fig&nbsp;14 — Searching and filtering</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -385,36 +395,34 @@
           <h2>Compare &amp; Replicate</h2>
         </div>
 
-        <h3>Compare two photos</h3>
-        <ol class="steps-list">
-          <li>Open a photo full screen and choose <strong>Compare with…</strong> from its menu (or select two photos in the Gallery and tap <strong>Compare</strong>).</li>
-          <li>Pick the second photo. They're shown side by side with labeled banners — ideal for before/after.</li>
-        </ol>
-        <figure class="shot full">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">🪟</span>
-            <span class="kind full">Full screen</span>
-            <span class="what">Compare view</span>
-            <span class="spec">Two photos side by side with the labeled banners (e.g. "Before" / "After"). A before/after pair makes the best example.</span>
+        <div class="split">
+          <div class="split-body">
+            <h3>Compare two photos</h3>
+            <ol class="steps-list">
+              <li>Open a photo full screen and choose <strong>Compare with…</strong> from its menu (or select two photos in the Gallery and tap <strong>Compare</strong>).</li>
+              <li>Pick the second photo. They're shown together with labeled banners — ideal for before/after.</li>
+            </ol>
           </div>
-          <figcaption>Fig&nbsp;14 — Comparing two photos</figcaption>
-        </figure>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/compare.jpg" width="720" height="1564" alt="The Compare view with a Before photo above an After photo" loading="lazy" />
+            <figcaption>Fig&nbsp;15 — Comparing two photos</figcaption>
+          </figure>
+        </div>
 
-        <h3>Replicate a shot <span class="tag-pro">Premium</span></h3>
-        <ol class="steps-list">
-          <li>Open a photo full screen and choose <strong>Replicate</strong> from its menu.</li>
-          <li>The camera opens with on-screen guides for the original's framing, level, and position. Line up until it reads <strong>Aligned</strong>, then capture.</li>
-        </ol>
-        <div class="callout callout--note"><strong>Why it's useful:</strong> Re-shoot a location weeks later from the exact same angle and spot — perfect for progress and before/after documentation.</div>
-        <figure class="shot full">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">🎯</span>
-            <span class="kind full">Full screen</span>
-            <span class="what">Replicate mode, aligned</span>
-            <span class="spec">The camera in Replicate mode with the ghost/original overlay and the level &amp; compass guides, ideally showing the "Aligned" badge state.</span>
+        <div class="split split--flip">
+          <div class="split-body">
+            <h3>Replicate a shot <span class="tag-pro">Premium</span></h3>
+            <ol class="steps-list">
+              <li>Open a photo full screen and choose <strong>Replicate</strong> from its menu.</li>
+              <li>The camera opens with on-screen guides for the original's framing, level, and position. Line up until it reads <strong>Aligned</strong>, then capture.</li>
+            </ol>
+            <div class="callout callout--note"><strong>Why it's useful:</strong> Re-shoot a location weeks later from the exact same angle and spot — perfect for progress and before/after documentation.</div>
           </div>
-          <figcaption>Fig&nbsp;15 — Lining up a Replicate shot</figcaption>
-        </figure>
+          <figure class="shot full split-media">
+            <img class="shot-img" src="/guide/images/replicate-mode.jpg" width="720" height="1567" alt="The camera in Replicate mode with compass guides and an On the spot alignment badge" loading="lazy" />
+            <figcaption>Fig&nbsp;16 — Lining up a Replicate shot</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -426,16 +434,6 @@
           <h2>Settings</h2>
         </div>
         <p class="lead">Open Settings with the gear icon from the Camera or Gallery screen.</p>
-
-        <figure class="shot full">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">⚙️</span>
-            <span class="kind full">Full screen</span>
-            <span class="what">The Settings list</span>
-            <span class="spec">The main Settings screen showing the grouped rows (Capture / Library / App sections). One representative screenshot is enough — the table below covers the detail.</span>
-          </div>
-          <figcaption>Fig&nbsp;16 — Settings overview</figcaption>
-        </figure>
 
         <div class="table-wrap">
           <table class="gtable">
@@ -483,16 +481,6 @@
         </div>
 
         <div class="callout callout--note">Purchases restore automatically across your devices signed in to the same Apple ID. Unlock or restore from <strong>Settings → Master Camera Pro</strong>.</div>
-
-        <figure class="shot full">
-          <div class="ph">
-            <span class="icon" aria-hidden="true">⭐️</span>
-            <span class="kind full">Full screen</span>
-            <span class="what">The Premium screen</span>
-            <span class="spec">The "Master Camera Premium" unlock screen showing the feature list and the one-time "Unlock Everything" price button.</span>
-          </div>
-          <figcaption>Fig&nbsp;17 — Master Camera Premium</figcaption>
-        </figure>
       </div>
     </section>
 

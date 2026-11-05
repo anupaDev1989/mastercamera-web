@@ -377,44 +377,15 @@ table.gtable tbody td { color: var(--muted); }
 table.gtable tbody td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
 table.gtable td .tag-pro { margin-left: 6px; }
 
-/* ---------- Screenshot-placeholder figures -------------------------------- */
-figure.shot { margin: 22px 0 4px; }
-figure.shot .ph {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 8px;
-  padding: 24px 20px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--card);
-}
-figure.shot .ph .icon { font-size: 25px; opacity: .8; }
-figure.shot .ph .kind {
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 6px;
-}
-figure.shot .ph .kind.full   { color: var(--brand); background: var(--brand-soft); border: 1px solid var(--brand-line); }
-figure.shot .ph .kind.crop   { color: var(--blue);  background: var(--blue-soft);  border: 1px solid var(--blue-line); }
-figure.shot .ph .kind.detail { color: var(--gold);  background: var(--gold-soft);  border: 1px solid var(--gold-line); }
-figure.shot .ph .what { font-weight: 650; color: var(--text); font-size: 15.5px; letter-spacing: -.01em; }
-figure.shot .ph .spec { color: var(--muted); font-size: 13.5px; line-height: 1.5; max-width: 460px; }
-figure.shot.full   .ph { min-height: 300px; max-width: 260px; margin: 0 auto; }
-figure.shot.crop   .ph { min-height: 140px; }
-figure.shot.detail .ph { min-height: 96px; }
-
-/* ---------- Real screenshots (replace the placeholders above) -------------
+/* ---------- Screenshot figures --------------------------------------------
    Each figure kind gets its own cap so a crop of one small control never
    renders larger than the phone screen it was taken from. Widths are chosen
    so the UI inside each shot reads at roughly its real on-device size. */
+figure.shot { margin: 22px 0 4px; }
 figure.shot .shot-img {
   display: block;
+  cursor: zoom-in;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
   width: 100%;
   height: auto;
   margin: 0 auto;
@@ -449,13 +420,115 @@ figure.shot figcaption {
   color: var(--muted-2);
 }
 figure.shot.full figcaption { max-width: 260px; margin-left: auto; margin-right: auto; }
-.shot-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.shot-row figure.shot { margin-top: 0; }
-.shot-row figure.shot.full .ph { max-width: none; }
-/* Two-up rows: fill the column instead of the standalone caps above.
-   Declared last so it beats the equal-specificity per-kind rules. */
+figure.shot.full .shot-img:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(16, 18, 20, .22);
+}
+
+/* Two phones side by side */
+.shot-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 240px));
+  justify-content: center;
+  gap: 32px;
+  margin-top: 28px;
+}
+.shot-row figure.shot { margin: 0; }
 .shot-row figure.shot .shot-img,
 .shot-row figure.shot figcaption { max-width: 100%; }
+
+/* ---------- Split: steps beside a tall phone screenshot ------------------- */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 48px;
+  align-items: center;
+  margin-top: 48px;
+}
+.split--flip { grid-template-columns: 240px minmax(0, 1fr); }
+.split--flip .split-media { order: -1; }
+.split--intro { margin-top: 0; }
+.split-body > h3:first-child { margin-top: 0; }
+.split-body > .lead:first-child { margin-top: 14px; }
+.split figure.shot { margin: 0; }
+.split figure.shot .shot-img,
+.split figure.shot figcaption { max-width: 100%; }
+
+/* Basics intro cards, stacked beside the phone */
+.mini-cards--stack { grid-template-columns: 1fr; gap: 10px; }
+.mini-cards--stack .mini-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+}
+.mini-cards--stack .mini-card .ic { flex: 0 0 auto; margin: 0; }
+
+/* ---------- Scroll reveal (only when JS is running) ----------------------- */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.js .reveal.is-in { opacity: 1; transform: none; }
+
+/* ---------- Active section in the contents bar ---------------------------- */
+.toc a.is-active {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+/* ---------- Tap-to-enlarge viewer ----------------------------------------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  background: rgba(16, 18, 20, .86);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s var(--ease), visibility 0s linear .25s;
+  cursor: zoom-out;
+}
+.lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .25s var(--ease);
+}
+.lightbox img {
+  max-width: min(100%, 980px);
+  max-height: calc(100vh - 110px);
+  width: auto;
+  height: auto;
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+  transform: scale(.96);
+  transition: transform .3s var(--ease);
+}
+.lightbox.is-open img { transform: none; }
+.lightbox p { margin: 0; color: #e8ebf0; font-size: 14px; text-align: center; }
+.lightbox button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .14);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lightbox button:hover { background: rgba(255, 255, 255, .26); }
+body.no-scroll { overflow: hidden; }
 
 /* ---------- Footer --------------------------------------------------------- */
 .foot {
@@ -526,12 +599,27 @@ figure.shot.full figcaption { max-width: 260px; margin-left: auto; margin-right:
   .doc { padding: 60px 0; }
   .hero { padding: 76px 0 60px; }
 }
+@media (max-width: 760px) {
+  .split,
+  .split--flip {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .split--flip .split-media { order: 0; }
+  .split .split-media { width: 100%; max-width: 240px; margin: 0 auto; }
+}
 @media (max-width: 700px) {
   .mini-cards { grid-template-columns: 1fr; }
-  .shot-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .shot-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .shot-row figure.shot.full .shot-img { border-radius: 20px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto; }
-  .btn, .toc a, .topbar .back, .foot .back-link { transition: none; }
+  .btn, .toc a, .topbar .back, .foot .back-link, .lightbox, .lightbox img,
+  figure.shot .shot-img { transition: none; }
+  figure.shot.full .shot-img:hover { transform: none; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
 }
